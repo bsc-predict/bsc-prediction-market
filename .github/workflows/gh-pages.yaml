@@ -19,6 +19,8 @@ jobs:
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@3.6.1
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
         with:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           BRANCH: gh-pages
