@@ -9,6 +9,7 @@ const AccountContext = React.createContext<{account?: string, balance?: BalanceI
 interface BalanceInfo {
   balance: string
   balanceUsd: number
+  bnbPrice: number
 }
 
 const AccountContextProvider: React.FunctionComponent = ({ children }) => {
@@ -25,7 +26,7 @@ const AccountContextProvider: React.FunctionComponent = ({ children }) => {
       Promise.all([bnbPrice, balance])
         .then(([price, bal]) => {
           const balanceUsd = Number(web3.utils.fromWei(bal, "ether")) * price
-          setBalance({balance: bal, balanceUsd})
+          setBalance({balance: bal, balanceUsd, bnbPrice: price})
         })
     } else {
       setBalance(undefined)

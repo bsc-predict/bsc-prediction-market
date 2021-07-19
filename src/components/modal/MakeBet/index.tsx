@@ -12,6 +12,7 @@ interface MakeBetProps {
 const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const {direction} = props
 
+  const [isLoading, setIsLoading] = React.useState(false)
   const [size, setSize] = React.useState(0)
   const [perc, setPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
@@ -22,7 +23,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   React.useEffect(() => {
     if (perc !== undefined) {
       const bal = Number(web3.utils.fromWei(balance?.balance || "0"))
-      const maxSize = bal - 0.0005
+      const maxSize = bal - 0.005
       setSize(Math.round(Math.max(0, Math.min(bal * perc, maxSize)) * 10000) / 10000)  
     }
   }, [perc, balance?.balance])
@@ -34,7 +35,9 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   }
   
   const handleOnSuccess = () => {
+    setIsLoading(true)
     makeBet(curDirection, size)
+      .finally(() => setIsLoading(false))
   }
 
   const buttonGreenHighlighted = "bg-green-300 dark:bg-green-800"
@@ -53,7 +56,8 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
             type="number"
             value={size}
             onChange={v => handleChangeSize(Number(v.currentTarget.value))}/>
-          <p className="text-xs italic">Balance: {web3.utils.fromWei(balance?.balance || "0", "ether")} (${balance?.balanceUsd.toLocaleString()})</p>
+          <p className="text-xs italic">Bet: ${Math.round(size * (balance?.bnbPrice || 0) * 100) / 100 }</p>
+          <p className="text-xs italic">Balance: {web3.utils.fromWei(balance?.balance || "0", "ether").slice(0,6)} (${balance?.balanceUsd.toLocaleString()})</p>
         </div>
       </form>
         <div>
@@ -70,7 +74,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
             <button onClick={() => setPerc(1.0)} className={`w-32 text-sm rounded ${perc === 1 ? buttonGreenHighlighted : ""}`}>100%</button>
           </div>
         </div>
-      <Footer onSuccess={handleOnSuccess} successText="Bet"/>
+      <Footer onSuccess={handleOnSuccess} successText="Bet" isLoading={isLoading}/>
     </div>
   )
 }

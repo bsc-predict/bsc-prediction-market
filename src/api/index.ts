@@ -4,13 +4,8 @@ import getConfig from "next/config"
 import web3 from "../utils/web3"
 import { csvToJson } from "./utils"
 
-const { publicRuntimeConfig } = getConfig()
-
-const apiKey = publicRuntimeConfig.BSC_API_KEY
-
 const Urls = {
-  addressTransactions: (address: string) =>
-    `https://api.bscscan.com/api?module=account&action=txlist&address=${address}&startblock=1&endblock=99999999&sort=asc&apikey=${apiKey}`,
+  addressTransactions: (address: string) => `https://account.bscpredict.workers.dev/${address}`,
   bnbPrice: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
   latestRounds: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/latest.csv",
   allRounds: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/rounds.csv",
@@ -47,7 +42,7 @@ export const fetchBnbPrice = async (): Promise<number> => {
   return res.data.price
 }
 
-export const fetchRounds = async (latest: boolean): Promise<Round[]> => {
+export const fetchArchivedRounds = async (latest: boolean): Promise<Round[]> => {
   const url = latest ? Urls.latestRounds : Urls.allRounds
   const res = await axios.get(url)
   const roundResponse = csvToJson(res.data) as RoundResponse[]

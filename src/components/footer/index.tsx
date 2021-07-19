@@ -14,7 +14,7 @@ const Footer: React.FunctionComponent = () => {
   const {isDark} = React.useContext(ThemeContext)
 
   return(
-    <footer className="h-full h-16 mt-8 bg-white dark:bg-gray-900">
+    <footer className="mt-8">
       <hr className="border-gray-600"/>
       <div className="block md:hidden text-center text-xl my-8">
         BSC Prediction Markets

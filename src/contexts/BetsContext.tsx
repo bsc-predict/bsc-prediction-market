@@ -59,7 +59,13 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   const fetch = React.useCallback(() => {
     if(account) {
       fetchBets(account)
-        .then(({bets, claimed}) => setBets(enrichBets(bets, rounds.current, claimed)))
+        .then(({bets, claimed}) => setBets(prior => {
+          // bet might be pending, don't override with new bets!
+          const pending = prior.filter(b => b.status === "pending")
+          const exclude = new Set(pending.map(p => p.timeStamp))
+          const updated = enrichBets(bets, rounds.current, claimed).filter(b => !exclude.has(b.timeStamp))
+          return pending.concat(updated).sort((a, b) => a.timeStamp > b.timeStamp ? -1 : 1)
+        }))
         .catch(() => setMessage({type: "error", message: 'Failed to retrieve bets', title: "Error", duration: 5000}))
     } else {
       setBets([])

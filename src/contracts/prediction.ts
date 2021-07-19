@@ -28,7 +28,7 @@ export const usePredictionContract = () => {
     const value = web3.utils.toWei(eth.toString(), "ether")
     const betMethod = direction === "bull" ? "betBull" : "betBear"
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], predictionAddress)
-    contract.methods[betMethod]()
+    return contract.methods[betMethod]()
       .send({ from: account, value })
       .once('sent', () => {
         setMessage({type: "info", message: "", title: "Bet sent", duration: 7000})
@@ -88,9 +88,10 @@ export const fetchRounds = async (epochs: Array<string | number>) => {
   return await Promise.all(rounds)
 }
 
-export const fetchLatestRounds = async (n: number): Promise<Round[]> => {
+export const fetchLatestRounds = async (n: number, skip: string[]): Promise<Round[]> => {
+  const skipSet = new Set(skip)
   const epoch = await contract.methods.currentEpoch().call()
-  const epochs = Array.from(Array(n).keys()).map(offset => `${epoch - offset}`)
+  const epochs = Array.from(Array(n).keys()).map(offset => `${epoch - offset}`).filter(e => !skipSet.has(e))
   return fetchRounds(epochs)
 }
 

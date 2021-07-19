@@ -1,8 +1,5 @@
 module.exports = {
   reactStrictMode: true,
-  publicRuntimeConfig: {
-    BSC_API_KEY: process.env.BSC_API_KEY,
-  },
   images: {
     disableStaticImages: true
   },

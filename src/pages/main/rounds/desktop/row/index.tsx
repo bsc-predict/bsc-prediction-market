@@ -22,7 +22,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   const {block} = React.useContext(BlockContext)
   const {latestOracle} = React.useContext(OracleContext)
   
-  const canBet = round.startBlockNum < block && round.lockBlockNum > block
+  const canBet = bet === undefined && round.startBlockNum < block && round.lockBlockNum > block
 
   const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, latestOracle)
 

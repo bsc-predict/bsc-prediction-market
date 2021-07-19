@@ -18,12 +18,14 @@ const AppHeader: React.FunctionComponent = () => {
   return(
       <header className="sticky px-4 top-0 bg-white dark:bg-gray-900 flex items-center pt-2 pb-2 border-b border-gray-200">
         <div className="flex-none w-8">
-          <Image
-            alt="prediction-icon"
-            src={isDark ? "/prediction-light.svg" : "/prediction.svg"}
-            width={24}
-            height={24}
-          />
+          <a href="/">
+            <Image
+              alt="prediction-icon"
+              src={isDark ? "/prediction-light.svg" : "/prediction.svg"}
+              width={32}
+              height={33}
+            />
+          </a>
         </div>
         <div className="invisible flex-grow md:text-center text-xl text-strong md:visible">Binance Smart Chain (BSC) Prediction Markets</div>
         <div className="flex-none w-max ml-2">
