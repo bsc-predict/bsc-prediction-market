@@ -23,7 +23,6 @@ class MyDocument extends Document {
                   `,
               }}
             />
-          <link rel="stylesheet" href="/static/google-fonts.css" />
           <meta
             key="description"
             name="description"
