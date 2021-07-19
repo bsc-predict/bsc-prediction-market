@@ -1,4 +1,4 @@
-export default [
+const questions = [
   {
     id: 1,
     q: <div>What is this website?</div>,
@@ -8,12 +8,12 @@ export default [
   {
     id: 2,
     q: <div>How is this different than <a className="underline"  href="https://pancakeswap.finance/prediction">Pancake Swap Prediction Market?</a></div>,
-    a: <div>It's not. It's just another way to interact with the same <a className="underline" href="https://bscscan.com/address/0x516ffd7d1e0ca40b1879935b2de87cb20fc1124b">contact</a></div>
+    a: <div>It&apos;s not. It&apos;s just another way to interact with the same <a className="underline" href="https://bscscan.com/address/0x516ffd7d1e0ca40b1879935b2de87cb20fc1124b">contact</a></div>
   },
   {
     id: 3,
-    q: <div>So what's different from your site?</div>,
-    a: <div>It's a lot lighter, faster and simpler to use. It also poll more frequently to get more accurate pool size and payoffs.
+    q: <div>So what&apos;s different from your site?</div>,
+    a: <div>It&apos;s a lot lighter, faster and simpler to use. It also poll more frequently to get more accurate pool size and payoffs.
       Finally, it gives you more historical data and a table view of all your bets</div>,    
   },
   {
@@ -24,7 +24,7 @@ export default [
   {
     id: 5,
     q: <div>How can I contact you?</div>,
-    a: <div>I don't offer general support. Product is as-is. To file a bug, report an issue
+    a: <div>I don&apos;t offer general support. Product is as-is. To file a bug, report an issue
       on <a className="underline" href="https://github.com/bsc-prediction-markets">github</a></div>,    
   },
   {
@@ -33,3 +33,5 @@ export default [
     a: <div>You can <a className="underline" href="contact@bscpredict.com">email me</a> but I may not reply.</div>
   }
 ]
+
+export default questions

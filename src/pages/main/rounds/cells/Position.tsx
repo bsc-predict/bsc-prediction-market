@@ -32,7 +32,7 @@ const Position: React.FunctionComponent<PositionProps> = (props) => {
 
   const handleSetDirection = React.useCallback((direction: "bull" | "bear") => {
     showModal({tag: "make-bet", direction})
-  }, [])
+  }, [showModal])
 
   return(
     <td className={`justify-center text-center border border-grey-900

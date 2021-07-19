@@ -1,6 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
-import Image from "next/image"
 import { ThemeContext } from "../../contexts/ThemeContext"
 import useLogin from "../../hooks/useLogin"
 
@@ -19,7 +18,7 @@ const AppHeader: React.FunctionComponent = () => {
   return(
       <header className="sticky px-4 top-0 bg-white dark:bg-gray-900 flex items-center pt-2 pb-2 border-b border-gray-200">
         <div className="flex-none w-8">
-          <Image
+          <img
             alt="prediction-icon"
             src={isDark ? "/prediction-light.svg" : "/prediction.svg"}
             width={24}
@@ -29,13 +28,13 @@ const AppHeader: React.FunctionComponent = () => {
         <div className="invisible flex-grow md:text-center text-xl text-strong md:visible">Binance Smart Chain (BSC) Prediction Markets</div>
         <div className="flex-none w-max ml-2">
           <button className="border rounded h-12 px-3" onClick={handleToggleTheme}>
-            <Image alt="toggle-theme" src={themeIcon} width={24} height={24}/>
+            <img alt="toggle-theme" src={themeIcon} width={24} height={24}/>
           </button>
         </div>
         <div className="flex-none w-max ml-2">
           {account ?
             <button className="flex items-center border rounded h-12 px-3 hover:bg-red-300 dark:hover:bg-red-900" onClick={handleDeactivate}>
-              <Image
+              <img
                 alt="logout"
                 src={isDark ? "/logout-light.svg" : "/logout.svg"}
                 width={24}
@@ -43,7 +42,7 @@ const AppHeader: React.FunctionComponent = () => {
                 color="white"/>
             </button> :
             <button className="flex items-center border rounded h-12 px-3 hover:bg-green-300 dark:hover:bg-green-900" onClick={handleActivate}>
-              <Image
+              <img
                 alt="login"
                 src={isDark ? "/login-light.svg" : "/login.svg"}
                 width={24}

@@ -1,4 +1,3 @@
-import { useWeb3React } from "@web3-react/core"
 import React from "react"
 import { AccountContext } from "../../../contexts/AccountContext"
 import { usePredictionContract } from "../../../contracts/prediction"
@@ -26,7 +25,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
       const maxSize = bal - 0.0005
       setSize(Math.round(Math.max(0, Math.min(bal * perc, maxSize)) * 10000) / 10000)  
     }
-  }, [perc])
+  }, [perc, balance?.balance])
 
 
   const handleChangeSize = (s: number) => {

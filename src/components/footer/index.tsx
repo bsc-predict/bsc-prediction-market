@@ -1,5 +1,4 @@
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { ThemeContext } from "../../contexts/ThemeContext"
 
@@ -66,7 +65,7 @@ const Footer: React.FunctionComponent = () => {
         <div>
           <div className="mb-4 block font-bold text-xl mb-8">&nbsp;</div>
           <div className="cursor-pointer">
-            <Image alt="toggle-theme" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+            <img alt="toggle-theme" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
           </div>
         </div>
       </div>
