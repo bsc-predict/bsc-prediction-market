@@ -66,7 +66,9 @@ const Footer: React.FunctionComponent = () => {
         <div>
           <div className="mb-4 block font-bold text-xl mb-8">&nbsp;</div>
           <div className="cursor-pointer">
-            <Image alt="toggle-theme" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+            <Link href="https://twitter.com/bscpredict">
+              <Image alt="toggle-theme" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+            </Link>
           </div>
         </div>
       </div>
