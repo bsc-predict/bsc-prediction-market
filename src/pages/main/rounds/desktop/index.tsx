@@ -55,17 +55,16 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
 
       </div>
       <div className="float-right mt-4">
-        <a href="/" className={pageStyle} onClick={() => onChangePage(0)}>
+        <div className={pageStyle} onClick={() => onChangePage(0)}>
           ⇤
-        </a>
+        </div>
         {pages.map(p => 
-          <a
+          <div
             key={p}
-            href="#"
             onClick={() => onChangePage(p)}
             className={`${pageStyle} ${p === page ? "bg-gray-200 dark:bg-gray-700" : ""}`}>
             {p + 1}
-          </a>
+          </div>
         )}
         <a className={pageStyle}>...</a>
       </div>

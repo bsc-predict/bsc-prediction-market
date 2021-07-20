@@ -7,7 +7,8 @@ const Links = {
   pancakeSwap: "https://pancakeswap.finance",
   documentation: "https://docs.pancakeswap.finance/products/prediction",
   about: "/about",
-  email: "mailto:contact@bscpredict.com"
+  email: "mailto:contact@bscpredict.com",
+  twitter: "https://twitter.com/bscpredict",
 }
 
 const Footer: React.FunctionComponent = () => {
@@ -66,8 +67,10 @@ const Footer: React.FunctionComponent = () => {
         <div>
           <div className="mb-4 block font-bold text-xl mb-8">&nbsp;</div>
           <div className="cursor-pointer">
-            <Link href="https://twitter.com/bscpredict">
-              <Image alt="toggle-theme" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+            <Link href={Links.twitter}>
+              <a>
+                <Image alt="twitter" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+              </a>
             </Link>
           </div>
         </div>
