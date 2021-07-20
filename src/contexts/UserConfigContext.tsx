@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 
 const COLOR_THEME_KEY = "color-theme"
 const SHOW_ROWS_KEY = "show-rows"
+const DEFAULT_SHOW_ROWS = 10
 
 interface IUserConfigContext {
   isDark: boolean
@@ -29,9 +30,12 @@ const UserConfigContextProvider: React.FunctionComponent = ({ children }) => {
   const [showRows, setShowRows] = useState<number>(() => {
     try {
       const item = window.localStorage.getItem(SHOW_ROWS_KEY);
-      return Number(item)
+      if (item){
+        return Number(item)
+      }
+      return DEFAULT_SHOW_ROWS
     } catch (error) {
-      return 10
+      return DEFAULT_SHOW_ROWS
     }
   })
 
