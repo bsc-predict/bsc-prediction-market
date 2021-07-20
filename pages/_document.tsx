@@ -1,5 +1,6 @@
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
 import { MY_SEO } from '../config'
+import { GA_TRACKING_ID } from '../src/utils/gtag'
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
@@ -11,7 +12,7 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head >
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8VG0TTJXN2"></script>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}></script>
           <script
               dangerouslySetInnerHTML={{
                 __html: `
@@ -19,7 +20,7 @@ class MyDocument extends Document {
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
                 
-                  gtag('config', 'G-8VG0TTJXN2');
+                  gtag('config', '${GA_TRACKING_ID}', {page_path: window.location.pathname});
                   `,
               }}
             />

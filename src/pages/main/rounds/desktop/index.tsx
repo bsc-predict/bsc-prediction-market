@@ -46,7 +46,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
         {rowOptions.map(n =>
           <button
             key={n}
-            className={`px-2 mx-1 w-12 text-sm border rounded ${showRows === n ? "bg-green-300 dark:bg-green-900" : ""}`}
+            className="px-2 mx-1 w-12 text-sm border rounded"
             onClick={() => updateShowRows(n)}
           >
             {n}

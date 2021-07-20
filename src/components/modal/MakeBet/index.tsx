@@ -4,6 +4,8 @@ import { usePredictionContract } from "../../../contracts/prediction"
 import web3 from "../../../utils/web3"
 import Footer from "../components/Footer"
 import Title from "../components/Title"
+import * as gtag from "../../../utils/gtag"
+import { NotificationsContext } from "../../../contexts/NotificationsContext"
 
 interface MakeBetProps {
   direction: "bull" | "bear"
@@ -17,6 +19,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const [perc, setPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
 
+  const {setMessage} = React.useContext(NotificationsContext)
   const {balance} = React.useContext(AccountContext)
   const {makeBet} = usePredictionContract()
   
@@ -56,8 +59,10 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
             type="number"
             value={size}
             onChange={v => handleChangeSize(Number(v.currentTarget.value))}/>
-          <p className="text-xs italic">Bet: ${Math.round(size * (balance?.bnbPrice || 0) * 100) / 100 }</p>
-          <p className="text-xs italic">Balance: {web3.utils.fromWei(balance?.balance || "0", "ether").slice(0,6)} (${balance?.balanceUsd.toLocaleString()})</p>
+          <p className="text-xs italic">
+            Bet: ${Math.round(size * (balance?.bnbPrice || 0) * 100) / 100 }&nbsp;
+            Balance: {web3.utils.fromWei(balance?.balance || "0", "ether").slice(0,6)} (${balance?.balanceUsd.toLocaleString()})
+          </p>
         </div>
       </form>
         <div>

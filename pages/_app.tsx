@@ -9,9 +9,9 @@ import { RoundsContextProvider } from '../src/contexts/RoundsContext'
 import { BetsContextProvider } from '../src/contexts/BetsContext'
 import { OracleContextProvider } from '../src/contexts/OracleContext'
 import { AccountContextProvider } from '../src/contexts/AccountContext'
-import { UserConfigContextProvider } from '../src/contexts/UserConfigContext'
 import { NotificationsContextProvider } from '../src/contexts/NotificationsContext'
 import { ModalContextProvider } from '../src/contexts/ModalContext'
+import { UserConfigContextProvider } from '../src/contexts/UserConfigContext'
 
 function MyApp({ Component, pageProps }: AppProps) {
   

@@ -2,9 +2,11 @@ import React from "react"
 import Link from "next/link"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
 import Image from "next/image"
+import { linkClass } from "./style"
 
 const Links = {
   pancakeSwap: "https://pancakeswap.finance",
+  pancakeSwapPredictions: "https://pancakeswap.finance/prediction",
   documentation: "https://docs.pancakeswap.finance/products/prediction",
   about: "/about",
   email: "mailto:contact@bscpredict.com",
@@ -21,58 +23,46 @@ const Footer: React.FunctionComponent = () => {
         BSC Prediction Markets
       </div>
       <div className="hidden md:flex mt-12 mb-12 flex-row justify-center space-x-20">
-        <div>
+        <div className="w-1/6">
           <div className="mb-4 block font-bold text-xl mb-8">Games</div>
           <div>
             <Link href="/">
-              <a className="mb-4 block cursor-pointer text-gray-600 dark:text-gray-400 dark:hover:text-white hover:text-gray-500 my-8">
-                BNB Predictions
+              <a className={linkClass}>
+                BNB Predict
               </a>
             </Link>
           </div>
         </div>
-        <div>
+        <div className="w-1/6">
           <div className="mb-4 block font-bold text-xl mb-8">Links</div>
           <div>
-            <a
-              href={Links.pancakeSwap}
-              className="mb-4 block cursor-pointer text-gray-600 dark:text-gray-400 dark:hover:text-white hover:text-gray-500 my-8"
-            >
-              Pancake Swap
-            </a>
+          <Link href={Links.pancakeSwap}>
+              <a className={linkClass}>Pancake Swap</a>
+            </Link>
+            <Link href={Links.pancakeSwapPredictions}>
+              <a className={linkClass}>Pancake Swap Predictions</a>
+            </Link>
             <Link href={Links.documentation}>
-              <a className="mb-4 block cursor-pointer text-gray-600 dark:text-gray-400 dark:hover:text-white hover:text-gray-500 my-8">
-                Documentation
-              </a>
+              <a className={linkClass}>Documentation</a>
             </Link>
           </div>
         </div>
-        <div>
+        <div className="w-1/6">
           <div className="mb-4 block font-bold text-xl mb-8">Help</div>
-          <div>
-            <a
-              href={Links.about}
-              className="mb-4 block cursor-pointer text-gray-600 dark:text-gray-400 dark:hover:text-white hover:text-gray-500 my-8"
-            >
-              About
-            </a>
-            <a
-              href={Links.email}
-              className="mb-4 block cursor-pointer text-gray-600 dark:text-gray-400 dark:hover:text-white hover:text-gray-500 my-8"
-            >
-              Contact
-            </a>
-          </div>
+          <Link href={Links.about}>
+            <a className={linkClass}>About</a>
+            </Link>
+          <Link href={Links.email}>
+            <a className={linkClass}>Contact</a>
+          </Link>
         </div>
         <div>
           <div className="mb-4 block font-bold text-xl mb-8">&nbsp;</div>
-          <div className="cursor-pointer">
             <Link href={Links.twitter}>
               <a>
                 <Image alt="twitter" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
               </a>
             </Link>
-          </div>
         </div>
       </div>
     </footer>
