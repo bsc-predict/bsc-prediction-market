@@ -8,4 +8,4 @@ https://bscpredict.com
 
 or
 
-bsc-predict.github.io
+https://bscpredict.vercel.app
