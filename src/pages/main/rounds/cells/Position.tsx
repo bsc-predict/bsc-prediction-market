@@ -1,8 +1,6 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
-import { usePredictionContract } from "../../../../contracts/prediction"
 import useLogin from "../../../../hooks/useLogin"
-import MakeBet from "../../../../components/modal"
 import { buttonClass } from "./style"
 import { ModalContext } from "../../../../contexts/ModalContext"
 

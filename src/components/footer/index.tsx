@@ -1,17 +1,18 @@
 import React from "react"
 import Link from "next/link"
-import { ThemeContext } from "../../contexts/ThemeContext"
+import { UserConfigContext } from "../../contexts/UserConfigContext"
 import Image from "next/image"
 
 const Links = {
   pancakeSwap: "https://pancakeswap.finance",
   documentation: "https://docs.pancakeswap.finance/products/prediction",
   about: "/about",
-  email: "mailto:contact@bscpredict.com"
+  email: "mailto:contact@bscpredict.com",
+  twitter: "https://twitter.com/bscpredict",
 }
 
 const Footer: React.FunctionComponent = () => {
-  const {isDark} = React.useContext(ThemeContext)
+  const {isDark} = React.useContext(UserConfigContext)
 
   return(
     <footer className="mt-8">
@@ -66,7 +67,11 @@ const Footer: React.FunctionComponent = () => {
         <div>
           <div className="mb-4 block font-bold text-xl mb-8">&nbsp;</div>
           <div className="cursor-pointer">
-            <Image alt="toggle-theme" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+            <Link href={Links.twitter}>
+              <a>
+                <Image alt="twitter" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+              </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -20,14 +20,8 @@ const RoundsTable: React.FunctionComponent = () => {
     const page = Number(query.page)
 		if (!Number.isNaN(page)) {
 			setPage(page)
-		} else {
-			loadRounds(0)
 		}
   }, [loadRounds, query.page])
-
-	React.useEffect(() => {
-		loadRounds(page)
-	}, [loadRounds, page])
 
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
   

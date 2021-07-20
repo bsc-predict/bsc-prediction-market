@@ -1,6 +1,6 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
-import { ThemeContext } from "../../contexts/ThemeContext"
+import { UserConfigContext } from "../../contexts/UserConfigContext"
 import useLogin from "../../hooks/useLogin"
 import Image from "next/image"
 import Link from "next/link"
@@ -8,7 +8,7 @@ import Link from "next/link"
 const AppHeader: React.FunctionComponent = () => {
 
   const {account} = useWeb3React()
-  const {isDark, toggleTheme} = React.useContext(ThemeContext)
+  const {isDark, toggleTheme} = React.useContext(UserConfigContext)
 
   const {handleActivate, handleDeactivate} = useLogin()
 

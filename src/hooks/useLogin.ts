@@ -16,7 +16,7 @@ const useLogin = () => {
   
   const handleActivate = useCallback(() => {
     localStorage?.setItem(LOGGED_IN_KEY, "true")
-    activate(injected, err => setMessage({type: "error", message: 'Failed to fetch oracle', title: "Error", duration: 5000})
+    activate(injected, err => setMessage({type: "error", message: 'Login failed', title: "Error", duration: 5000})
     )
   }, [activate])
 
