@@ -1,6 +1,6 @@
 import React from "react"
 import Link from "next/link"
-import { ThemeContext } from "../../contexts/ThemeContext"
+import { UserConfigContext } from "../../contexts/UserConfigContext"
 import Image from "next/image"
 
 const Links = {
@@ -11,7 +11,7 @@ const Links = {
 }
 
 const Footer: React.FunctionComponent = () => {
-  const {isDark} = React.useContext(ThemeContext)
+  const {isDark} = React.useContext(UserConfigContext)
 
   return(
     <footer className="mt-8">

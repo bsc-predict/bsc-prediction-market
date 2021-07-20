@@ -19,13 +19,13 @@ const questions = [
   {
     id: 4,
     q: <div>Is the code public?</div>,
-    a: <div><a className="underline" href="https://github.com/bsc-prediction-markets">Yes</a></div>,    
+    a: <div><a className="underline" href="https://github.com/bsc-predict/bsc-prediction-market">Yes</a></div>,    
   },
   {
     id: 5,
     q: <div>How can I contact you?</div>,
     a: <div>I don&apos;t offer general support. Product is as-is. To file a bug, report an issue
-      on <a className="underline" href="https://github.com/bsc-prediction-markets">github</a></div>,    
+      on <a className="underline" href="https://github.com/bsc-predict/bsc-prediction-market">github</a></div>,    
   },
   {
     id: 6,

@@ -1,8 +1,9 @@
 import React from "react"
-import { BetsContext } from "../../../../contexts/BetsContext"
-import { RoundsContext } from "../../../../contexts/RoundsContext"
+import { UserConfigContext } from "../../../../contexts/UserConfigContext"
 import { createArray } from "../../../../utils/utils"
 import RoundRow from "./row"
+import EmptyRow from "./row/empty"
+import { pageStyle } from "./style"
 
 interface RoundsTableDesktopProps {
   rounds: Round[]
@@ -12,12 +13,14 @@ interface RoundsTableDesktopProps {
 }
 
 
-
 const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (props) => {
   const {rounds, bets, page, onChangePage} = props
 
+  const {showRows, updateShowRows} = React.useContext(UserConfigContext)
+
   const pages = page < 3 ? createArray(0, 5) : createArray(page - 2, page + 3)
-  const pageStyle = "bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+  const rowOptions = [5 ,10, 15, 20]
+
   return(
     <div className="overflow-y-auto">
       <table className="w-full border-collapse border border-grey-800">
@@ -34,16 +37,25 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
           </tr>
         </thead>
         <tbody>
-            {rounds.map(r =>
-              <RoundRow key={r.epoch} round={r} bet={bets.find(b => b.epoch === r.epoch)}/>)}
+          {rounds.length === 0 && createArray(0, showRows).map(idx => <EmptyRow key={idx}/>)}
+          {rounds.map(r => <RoundRow key={r.epoch} round={r} bet={bets.find(b => b.epoch === r.epoch)}/>)}
         </tbody>
       </table>
+      <div className="flex float-left mt-4">
+        <div className="mx-4">Rows</div>
+        {rowOptions.map(n =>
+          <button
+            key={n}
+            className={`px-2 mx-1 w-12 text-sm border rounded ${showRows === n ? "bg-green-300 dark:bg-green-900" : ""}`}
+            onClick={() => updateShowRows(n)}
+          >
+            {n}
+          </button>
+        )}
+
+      </div>
       <div className="float-right mt-4">
-        <a
-          href="#"
-          className={pageStyle}
-          onClick={() => onChangePage(0)}
-        >
+        <a href="/" className={pageStyle} onClick={() => onChangePage(0)}>
           ⇤
         </a>
         {pages.map(p => 

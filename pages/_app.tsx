@@ -9,14 +9,14 @@ import { RoundsContextProvider } from '../src/contexts/RoundsContext'
 import { BetsContextProvider } from '../src/contexts/BetsContext'
 import { OracleContextProvider } from '../src/contexts/OracleContext'
 import { AccountContextProvider } from '../src/contexts/AccountContext'
-import { ThemeContextProvider } from '../src/contexts/ThemeContext'
+import { UserConfigContextProvider } from '../src/contexts/UserConfigContext'
 import { NotificationsContextProvider } from '../src/contexts/NotificationsContext'
 import { ModalContextProvider } from '../src/contexts/ModalContext'
 
 function MyApp({ Component, pageProps }: AppProps) {
   
   return (
-    <ThemeContextProvider>
+    <UserConfigContextProvider>
       <NotificationsContextProvider>
         <Web3ReactProvider getLibrary={getLibrary}>
           <RefreshContextProvider>
@@ -36,7 +36,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </RefreshContextProvider>
         </Web3ReactProvider>
       </NotificationsContextProvider>
-    </ThemeContextProvider>
+    </UserConfigContextProvider>
   )
 }
 
