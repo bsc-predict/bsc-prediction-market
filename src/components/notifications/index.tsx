@@ -4,10 +4,11 @@ export interface NotificationProps {
   type: "info" | "success" | "error"
   title: string
   message: string
+  absolute: boolean
 }
 
 const Notification: React.FunctionComponent<NotificationProps> = (props) => {
-  const {type, title, message} = props
+  const {type, title, message, absolute} = props
   let containerColor = ""
   if (type === "info") {
     containerColor = "bg-blue-100 border-blue-500 text-blue-700 dark:bg-blue-900 dark:border-blue-700 dark:text-white"
@@ -18,7 +19,7 @@ const Notification: React.FunctionComponent<NotificationProps> = (props) => {
   }
 
   return(
-    <div className={`${containerColor} absolute bottom-0 right-0 border-l-8 p-4 w-96 z-10`} role="alert">
+    <div className={`${containerColor} ${absolute ? "absolute bottom-0 right-0 w-96" : ""} border-l-8 p-4 z-10`} role="alert">
       <p className="font-bold">{title}</p>
       <p>{message}</p>
     </div>

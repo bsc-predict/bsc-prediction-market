@@ -29,7 +29,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
       <td className={rowClass}>{round.bearPayoutGross.toFixed(4)}</td>
       <td className={rowClass}>{prizePool}</td>
       <td className={rowClass}>{lockPrice.toFixed(2)}</td>
-      <td className={`${ rowClass} ${winnerColor} ${liveBorder}`}>{curPriceDisplay}</td>
+      <td className={`${rowClass} ${winnerColor} ${liveBorder}`}>{curPriceDisplay}</td>
       <Position bet={bet} canBet={canBet}/>
       <Result round={round} bet={bet} winner={winner}/>
     </tr>

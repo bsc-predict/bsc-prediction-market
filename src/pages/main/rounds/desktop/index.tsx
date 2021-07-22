@@ -10,11 +10,12 @@ interface RoundsTableDesktopProps {
   bets: Bet[]
   page: number
   onChangePage: (p: number) => void
+  numPages: number
 }
 
 
 const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (props) => {
-  const {rounds, bets, page, onChangePage} = props
+  const {rounds, bets, page, onChangePage, numPages} = props
 
   const {showRows, updateShowRows} = React.useContext(UserConfigContext)
 
@@ -55,10 +56,10 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
 
       </div>
       <div className="float-right mt-4">
-        <div className={pageStyle} onClick={() => onChangePage(0)}>
+        <div className={`${page === 0 ? "hidden" : ""} ${pageStyle}`} onClick={() => onChangePage(0)}>
           ⇤
         </div>
-        {pages.map(p => 
+        {pages.filter(p => p <= numPages).map(p => 
           <div
             key={p}
             onClick={() => onChangePage(p)}
@@ -66,7 +67,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
             {p + 1}
           </div>
         )}
-        <a className={pageStyle}>...</a>
+        {numPages > Math.max(...pages) && <a className={pageStyle}>...</a>}
       </div>
     </div>
   )

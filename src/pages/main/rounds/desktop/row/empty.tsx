@@ -4,7 +4,7 @@ import { rowClass } from "../style"
 const EmptyRow: React.FunctionComponent = () => {
   
   return(
-    <tr>
+    <tr className="animate-pulse bg-white dark:bg-gray-900">
       <td className={rowClass}>&nbsp;</td>
       <td className={rowClass}>&nbsp;</td>
       <td className={rowClass}>&nbsp;</td>

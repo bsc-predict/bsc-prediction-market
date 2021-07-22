@@ -1,6 +1,8 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
 import { fetchBnbPrice } from "../api"
+import { useRequiresPolling } from "../hooks/useRequiresPolling"
+import { getBalance } from "../utils/accounts"
 import web3 from "../utils/web3"
 import { RefreshContext } from "./RefreshContext"
 
@@ -15,23 +17,17 @@ interface BalanceInfo {
 const AccountContextProvider: React.FunctionComponent = ({ children }) => {
   const [balance, setBalance] = React.useState<BalanceInfo | undefined>(undefined)
 
+  const requiresPolling = useRequiresPolling()
   const {account} = useWeb3React()
   const {slow} = React.useContext(RefreshContext)
   
   React.useEffect(() => {
-    if (account) {
-      const bnbPrice = fetchBnbPrice()
-      const balance = web3.eth.getBalance(account)
-
-      Promise.all([bnbPrice, balance])
-        .then(([price, bal]) => {
-          const balanceUsd = Number(web3.utils.fromWei(bal, "ether")) * price
-          setBalance({balance: bal, balanceUsd, bnbPrice: price})
-        })
+    if (account && requiresPolling) {
+      getBalance(account).then(setBalance)
     } else {
       setBalance(undefined)
     }
-  }, [slow, account])
+  }, [slow, account, requiresPolling])
 
   
   return <AccountContext.Provider value={{ account: typeof account === "string" ? account : undefined, balance }}>{children}</AccountContext.Provider>

@@ -14,7 +14,8 @@ const AppHeader: React.FunctionComponent = () => {
 
   const handleToggleTheme = () => toggleTheme()
 
-  const themeIcon = isDark ? "/light-mode.svg" :"/dark-mode.svg"
+  const themeIcon = isDark ? "/light-mode.svg" : "/dark-mode.svg"
+  const historyIcon = isDark ? "/history-dark.svg" : "/history-light.svg"
 
   return(
       <header className="sticky px-4 top-0 bg-white dark:bg-gray-900 flex items-center pt-2 pb-2 border-b border-gray-200">
@@ -34,6 +35,13 @@ const AppHeader: React.FunctionComponent = () => {
         <div className="flex-none w-max ml-2">
           <button className="border rounded h-12 px-3" onClick={handleToggleTheme}>
             <Image alt="toggle-theme" src={themeIcon} width={24} height={24}/>
+          </button>
+        </div>
+        <div className="flex-none w-max ml-2">
+          <button className="border rounded h-12 px-3">
+            <Link href="/history" passHref>
+              <Image alt="history" src={historyIcon} width={24} height={24}/>
+            </Link>
           </button>
         </div>
         <div className="flex-none w-max ml-2">

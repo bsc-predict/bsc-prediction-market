@@ -1,5 +1,6 @@
 import React from "react"
 import { fetchLatestRounds, fetchRounds, getCurrentEpoch } from "../contracts/prediction"
+import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { createArray } from "../utils/utils"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
@@ -13,14 +14,16 @@ interface IRoundsContext {
 const RoundsContext = React.createContext<IRoundsContext>({
   latestRounds: [],
   curRounds: [],
-  loadRounds: () => {/**/}
+  loadRounds: () => {/**/},
 })
 
 
 const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
   const [latestRounds, setLatestRounds] = React.useState<Round[]>([])
   const [curRounds, setCurRounds] = React.useState<Round[]>([])
-  
+
+  const requiresPolling = useRequiresPolling()
+
   const rounds = React.useRef<Round[]>([])
   const toPoll = React.useRef(new Set<string>())
   const init = React.useRef(false)
@@ -76,14 +79,14 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
   }, [updateRounds, showRows])
 
   React.useEffect(() => {
-    if (init.current) {
+    if (init.current && requiresPolling) {
       updatePoll()
       const updated = fetchRounds(Array.from(toPoll.current))
       updated
         .then(updateRounds)
         .catch(() => setMessage({type: "error", message: 'Failed to fetch rounds', title: "Error", duration: 5000}))
     }
-  }, [fast, updateRounds, updatePoll])
+  }, [fast, updateRounds, updatePoll, requiresPolling])
   
   return <RoundsContext.Provider value={{
     curRounds,

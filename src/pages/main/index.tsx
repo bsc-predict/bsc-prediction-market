@@ -1,16 +1,16 @@
 import React from 'react'
 import Info from '../../components/info'
-import RoundsTable from './rounds'
+import RoundsPage from './rounds'
 
 
-const RoundsPage: React.FunctionComponent = () => {
+const Rounds: React.FunctionComponent = () => {
 
   return (
     <div>
       <Info/>
-      <RoundsTable />
+      <RoundsPage />
     </div>
   )
 }
 
-export default RoundsPage
+export default Rounds

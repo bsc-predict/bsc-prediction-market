@@ -52,5 +52,13 @@ interface Bet {
   epoch?: string
   won?: boolean
   status?: BetStatus
+  wonAmount?: number
+  wonPerc?: number
 }
 
+interface Balance {
+  balance: string
+  balanceEth: string
+  balanceUsd: number
+  bnbPrice: number
+}

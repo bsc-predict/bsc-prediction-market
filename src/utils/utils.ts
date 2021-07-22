@@ -53,3 +53,13 @@ export const createArray = (from: number, to: number) => {
   const mult = to > from ? 1 : -1
   return Array.from(Array(Math.abs(to - from)).keys()).map(offset => from + offset * mult)
 }
+
+export const prettyNumber = (amount: string | number, percision: number) => {
+  const local = amount.toLocaleString()
+  const period = local.indexOf(".")
+  if (period !== -1) {
+    return local.slice(0, period + percision)
+  } else {
+    return local
+  }
+}

@@ -1,20 +1,27 @@
+import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import React from "react"
 import { BetsContext } from "../../../contexts/BetsContext"
 import { RoundsContext } from "../../../contexts/RoundsContext"
-import RoundsTableDesktop from "./desktop"
-import RoundsTableMobile from "./mobile"
+import { UserConfigContext } from "../../../contexts/UserConfigContext"
+import RoundsTable from "./table";
 
-const RoundsTable: React.FunctionComponent = () => {
-	const [page, setPage] = React.useState(0)
-	const { query } = useRouter()
+const RoundsPage: React.FunctionComponent = () => {
+  const [page, setPage] = React.useState(0)
+  const { query } = useRouter()
 
-	const {curRounds, latestRounds, loadRounds} = React.useContext(RoundsContext)
-	const {bets} = React.useContext(BetsContext)
+  const {account} = useWeb3React()
+  const {curRounds, latestRounds, loadRounds} = React.useContext(RoundsContext)
+  const {bets, setAccount} = React.useContext(BetsContext)
+  const {showRows} = React.useContext(UserConfigContext)
 
-	React.useEffect(() => {
-		loadRounds(page)
-	}, [loadRounds, page])
+  React.useEffect(() => {
+    setAccount(account || undefined)
+  }, [account, setAccount])
+
+  React.useEffect(() => {
+    loadRounds(page)
+  }, [loadRounds, page])
 
   React.useEffect(() => {
     const page = Number(query.page)
@@ -26,23 +33,14 @@ const RoundsTable: React.FunctionComponent = () => {
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
   
 	return(
-		<div>
-			<div className="hidden md:contents">
-				<RoundsTableDesktop
-					bets={bets}
-					rounds={page === 0 ? latestRounds : curRounds}
-					page={page} onChangePage={handleSetPage}/>
-			</div>
-			<div className="contents md:hidden">
-				<RoundsTableMobile 
-					bets={bets}
-					rounds={page === 0 ? latestRounds : curRounds}
-					page={page}
-					onChangePage={handleSetPage}
-				/>
-				</div>
-		</div>
-	)
+    <RoundsTable
+      numPages={latestRounds.length > 0 ? Math.floor((latestRounds[0].epochNum - 2) / showRows) : 0}
+      rounds={page === 0 ? latestRounds : curRounds}
+      setPage={handleSetPage}
+      page={page}
+      bets={bets}
+    />
+  )
 }
 
-export default RoundsTable
+export default RoundsPage

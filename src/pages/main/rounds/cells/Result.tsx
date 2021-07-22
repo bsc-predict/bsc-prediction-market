@@ -19,15 +19,20 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
     const payout = winner === "bull" ? round.bullPayout : round.bearPayout
     winAmount = (bet.valueEthNum * (payout - 1.0)).toFixed(4)
   }
-  
+
+  const betValue = bet ? Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4) : ""
   return(
-    <td className={`px-5 p-1 border border-grey-800 text-center ${bet?.direction === winner ? "text-green-600" : "text-red-600"}`}>
-      {bet && bet.direction !== winner && Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4)}
+    <td className="px-5 p-1 border border-grey-800 text-center">
+      {bet && bet.direction !== winner && <span className="text-red-600">{betValue}</span>}
       {bet && bet.direction === winner && bet.status === "claimable"  &&
-        <button className={buttonClass} onClick={() => bet && bet.epoch && claim(bet.epoch)}>→ {winAmount} ←</button>
+        <button className={`text-green-600 ${buttonClass}`} onClick={() => bet && bet.epoch && claim(bet.epoch)}>→ {winAmount} ←</button>
       }
       {bet && bet.direction === winner && bet.status === "pending" && "Claiming..."}
-      {bet && bet.direction === winner && bet.status === "claimed" && winAmount}
+      {bet && bet.direction === winner && bet.status === "claimed" && <div>
+          <span className="text-green-600">{winAmount}</span>
+          <span>&nbsp;({betValue})</span>
+         
+        </div>}
     </td>
 
   )
