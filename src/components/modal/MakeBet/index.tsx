@@ -4,8 +4,9 @@ import { usePredictionContract } from "../../../contracts/prediction"
 import web3 from "../../../utils/web3"
 import Footer from "../components/Footer"
 import Title from "../components/Title"
-import * as gtag from "../../../utils/gtag"
+import { BetsContext } from "../../../contexts/BetsContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
+import { ModalContext } from "../../../contexts/ModalContext"
 
 interface MakeBetProps {
   direction: "bull" | "bear"
@@ -19,8 +20,11 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const [perc, setPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
 
-  const {setMessage} = React.useContext(NotificationsContext)
+  const {fetchBets} = React.useContext(BetsContext)
   const {balance} = React.useContext(AccountContext)
+  const {setMessage} = React.useContext(NotificationsContext)
+  const {closeModal} = React.useContext(ModalContext)
+
   const {makeBet} = usePredictionContract()
   
   React.useEffect(() => {
@@ -40,6 +44,11 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const handleOnSuccess = () => {
     setIsLoading(true)
     makeBet(curDirection, size)
+      .then(() => {
+        fetchBets()
+        setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})
+        closeModal()
+      })
       .finally(() => setIsLoading(false))
   }
 

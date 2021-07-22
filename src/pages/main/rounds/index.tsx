@@ -4,6 +4,7 @@ import React from "react"
 import { BetsContext } from "../../../contexts/BetsContext"
 import { RoundsContext } from "../../../contexts/RoundsContext"
 import { UserConfigContext } from "../../../contexts/UserConfigContext"
+import { usePrevious } from "../../../hooks/usePrevious";
 import RoundsTable from "./table";
 
 const RoundsPage: React.FunctionComponent = () => {
@@ -12,8 +13,17 @@ const RoundsPage: React.FunctionComponent = () => {
 
   const {account} = useWeb3React()
   const {curRounds, latestRounds, loadRounds} = React.useContext(RoundsContext)
-  const {bets, setAccount} = React.useContext(BetsContext)
+  const {bets, fetchBets, setAccount} = React.useContext(BetsContext)
   const {showRows} = React.useContext(UserConfigContext)
+  const prevLatest = usePrevious(latestRounds)
+
+  React.useEffect(() => {
+    if (latestRounds && prevLatest) {
+      if (Math.max(...prevLatest.map(p => p.epochNum), 0) !== Math.max(...latestRounds.map(p => p.epochNum), 0)) {
+        fetchBets()
+      }
+    }
+  }, [latestRounds, fetchBets, prevLatest])
 
   React.useEffect(() => {
     setAccount(account || undefined)

@@ -1,4 +1,4 @@
-import React, { KeyboardEventHandler } from "react"
+import React from "react"
 import { getBalance } from "../../../utils/accounts"
 import { prettyNumber } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
@@ -9,8 +9,14 @@ interface HistoricalInfoProps {
 }
 
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
-  const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
   const {bets, account} = props
+
+  const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
+  const [curAccount, setCurAccount] = React.useState("")
+
+  React.useEffect(() => {
+    setCurAccount(account)
+  }, [account])
 
   React.useEffect(() => {
     if (account) {
@@ -18,32 +24,35 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
     }
   }, [account])
 
-  const handleEditAccount: KeyboardEventHandler<HTMLSpanElement> = e => {
-    if (e.key === "Enter") {
-      return false
-      // TODO: Set account and update url!
-    }
-  }
-
   const betsWon = bets.filter(b => b.won).length
   const totalBets = bets.length
   const totalWon = Number(
     web3.utils.fromWei(bets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
-
+  const biggestWin = bets.find(b => b.wonAmount === Math.max(...bets.map(b => b.wonAmount || 0)))
+  const biggestWinAmount = biggestWin ? Number(web3.utils.fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
+  
   return(
-    <div className="mb-5 mt-5">
+    <div className="mb-5 mt-5 overflow-auto">
       <table className="table-auto border-collapse">
         <tbody>
           <tr>
             <td className="px-5 p-1 border">Account</td>
-            <td className="px-5 p-1 border w-86">
-              <span contentEditable onKeyDown={handleEditAccount} suppressContentEditableWarning={true}>{account}</span>
-              &nbsp;<span className="cursor:pointer">✎</span>
+            <td className="px-5 p-1 border space-x-4 bg-green-300 dark:bg-green-900">
+              <form>
+                <label>
+                  <input
+                    className="bg-green-300 dark:bg-green-900"
+                    type="text"
+                    name="a"
+                    value={curAccount} onChange={e => setCurAccount(e.currentTarget.value)}
+                  />
+                </label>
+            </form>
             </td>
           </tr>
           <tr>
             <td className="px-5 p-1 border">Balance</td>
-            <td className="px-5 p-1 border w-86">
+            <td className="px-5 p-1 border">
               {balance !== undefined ?
                 `${Number(balance.balanceEth).toFixed(2)} 
                 (\$${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()})` :
@@ -52,18 +61,26 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
           </tr>
           <tr>
             <td className="px-5 p-1 border">Games played</td>
-            <td className="px-5 p-1 border w-86">{bets.length.toLocaleString()}</td>
+            <td className="px-5 p-1 border">{bets.length.toLocaleString()}</td>
           </tr>
           <tr>
             <td className="px-5 p-1 border">Games won</td>
-            <td className="px-5 p-1 border w-86">
+            <td className="px-5 p-1 border">
               {betsWon.toLocaleString()} / {totalBets.toLocaleString()}&nbsp;
               ({((betsWon / totalBets) * 100).toFixed(2)}%)</td>
           </tr>
           <tr>
             <td className="px-5 p-1 border">Total won</td>
-            <td className="px-5 p-1 border w-86">
+            <td className="px-5 p-1 border">
               {prettyNumber(totalWon, 2)} BNB (${prettyNumber(balance.bnbPrice * totalWon, 2)})
+            </td>
+          </tr>
+          <tr>
+            <td className="px-5 p-1 border">Biggest win</td>
+            <td className="px-5 p-1 border">
+              {prettyNumber(biggestWinAmount, 2)} BNB
+              (${prettyNumber(balance.bnbPrice * biggestWinAmount, 2)})
+              -- {prettyNumber(biggestWin?.wonPerc || "", 2)}x
             </td>
           </tr>
         </tbody>

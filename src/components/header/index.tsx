@@ -18,7 +18,7 @@ const AppHeader: React.FunctionComponent = () => {
   const historyIcon = isDark ? "/history-dark.svg" : "/history-light.svg"
 
   return(
-      <header className="sticky px-4 top-0 bg-white dark:bg-gray-900 flex items-center pt-2 pb-2 border-b border-gray-200">
+      <header className="sticky px-2 md:px-4 top-0 bg-white dark:bg-gray-900 flex items-center pt-2 pb-2 border-b border-gray-200">
         <div className="flex-none w-8">
           <Link href="/">
             <a>

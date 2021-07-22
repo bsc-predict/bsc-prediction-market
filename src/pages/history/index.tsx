@@ -5,6 +5,7 @@ import { fetchArchivedRounds, fetchBets } from "../../api";
 import Notification from "../../components/notifications";
 import { UserConfigContext } from "../../contexts/UserConfigContext";
 import { enrichBets } from "../../utils/bets";
+import web3 from "../../utils/web3";
 import RoundsTable from "../main/rounds/table";
 import HistoricalInfo from "./info";
 
@@ -19,7 +20,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const router = useRouter()
 
   const {account: userAccount} = useWeb3React()
-  const {account: pathAccount} = router.query
+  const {a: pathAccount} = router.query
   const account = typeof pathAccount === "string" ? pathAccount : userAccount
 
   const {showRows} = React.useContext(UserConfigContext)
@@ -33,6 +34,8 @@ const HistoryPage: React.FunctionComponent = () => {
           setEnrichedBets(enriched)
         })
         .finally(() => setIsLoading(false))
+    } else {
+      setIsLoading(false)
     }
   }, [rounds, account])
 
@@ -54,36 +57,46 @@ const HistoryPage: React.FunctionComponent = () => {
   }, [enrichedBets, rounds, page, showRows])
 
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
+  
+  let message: JSX.Element | null = null
+
   if (!isLoading && !account) {
-    return (
+    message =
       <Notification
         type="error"
         title="Error"
         absolute={false}
-        message="No account provided. Login or provide account through path (e.g. /history/&lt;account&gt;)"
-      />
-    )    
+        message="No account provided. Login or provide account in the account text field above"
+      /> 
   } else if (!isLoading && rounds.length === 0) {
-      return (
+      message =
         <Notification
           type="info"
           title="No bets made"
           absolute={false}
           message={`Account ${account} has not made any bets`}
       />
-      )
+    } else if (account && !web3.utils.isAddress(account)) {
+      message = 
+        <Notification
+          type="error"
+          title="Error"
+          absolute={false}
+          message="Invalid account"
+        />
     }
 
 	return(
     <div>
       <HistoricalInfo bets={enrichedBets} account={account || ""}/>
-      <RoundsTable
+      {message}
+      {isLoading || showRounds.length > 0 && <RoundsTable
         rounds={showRounds}
         setPage={handleSetPage}
         page={page}
         bets={enrichedBets}
         numPages={Math.floor((enrichedBets.length - 1) / showRows)}
-      />
+      />}
     </div>
   )
 }

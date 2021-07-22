@@ -1,8 +1,5 @@
 import React from "react"
 import MakeBet from "../components/modal/MakeBet"
-import web3 from "../utils/web3"
-import { NotificationsContext } from "./NotificationsContext"
-import { RefreshContext } from "./RefreshContext"
 
 interface MakeBetProps {
   tag: "make-bet"

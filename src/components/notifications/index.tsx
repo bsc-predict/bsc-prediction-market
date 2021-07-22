@@ -19,7 +19,7 @@ const Notification: React.FunctionComponent<NotificationProps> = (props) => {
   }
 
   return(
-    <div className={`${containerColor} ${absolute ? "absolute bottom-0 right-0 w-96" : ""} border-l-8 p-4 z-10`} role="alert">
+    <div className={`${containerColor} ${absolute ? "absolute bottom-0 right-0 w-96 overflow-hidden" : ""} border-l-8 p-4 z-10`} role="alert">
       <p className="font-bold">{title}</p>
       <p>{message}</p>
     </div>

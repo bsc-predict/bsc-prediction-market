@@ -5,13 +5,13 @@ import Link from "next/link"
 const NotFound: React.FunctionComponent = () => {
   return(
     <AppWrapper>
-      <div className="grid place-items-center ">
-        <div className="flex divide-x-2 self-center mt-48">
+      <div className="flex flex-col w-full justify-center items-center">
+        <div className="flex divide-x-2 self-center mt-48 my-8">
           <div className="px-8 text-2xl">404</div>
           <div className="px-8 text-2xl">Not Found</div>
         </div>
         <Link href="/">
-          <a className="m-16 p-4 bg-green-300 dark:bg-green-900 text-xl rounded">
+          <a className="m-16 p-4 bg-green-300 dark:bg-green-900 text-xl my-8 text-center rounded w-36">
             Home
           </a>
         </Link>

@@ -1,5 +1,6 @@
 import React from "react"
 import { fetchBets } from "../api"
+import { usePrevious } from "../hooks/usePrevious"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { enrichBets } from "../utils/bets"
 import { NotificationsContext } from "./NotificationsContext"
@@ -10,22 +11,35 @@ interface IBetsContext {
   setAccount: (a: string | undefined) => void
   bets: Bet[]
   updateBetStatus: (epoch: string, status: BetStatus) => void
+  fetchBets: () => void
 }
 
-const BetsContext = React.createContext<IBetsContext>({ bets: [], updateBetStatus: () => {/**/}, setAccount: () => {/**/} })
+const BetsContext = React.createContext<IBetsContext>({
+  bets: [],
+  updateBetStatus: () => {/**/},
+  setAccount: () => {/**/},
+  fetchBets: () => {/**/},
+})
 
 const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   const [bets, setBets] = React.useState<Bet[]>([])
   const [account, setAccount] = React.useState<string | undefined>(undefined)
   
-  const requiresPolling = useRequiresPolling()
   const {setMessage} = React.useContext(NotificationsContext)
   const {curRounds, latestRounds} = React.useContext(RoundsContext)
   const rounds = React.useRef<Round[]>([])
-  
-  const {slow} = React.useContext(RefreshContext)
 
-  const handleSetAccount = React.useCallback((a: string | undefined) => setAccount(a), [])
+  const prevAccount = usePrevious(account)
+
+  React.useEffect(() => {
+    if (prevAccount !== account) {
+      fetch()
+    }
+  }, [account, prevAccount])
+  
+  const handleSetAccount = React.useCallback((a: string | undefined) => {
+    setAccount(a)
+  }, [])
 
   const updateBetStatus = React.useCallback((epoch: string, status: BetStatus) => setBets(prior => prior.map(b => b.epoch === epoch ? {...b, status} : b)), [])
 
@@ -52,14 +66,8 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   React.useEffect(() => {
     rounds.current = latestRounds.concat(curRounds)
   }, [curRounds, latestRounds])
-
-  React.useEffect(() => {
-    if (requiresPolling) {
-      fetch()
-    }
-  }, [fetch, slow, requiresPolling])
   
-  return <BetsContext.Provider value={{ bets, updateBetStatus, setAccount: handleSetAccount }}>{children}</BetsContext.Provider>
+  return <BetsContext.Provider value={{ bets, updateBetStatus, setAccount: handleSetAccount, fetchBets: fetch }}>{children}</BetsContext.Provider>
 }
   
 export { BetsContext, BetsContextProvider }
