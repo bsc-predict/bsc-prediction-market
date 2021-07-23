@@ -1,5 +1,6 @@
 import React from "react"
 import { getBalance } from "../../../utils/accounts"
+import { calcMaxDrawdown } from "../../../utils/bets"
 import { prettyNumber } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
 
@@ -11,6 +12,7 @@ interface HistoricalInfoProps {
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
   const {bets, account} = props
 
+  const [performanceLast, setPerformanceLast] = React.useState(20)
   const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
   const [curAccount, setCurAccount] = React.useState("")
 
@@ -31,10 +33,8 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const biggestWin = bets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a, bets?.[0])
   const biggestWinAmount = biggestWin ? Number(web3.utils.fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
   
-  const performanceRounds = [10, 20, 50, 100]
-  const performance = performanceRounds.map(n => ({
-    rounds: n,
-    won: web3.utils.fromWei(bets.slice(0, n).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")}))
+  const performance = web3.utils.fromWei(bets.slice(0, performanceLast).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
+  const maxDrawdown = web3.utils.fromWei(calcMaxDrawdown(bets.slice(0, performanceLast)).toString(), "ether")
 
   return(
     <div className="mb-5 mt-5 overflow-auto">
@@ -85,13 +85,23 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
             <td className="px-5 p-1 border">
               {prettyNumber(biggestWinAmount, 2)} BNB
               (${prettyNumber(balance.bnbPrice * biggestWinAmount, 2)})
-              -- {prettyNumber(biggestWin?.wonPerc || "", 2)}x
+              {biggestWin  && <span> - {prettyNumber(biggestWin?.wonPerc || "", 2)}x</span>}
             </td>
           </tr>
           <tr>
-            <td className="px-5 p-1 border">Performance</td>
             <td className="px-5 p-1 border">
-                {performance.map(({rounds, won}) => `[${rounds}: ${prettyNumber(won, 4)}]`).join(", ")}
+              Performance in last
+              <input
+                type="number"
+                className="bg-green-300 dark:bg-green-900 w-12 mx-4 apperance-none"
+                value={performanceLast}
+                onChange={e => setPerformanceLast(Math.floor(Number(e.currentTarget.value)))}
+              />
+              rounds
+            </td>
+            <td className="px-5 p-1 border">
+                {prettyNumber(performance, 4)}
+                &nbsp; Max drawdown: {prettyNumber(maxDrawdown, 4)}
             </td>
           </tr>
         </tbody>

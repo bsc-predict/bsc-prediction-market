@@ -27,12 +27,15 @@ const HistoryPage: React.FunctionComponent = () => {
 
 
   React.useEffect(() => {
-    if (account) {
+    if (account && rounds.length > 0) {
       setIsLoading(true)
       fetchBets(account)
         .then(({bets}) => {
-          const enriched = enrichBets(bets, rounds, new Set(rounds.map(r => r.epochNum))).filter(b => b.epoch)
-          setEnrichedBets(enriched)
+          const enriched =
+            enrichBets(bets, rounds, new Set(rounds.map(r => r.epochNum)))
+              .filter(b => b.epoch)
+              .sort((a, b) => a.blockNumberNum > b.blockNumberNum ? -1 : 1)
+            setEnrichedBets(enriched)            
         })
         .finally(() => setIsLoading(false))
     } else {
@@ -53,7 +56,6 @@ const HistoryPage: React.FunctionComponent = () => {
       .filter(r => epochs.has(r.epoch))
       .sort((r1, r2) => r2.epochNum < r1.epochNum ? -1 : 1)
       .slice(start, start + showRows)
-
     setShowRounds(show)
   }, [enrichedBets, rounds, page, showRows])
 
