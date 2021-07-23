@@ -28,6 +28,7 @@ const HistoryPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (account) {
+      setIsLoading(true)
       fetchBets(account)
         .then(({bets}) => {
           const enriched = enrichBets(bets, rounds, new Set(rounds.map(r => r.epochNum))).filter(b => b.epoch)
@@ -90,7 +91,8 @@ const HistoryPage: React.FunctionComponent = () => {
     <div>
       <HistoricalInfo bets={enrichedBets} account={account || ""}/>
       {message}
-      {isLoading || showRounds.length > 0 && <RoundsTable
+      {(isLoading || showRounds.length > 0) &&
+      <RoundsTable
         rounds={showRounds}
         setPage={handleSetPage}
         page={page}

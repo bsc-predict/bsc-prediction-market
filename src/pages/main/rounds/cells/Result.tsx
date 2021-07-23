@@ -39,8 +39,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
     <td className="px-5 p-1 border border-grey-800 text-center">
       {bet && bet.direction !== winner && <span className="text-red-600">{betValue}</span>}
       {bet && bet.direction === winner && bet.status === "claimable"  &&
-        <button className={`text-green-600 ${buttonClass}`} onClick={handleClaim}>→ {winAmount} ←</button>
-      }
+        <button className={`text-green-600 ${buttonClass}`} onClick={handleClaim}>→ {winAmount} ←</button>}
       {bet && bet.direction === winner && bet.status === "pending" && "Claiming..."}
       {bet && bet.direction === winner && bet.status === "claimed" && <div>
           <span className="text-green-600">{winAmount}</span>

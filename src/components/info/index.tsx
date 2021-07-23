@@ -16,8 +16,7 @@ const Info: React.FunctionComponent = () => {
   const {bets} = React.useContext(BetsContext)
   const {block} = React.useContext(BlockContext)
   const {latestRounds} = React.useContext(RoundsContext)
-  const {setMessage} = React.useContext(NotificationsContext)
-
+  
   useInterval(() => setSecondsRemaining(prior => Math.max(0, prior - 1)), 1000)
 
   React.useEffect(() => {

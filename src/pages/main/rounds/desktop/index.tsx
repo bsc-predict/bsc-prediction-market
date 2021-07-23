@@ -18,6 +18,12 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
   const {rounds, bets, page, onChangePage, numPages} = props
 
   const {showRows, updateShowRows} = React.useContext(UserConfigContext)
+  const betsMap = new Map<string, Bet>()
+  bets.forEach(b => {
+    if (b.epoch) {
+      betsMap.set(b.epoch, b)
+    }
+  })
 
   const pages = page < 3 ? createArray(0, 5) : createArray(page - 2, page + 3)
   const rowOptions = [5 ,10, 15, 20]
@@ -39,7 +45,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
         </thead>
         <tbody>
           {rounds.length === 0 && createArray(0, showRows).map(idx => <EmptyRow key={idx}/>)}
-          {rounds.map(r => <RoundRow key={r.epoch} round={r} bet={bets.find(b => b.epoch === r.epoch)}/>)}
+          {rounds.map(r => <RoundRow key={r.epoch} round={r} bet={betsMap.get(r.epoch)}/>)}
         </tbody>
       </table>
       <div className="flex float-left mt-4">

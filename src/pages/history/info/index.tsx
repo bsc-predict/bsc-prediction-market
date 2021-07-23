@@ -28,9 +28,14 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const totalBets = bets.length
   const totalWon = Number(
     web3.utils.fromWei(bets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
-  const biggestWin = bets.find(b => b.wonAmount === Math.max(...bets.map(b => b.wonAmount || 0)))
+  const biggestWin = bets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a, bets?.[0])
   const biggestWinAmount = biggestWin ? Number(web3.utils.fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
   
+  const performanceRounds = [10, 20, 50, 100]
+  const performance = performanceRounds.map(n => ({
+    rounds: n,
+    won: web3.utils.fromWei(bets.slice(0, n).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")}))
+
   return(
     <div className="mb-5 mt-5 overflow-auto">
       <table className="table-auto border-collapse">
@@ -81,6 +86,12 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
               {prettyNumber(biggestWinAmount, 2)} BNB
               (${prettyNumber(balance.bnbPrice * biggestWinAmount, 2)})
               -- {prettyNumber(biggestWin?.wonPerc || "", 2)}x
+            </td>
+          </tr>
+          <tr>
+            <td className="px-5 p-1 border">Performance</td>
+            <td className="px-5 p-1 border">
+                {performance.map(({rounds, won}) => `[${rounds}: ${prettyNumber(won, 4)}]`).join(", ")}
             </td>
           </tr>
         </tbody>

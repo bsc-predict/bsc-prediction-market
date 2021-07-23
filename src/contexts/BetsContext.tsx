@@ -1,10 +1,8 @@
 import React from "react"
 import { fetchBets } from "../api"
 import { usePrevious } from "../hooks/usePrevious"
-import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { enrichBets } from "../utils/bets"
 import { NotificationsContext } from "./NotificationsContext"
-import { RefreshContext } from "./RefreshContext"
 import { RoundsContext } from "./RoundsContext"
 
 interface IBetsContext {
