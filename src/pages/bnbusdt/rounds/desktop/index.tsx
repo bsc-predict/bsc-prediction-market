@@ -3,6 +3,7 @@ import { UserConfigContext } from "../../../../contexts/UserConfigContext"
 import { createArray } from "../../../../utils/utils"
 import RoundRow from "./row"
 import EmptyRow from "./row/empty"
+import RoundHeader from "./row/header"
 import { pageStyle } from "./style"
 
 interface RoundsTableDesktopProps {
@@ -32,16 +33,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
     <div className="overflow-y-auto">
       <table className="w-full border-collapse border border-grey-800">
         <thead>
-          <tr>
-            <th className="px-5 p-1">Epoch</th>
-            <th className="px-5 p-1">Bull Payout</th>
-            <th className="px-5 p-1">Bear Payout</th>
-            <th className="px-5 p-1">Prize Pool</th>
-            <th className="px-5 p-1">Lock</th>
-            <th className="px-5 p-1">Close</th>
-            <th className="px-5 p-1">Position</th>
-            <th className="px-5 p-1">Result</th>
-          </tr>
+          <RoundHeader/>
         </thead>
         <tbody>
           {rounds.length === 0 && createArray(0, showRows).map(idx => <EmptyRow key={idx}/>)}

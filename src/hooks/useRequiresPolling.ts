@@ -8,7 +8,7 @@ export const useRequiresPolling = () => {
   const requiresPolling = React.useRef(false)
   
   React.useEffect(() => {
-    if (pathname === "/") {
+    if (pathname.toLowerCase().startsWith("/games/")) {
       requiresPolling.current = true
     } else {
       requiresPolling.current = false

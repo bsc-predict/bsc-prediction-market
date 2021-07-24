@@ -54,6 +54,7 @@ interface Bet {
   status?: BetStatus
   wonAmount?: number
   wonPerc?: number
+  refundable?: boolean
 }
 
 interface Balance {

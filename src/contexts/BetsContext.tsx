@@ -24,8 +24,8 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   const [account, setAccount] = React.useState<string | undefined>(undefined)
   
   const {setMessage} = React.useContext(NotificationsContext)
-  const {curRounds, latestRounds} = React.useContext(RoundsContext)
-  const rounds = React.useRef<Round[]>([])
+  const {rounds} = React.useContext(RoundsContext)
+  const archivedRounds = React.useRef<Round[]>([])
 
   const prevAccount = usePrevious(account)
 
@@ -48,7 +48,7 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
           // bet might be pending, don't override with new bets!
           const pending = prior.filter(b => b.status === "pending")
           const exclude = new Set(pending.map(p => p.timeStamp))
-          const updated = enrichBets(bets, rounds.current, claimed).filter(b => !exclude.has(b.timeStamp))
+          const updated = enrichBets(bets, archivedRounds.current, claimed).filter(b => !exclude.has(b.timeStamp))
           return pending.concat(updated).sort((a, b) => a.timeStamp > b.timeStamp ? -1 : 1)
         }))
         .catch(() => setMessage({type: "error", message: 'Failed to retrieve bets', title: "Error", duration: 5000}))
@@ -58,12 +58,12 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   }, [account])
 
   React.useEffect(() => {
-    setBets(prior => enrichBets(prior, latestRounds.concat(curRounds)))
-  }, [latestRounds, curRounds])
+    setBets(prior => enrichBets(prior, rounds.latest.concat(rounds.cur)))
+  }, [rounds])
 
   React.useEffect(() => {
-    rounds.current = latestRounds.concat(curRounds)
-  }, [curRounds, latestRounds])
+    archivedRounds.current = rounds.latest.concat(rounds.cur)
+  }, [rounds])
   
   return <BetsContext.Provider value={{ bets, updateBetStatus, setAccount: handleSetAccount, fetchBets: fetch }}>{children}</BetsContext.Provider>
 }

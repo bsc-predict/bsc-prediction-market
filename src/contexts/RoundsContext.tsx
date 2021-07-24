@@ -1,5 +1,5 @@
 import React from "react"
-import { fetchLatestRounds, fetchRounds, getCurrentEpoch } from "../contracts/prediction"
+import { fetchLatestRounds, fetchRounds, getCurrentEpoch, getGamePaused } from "../contracts/prediction"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { createArray } from "../utils/utils"
 import { NotificationsContext } from "./NotificationsContext"
@@ -7,24 +7,24 @@ import { RefreshContext } from "./RefreshContext"
 import { UserConfigContext } from "./UserConfigContext"
 
 interface IRoundsContext {
-  latestRounds: Round[]
-  curRounds: Round[]
+  rounds: {cur: Round[], latest: Round[]}
+  paused: boolean
   loadRounds: (page: number) => void
 }
 const RoundsContext = React.createContext<IRoundsContext>({
-  latestRounds: [],
-  curRounds: [],
+  rounds: {cur: [], latest: []},
+  paused: false,
   loadRounds: () => {/**/},
 })
 
 
 const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
-  const [latestRounds, setLatestRounds] = React.useState<Round[]>([])
-  const [curRounds, setCurRounds] = React.useState<Round[]>([])
+  const [rounds, setRounds] = React.useState<{cur: Round[], latest: Round[]}>({cur: [], latest: []})
+  const [paused, setPaused] = React.useState(false)
 
   const requiresPolling = useRequiresPolling()
 
-  const rounds = React.useRef<Round[]>([])
+  const archivedRounds = React.useRef<Round[]>([])
   const toPoll = React.useRef(new Set<string>())
   const init = React.useRef(false)
 
@@ -34,36 +34,45 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
 
   const updateRounds = React.useCallback((update: Round[]) => {
     const newEpochs = new Set(update.map(u => u.epochNum))
-    const updated = rounds.current
+    const updated = archivedRounds.current
       .filter(r => !newEpochs.has(r.epochNum))
       .concat(update)
       .sort((a, b) => a.epochNum > b.epochNum ? -1 : 1)
-    rounds.current = updated
-    setCurRounds(p => {
-      const priorEpochs = new Set(p.map(e => e.epochNum))
-      return rounds.current.filter(c => priorEpochs.has(c.epochNum))
+    archivedRounds.current = updated
+    setRounds(p => {
+      const priorEpochs = new Set(p.cur.map(e => e.epochNum))
+      const cur = archivedRounds.current.filter(c => priorEpochs.has(c.epochNum))
+      const latest = archivedRounds.current.slice(0, showRows)
+      return {cur, latest}
     })
-    setLatestRounds(rounds.current.slice(0, showRows))
   }, [showRows])
 
+  const updatePaused = React.useCallback((update: Round[]) => {
+    if (update.every(u => u.closePrice === "0")) {
+      getGamePaused().then(p => setPaused(p))
+    } else {
+      setPaused(false)
+    }
+  }, [])
+
   const updatePoll = React.useCallback(async () => {
-    const p = new Set(rounds.current.filter(r => r.closePriceNum === 0 || r.lockBlockNum === 0).map(r => r.epoch))
-    if (!rounds.current.some(r => r.lockPriceNum === 0)) {
-      fetchLatestRounds(showRows, rounds.current.filter(r => r.oracleCalled).map(r => r.epoch)).then(updateRounds)
+    const p = new Set(archivedRounds.current.filter(r => r.closePriceNum === 0 || r.lockBlockNum === 0).map(r => r.epoch))
+    if (!archivedRounds.current.some(r => r.lockPriceNum === 0)) {
+      fetchLatestRounds(showRows, archivedRounds.current.filter(r => r.oracleCalled).map(r => r.epoch)).then(updateRounds)
     }
     toPoll.current = p
   }, [updateRounds])
 
   const loadRounds = React.useCallback(async (page: number) => {
     if (page === 0) {
-      const available = rounds.current.filter(r => r.oracleCalled).map(r => r.epoch)
+      const available = archivedRounds.current.filter(r => r.oracleCalled).map(r => r.epoch)
       fetchLatestRounds(showRows, available)
         .then(updateRounds)
         .catch(() => setMessage({type: "error", title: "Rrror", message: "Failed to update rounds", duration: 5000}))
         .finally(() => init.current = true)
     } else {
       const to = await getCurrentEpoch()
-      const available = new Set(rounds.current.map(r => r.epochNum))
+      const available = new Set(archivedRounds.current.map(r => r.epochNum))
       const start = Math.max(0, Number(to) - ((page + 1) * showRows - 1))
       const end = start + showRows
       const toReturn = createArray(start, end)
@@ -73,8 +82,8 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
           .then(updateRounds)
           .catch(() => setMessage({type: "error", message: 'failed to retrieve fetch rounds', title: "Error", duration: 5000}))
         }
-      const cur = rounds.current.filter(r => new Set(toReturn).has(r.epochNum))
-      setCurRounds(cur)
+      const cur = archivedRounds.current.filter(r => new Set(toReturn).has(r.epochNum))
+      setRounds(prior => ({...prior, cur}))
     }
   }, [updateRounds, showRows])
 
@@ -83,14 +92,17 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
       updatePoll()
       const updated = fetchRounds(Array.from(toPoll.current))
       updated
-        .then(updateRounds)
+        .then(r => {
+          updateRounds(r)
+          updatePaused(r)
+        })
         .catch(() => setMessage({type: "error", message: 'Failed to fetch rounds', title: "Error", duration: 5000}))
     }
   }, [fast, updateRounds, updatePoll, requiresPolling])
   
   return <RoundsContext.Provider value={{
-    curRounds,
-    latestRounds,
+    paused,
+    rounds,
     loadRounds,
   }}>{children}</RoundsContext.Provider>
 }

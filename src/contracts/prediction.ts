@@ -80,6 +80,8 @@ export const getInputType = (input: string): InputType | undefined => {
 
 export const getCurrentEpoch = async (): Promise<string> => contract.methods.currentEpoch().call()
 
+export const getGamePaused = async (): Promise<boolean> => contract.methods.paused().call()
+
 export const fetchRounds = async (epochs: Array<string | number>) => {
   const rounds = epochs.map(async epoch => {
     const r = await contract.methods.rounds(epoch.toString()).call() as Object

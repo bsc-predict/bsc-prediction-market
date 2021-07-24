@@ -1,9 +1,7 @@
-import { useWeb3React } from "@web3-react/core"
 import React from "react"
 import { AccountContext } from "../../contexts/AccountContext"
 import { BetsContext } from "../../contexts/BetsContext"
 import { BlockContext } from "../../contexts/BlockContext"
-import { NotificationsContext } from "../../contexts/NotificationsContext"
 import { RoundsContext } from "../../contexts/RoundsContext"
 import { useInterval } from "../../hooks/useInterval"
 import { toTimeString } from "../../utils/utils"
@@ -15,18 +13,18 @@ const Info: React.FunctionComponent = () => {
   const {account, balance} = React.useContext(AccountContext)
   const {bets} = React.useContext(BetsContext)
   const {block} = React.useContext(BlockContext)
-  const {latestRounds} = React.useContext(RoundsContext)
+  const {rounds} = React.useContext(RoundsContext)
   
   useInterval(() => setSecondsRemaining(prior => Math.max(0, prior - 1)), 1000)
 
   React.useEffect(() => {
-    const r = latestRounds.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
+    const r = rounds.latest.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
     if (r) {
       const t = Math.max(0, (r.lockBlockNum - block) * 3)
       // if its close enough, don't jump
       setSecondsRemaining(prior => Math.abs(prior - t) < 5 ? prior : t)
     }
-  }, [block, latestRounds])
+  }, [block, rounds.latest])
 
   return(
     <div className="mb-5 mt-5">

@@ -3,7 +3,7 @@ import Info from '../../components/info'
 import RoundsPage from './rounds'
 
 
-const Rounds: React.FunctionComponent = () => {
+const BnbUsdtPage: React.FunctionComponent = () => {
 
   return (
     <div>
@@ -13,4 +13,4 @@ const Rounds: React.FunctionComponent = () => {
   )
 }
 
-export default Rounds
+export default BnbUsdtPage

@@ -31,7 +31,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   let winAmount = ""
   if (bet && bet?.direction === winner) {
     const payout = winner === "bull" ? round.bullPayout : round.bearPayout
-    winAmount = (bet.valueEthNum * (payout - 1.0)).toFixed(4)
+    winAmount = (bet.valueEthNum * payout).toFixed(4)
   }
 
   const betValue = bet ? Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4) : ""
