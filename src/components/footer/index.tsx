@@ -27,7 +27,7 @@ const Footer: React.FunctionComponent = () => {
         <div className="w-48">
           <div className="mb-4 block font-bold text-xl mb-8">Games</div>
           <div>
-            <Link href="/">
+            <Link href="/games/bnbusdt">
               <a className={linkClass}>
                 BNB Predict
               </a>

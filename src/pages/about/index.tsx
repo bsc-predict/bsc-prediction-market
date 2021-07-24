@@ -3,7 +3,7 @@ import questions from "./questions"
 
 const AboutPage: React.FunctionComponent = () => {
   return(
-    <div>
+    <div className="p-4">
       {questions.map(({q, a, id}) => 
         <div key={id} className="my-12">
           <div className="text-xl font-bold mb-4">{q}</div>

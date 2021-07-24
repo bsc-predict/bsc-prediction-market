@@ -42,8 +42,8 @@ const RoundsPage: React.FunctionComponent = () => {
   }, [loadRounds, query.page])
 
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
-  
-	return(
+
+  return(
     <React.Fragment>
       {paused &&
       <div className="mb-6">

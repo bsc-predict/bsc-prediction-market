@@ -38,11 +38,13 @@ const AppHeader: React.FunctionComponent = () => {
           </button>
         </div>
         <div className="flex-none w-max ml-2">
-          <button className="border rounded h-12 px-3 hover:bg-green-300 dark:hover:bg-green-900">
-            <Link href="/history" passHref>
-              <Image alt="history" src={historyIcon} width={24} height={24}/>
-            </Link>
+        <Link href="/history" passHref>
+          <button className="border rounded h-12 hover:bg-green-300 dark:hover:bg-green-900">
+              <a className="px-3">
+                <Image alt="history" className="px-3" src={historyIcon} width={24} height={24}/>
+              </a>
           </button>
+          </Link>
         </div>
         <div className="flex-none w-max ml-2">
           {account ?

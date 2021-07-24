@@ -25,7 +25,6 @@ const HistoryPage: React.FunctionComponent = () => {
 
   const {showRows} = React.useContext(UserConfigContext)
 
-
   React.useEffect(() => {
     if (account && rounds.length > 0) {
       setIsLoading(true)
@@ -42,6 +41,13 @@ const HistoryPage: React.FunctionComponent = () => {
       setIsLoading(false)
     }
   }, [rounds, account])
+
+  React.useEffect(() => {
+    if (!account) {
+      setEnrichedBets([])
+      setShowRounds([])
+    }
+  }, [account])
 
   React.useEffect(() => {
     fetchArchivedRounds(false)

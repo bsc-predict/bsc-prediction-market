@@ -13,8 +13,13 @@ const questions = [
   {
     id: 3,
     q: <div>So what&apos;s different from your site?</div>,
-    a: <div>It&apos;s a lot lighter, faster and simpler to use. It also poll more frequently to get more accurate pool size and payoffs.
-      Finally, it gives you more historical data and a table view of all your bets</div>,    
+    a: <div>
+          <ol>
+            <li>• It&apos;s a lot lighter, faster and simpler to use</li>
+            <li>• More frequent polling for more accure pool size and payoffs</li>
+            <li>• Historical data for yourself or any other account</li>
+          </ol>
+        </div>
   },
   {
     id: 4,

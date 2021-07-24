@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import React, { useState, useEffect, useRef } from 'react'
 
 const FAST_INTERVAL = 5000
@@ -39,6 +38,7 @@ const RefreshContextProvider: React.FunctionComponent = ({ children }) => {
       setFast2(prev => prev + 1)
     }
   }, [isBrowserTabActiveRef])
+
   useEffect(() => {
     const interval = setInterval(async () => {
       if (isBrowserTabActiveRef.current) {

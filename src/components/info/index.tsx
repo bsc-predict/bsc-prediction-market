@@ -50,7 +50,7 @@ const Info: React.FunctionComponent = () => {
             <td className="px-5 p-1 border w-48">{bets.length.toLocaleString()}</td>
           </tr>
           <tr>
-            <td className="px-5 p-1 border">Time Remaining</td>
+            <td className="px-5 p-1 border">Time remaining</td>
             <td className="px-5 p-1 border w-48">~ {toTimeString(secondsRemaining)}</td>
           </tr>
         </tbody>
