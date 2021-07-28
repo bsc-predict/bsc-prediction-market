@@ -18,7 +18,7 @@ const HomePage: React.FunctionComponent = () => {
         />
         <h1 className="text-4xl">BSC Predict</h1>
         <div className="text-xl">Preidct BNB-USD movements in 5 minute intervals</div>
-        <Link href="/games/bnbusdt">
+        <Link href="/games/bnbusdt" passHref>
           <button className="bg-green-300 dark:bg-green-900 p-4 border rounded text-xl">
             <a>
               Play Now

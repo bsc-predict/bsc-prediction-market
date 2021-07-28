@@ -40,7 +40,7 @@ const HoverDropdown: React.FunctionComponent<DropdownProps> = (props) => {
         <div className="py-1 bg-gray-100 dark:bg-gray-800" role="none">
           {
             items.map(({label, key, href}, idx) => 
-              <Link href={href} key={key}>
+              <Link href={href} key={key} passHref>
                 <a className="block px-4 py-2 text-md" role="menuitem" tabIndex={-1} id={`menu-item-${idx}`}>
                   {label}
                 </a>
