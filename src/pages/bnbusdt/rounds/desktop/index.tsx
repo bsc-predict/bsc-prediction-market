@@ -4,7 +4,6 @@ import { createArray } from "../../../../utils/utils"
 import RoundRow from "./row"
 import EmptyRow from "./row/empty"
 import RoundHeader from "./row/header"
-import { pageStyle } from "./style"
 
 interface RoundsTableDesktopProps {
   rounds: Round[]

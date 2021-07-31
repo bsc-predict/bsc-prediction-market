@@ -25,6 +25,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
 
   const {chain} = React.useContext(BlockchainContext)
   const { fetchLatestRounds, fetchRounds, getCurrentEpoch, getGamePaused } = usePredictionContract(chain)
+  console.log(chain)
 
   const requiresPolling = useRequiresPolling()
 

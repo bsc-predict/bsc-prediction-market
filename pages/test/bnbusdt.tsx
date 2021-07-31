@@ -8,7 +8,7 @@ const BnbUsdt: React.FunctionComponent = () => {
   const {setChain} = React.useContext(BlockchainContext)
 
   React.useEffect(() => {
-    setChain("main")
+    setChain("test")
   }, [setChain])
 
   return (
