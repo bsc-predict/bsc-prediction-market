@@ -10,31 +10,31 @@ import { BetsContextProvider } from '../src/contexts/BetsContext'
 import { OracleContextProvider } from '../src/contexts/OracleContext'
 import { AccountContextProvider } from '../src/contexts/AccountContext'
 import { NotificationsContextProvider } from '../src/contexts/NotificationsContext'
-import { ModalContextProvider } from '../src/contexts/ModalContext'
 import { UserConfigContextProvider } from '../src/contexts/UserConfigContext'
+import { BlockchainContextProvider } from '../src/contexts/BlockchainContext'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  
+
   return (
     <UserConfigContextProvider>
       <NotificationsContextProvider>
-        <Web3ReactProvider getLibrary={getLibrary}>
-          <RefreshContextProvider>
-            <AccountContextProvider>
-              <BlockContextProvider>
-                <RoundsContextProvider>
-                  <OracleContextProvider>
-                    <BetsContextProvider>
-                      <ModalContextProvider>
+        <BlockchainContextProvider>
+          <Web3ReactProvider getLibrary={getLibrary}>
+            <RefreshContextProvider>
+              <AccountContextProvider>
+                <BlockContextProvider>
+                  <RoundsContextProvider>
+                    <OracleContextProvider>
+                      <BetsContextProvider>
                         <Component {...pageProps} />
-                      </ModalContextProvider>
-                    </BetsContextProvider>
-                  </OracleContextProvider>
-                </RoundsContextProvider>
-              </BlockContextProvider>
-            </AccountContextProvider>
-          </RefreshContextProvider>
-        </Web3ReactProvider>
+                      </BetsContextProvider>
+                    </OracleContextProvider>
+                  </RoundsContextProvider>
+                </BlockContextProvider>
+              </AccountContextProvider>
+            </RefreshContextProvider>
+          </Web3ReactProvider>
+        </BlockchainContextProvider>
       </NotificationsContextProvider>
     </UserConfigContextProvider>
   )

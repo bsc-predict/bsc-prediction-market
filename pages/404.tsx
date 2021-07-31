@@ -11,7 +11,7 @@ const NotFound: React.FunctionComponent = () => {
           <div className="px-8 text-2xl">Not Found</div>
         </div>
         <Link href="/">
-          <a className="m-16 p-4 bg-green-300 dark:bg-green-900 text-xl my-8 text-center rounded w-36">
+          <a className="btn btn-primary m-16 p-4 text-xl my-8 text-center rounded w-36">
             Home
           </a>
         </Link>

@@ -1,7 +1,10 @@
+import { useWeb3React } from "@web3-react/core"
+import Web3 from "web3"
 import { fetchBnbPrice } from "../api"
-import web3 from "./web3"
+import { useWeb3 } from "../hooks/useWeb3"
 
-export const getBalance = async (account: string): Promise<Balance> => {
+export const getBalance = async (web3: Web3, account: string): Promise<Balance> => {
+
   const bnbPrice = fetchBnbPrice()
   const balance = web3.eth.getBalance(web3.utils.toChecksumAddress(account))
 

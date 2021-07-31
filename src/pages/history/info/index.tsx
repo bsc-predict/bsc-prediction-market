@@ -1,4 +1,5 @@
 import React from "react"
+import { BlockchainContext } from "../../../contexts/BlockchainContext"
 import { getBalance } from "../../../utils/accounts"
 import { calcMaxDrawdown } from "../../../utils/bets"
 import { prettyNumber } from "../../../utils/utils"
@@ -15,16 +16,18 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
   const [curAccount, setCurAccount] = React.useState("")
-
+  const {web3Provider} = React.useContext(BlockchainContext)
+  
   React.useEffect(() => {
     setCurAccount(account)
   }, [account])
 
   React.useEffect(() => {
+    const web3 = web3Provider()
     if (account) {
-      getBalance(account).then(setBalance)
+      getBalance(web3, account).then(setBalance)
     }
-  }, [account])
+  }, [account, web3Provider])
 
   const betsWon = bets.filter(b => b.won).length
   const totalBets = bets.length
@@ -42,11 +45,11 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
         <tbody>
           <tr>
             <td className="px-5 p-1 border">Account</td>
-            <td className="px-5 p-1 border space-x-4 bg-green-300 dark:bg-green-900">
+            <td className="px-5 p-1 border space-x-4 bg-accent">
               <form>
                 <label>
                   <input
-                    className="bg-green-300 dark:bg-green-900"
+                    className="bg-accent"
                     type="text"
                     name="a"
                     value={curAccount} onChange={e => setCurAccount(e.currentTarget.value)}
@@ -93,7 +96,7 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
               Performance in last
               <input
                 type="number"
-                className="bg-green-300 dark:bg-green-900 w-12 mx-4 apperance-none"
+                className="bg-accent w-12 mx-4 apperance-none"
                 value={performanceLast}
                 onChange={e => setPerformanceLast(Math.floor(Number(e.currentTarget.value)))}
               />

@@ -32,10 +32,10 @@ export const getRoundInfo = (round: Round, latestOracle?: Oracle) => {
   const curPriceDisplay = (curPrice / Math.pow(10, 8)).toFixed(2)
   const prizePool = Number(web3.utils.fromWei(round.prizePool, "ether")).toFixed(2)
   const lockPrice = round.lockPriceNum / Math.pow(10, 8)
-  const winnerColor = winner === "bull" ? "bg-green-300 dark:bg-green-900" : winner == "bear" ? "bg-red-300 dark:bg-red-900" : ""
+  const winnerColor = winner === "bull" ? "bg-accent" : winner == "bear" ? "bg-secondary" : ""
   let liveBorder = ""
   if (live) {
-    liveBorder = curPrice > 0 ? "bg-green-300 bg-opacity-30 dark:bg-green-700" : "bg-red-300 bg-opacity-30 dark:bg-red-700"
+    liveBorder = curPrice > 0 ? "accent bg-opacity-30" : "secondary bg-opacity-30"
   }
   return {
     winner,

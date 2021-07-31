@@ -1,6 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import { useCallback, useEffect, useContext } from "react"
 import { NotificationsContext } from "../contexts/NotificationsContext"
+import web3 from "../utils/web3"
 import { injected } from "../utils/web3React"
 const LOGGED_IN_KEY = "logged-in"
 
@@ -9,6 +10,14 @@ const useLogin = () => {
 
   const {setMessage} = useContext(NotificationsContext)
 
+  const handleLoginError = (err: Error) => {
+    let message = err.message
+    if (err.name === "UnsupportedChainIdError") {
+      message = "Make sure you're on Binance Smart Chain on MetaMask"
+    }
+    setMessage({type: "error", message, title: "Connection Failed", duration: 5000})
+  }
+
   const handleDeactivate = () => {
     localStorage?.setItem(LOGGED_IN_KEY, "false")
       deactivate()
@@ -16,8 +25,7 @@ const useLogin = () => {
   
   const handleActivate = useCallback(() => {
     localStorage?.setItem(LOGGED_IN_KEY, "true")
-    activate(injected, err => setMessage({type: "error", message: err.message, title: "Error", duration: 5000})
-    )
+    activate(injected, err => handleLoginError(err))
   }, [activate])
 
   useEffect(() => {

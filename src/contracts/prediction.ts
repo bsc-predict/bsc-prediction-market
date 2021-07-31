@@ -1,33 +1,39 @@
 import predictionAbi from "./prediction_abi.json"
 import {useContext} from "react"
 import {AbiItem} from "web3-utils"
-import web3 from "../utils/web3"
-import useWeb3 from "../hooks/useWeb3"
+import Web3 from "web3"
 import { useWeb3React } from "@web3-react/core"
 import { NotificationsContext } from "../contexts/NotificationsContext"
 import { BetsContext } from "../contexts/BetsContext"
+import { BlockchainContext, Chain } from "../contexts/BlockchainContext"
 
-const predictionAddress = "0x516ffd7D1e0Ca40b1879935B2De87cb20Fc1124b"
+const PREDICTION_ADDRESS = "0x516ffd7D1e0Ca40b1879935B2De87cb20Fc1124b"
+const TESTNET_PREDICTION_ADDRESS = "0x257D3e7A74947bf7a8E2ac012b680cbb98642CE5"
 
-
-const contract = new web3.eth.Contract(predictionAbi as AbiItem[], predictionAddress)
 
 const bearBet = "0x0088160f"
 const bullBet = "0x821daba1"
 const claimPrefix = /(?<=0x379607f5).+/g
 
-export const usePredictionContract = () => {
-  const web3 = useWeb3()
+export const usePredictionContract = (chain: Chain) => {
+  const { library } = useWeb3React()
+
   const {account} = useWeb3React()
+  const {web3Provider} = useContext(BlockchainContext)
   const {setMessage} = useContext(NotificationsContext)
   const {updateBetStatus} = useContext(BetsContext)
+
+  const address = chain === "main" ? PREDICTION_ADDRESS : TESTNET_PREDICTION_ADDRESS
+  const web3 = library ? new Web3(library) : web3Provider()
+
+  const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
 
   const makeBet = async (direction: "bull" | "bear", eth: number) => {
 
     // TODO: Check gas price
     const value = web3.utils.toWei(eth.toString(), "ether")
     const betMethod = direction === "bull" ? "betBull" : "betBear"
-    const contract = new web3.eth.Contract(predictionAbi as AbiItem[], predictionAddress)
+    const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
     return contract.methods[betMethod]()
       .send({ from: account, value })
       .once('sent', () => {
@@ -42,7 +48,7 @@ export const usePredictionContract = () => {
   }
   
   const claim = async (epoch: string) => {
-    const contract = new web3.eth.Contract(predictionAbi as AbiItem[], predictionAddress)
+    const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
     contract.methods.claim(epoch)
       .send({from: account})
       .once('sending', () => {
@@ -59,7 +65,26 @@ export const usePredictionContract = () => {
       })
   }
 
-  return {claim, makeBet}
+  const getCurrentEpoch = async (): Promise<string> => contract.methods.currentEpoch().call()
+
+  const getGamePaused = async (): Promise<boolean> => contract.methods.paused().call()
+
+  const fetchRounds = async (epochs: Array<string | number>) => {
+    const rounds = epochs.map(async epoch => {
+      const r = await contract.methods.rounds(epoch.toString()).call() as Object
+      return toRound(r as RoundResponse)
+    })
+    return await Promise.all(rounds)
+  }
+
+  const fetchLatestRounds = async (n: number, skip: string[]): Promise<Round[]> => {
+    const skipSet = new Set(skip)
+    const epoch = await contract.methods.currentEpoch().call()
+    const epochs = Array.from(Array(n).keys()).map(offset => `${epoch - offset}`).filter(e => !skipSet.has(e) && Number(e) >= 0)
+    return fetchRounds(epochs)
+  }
+  
+  return {claim, makeBet, getCurrentEpoch, getGamePaused, fetchRounds, fetchLatestRounds}
 }
 
 
@@ -78,24 +103,6 @@ export const getInputType = (input: string): InputType | undefined => {
   return undefined
 }
 
-export const getCurrentEpoch = async (): Promise<string> => contract.methods.currentEpoch().call()
-
-export const getGamePaused = async (): Promise<boolean> => contract.methods.paused().call()
-
-export const fetchRounds = async (epochs: Array<string | number>) => {
-  const rounds = epochs.map(async epoch => {
-    const r = await contract.methods.rounds(epoch.toString()).call() as Object
-    return toRound(r as RoundResponse)
-  })
-  return await Promise.all(rounds)
-}
-
-export const fetchLatestRounds = async (n: number, skip: string[]): Promise<Round[]> => {
-  const skipSet = new Set(skip)
-  const epoch = await contract.methods.currentEpoch().call()
-  const epochs = Array.from(Array(n).keys()).map(offset => `${epoch - offset}`).filter(e => !skipSet.has(e))
-  return fetchRounds(epochs)
-}
 
 export const toRound = (r: RoundResponse): Round => {
   const bearPayout = ((Number(r.bearAmount) + Number(r.bullAmount)) * 0.97) / Number(r.bearAmount)

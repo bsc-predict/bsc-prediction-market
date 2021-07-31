@@ -1,6 +1,6 @@
 import React from 'react'
-import HistoryPage from '../../src/pages/history'
-import AppWrapper from '../../src/wrapper'
+import HistoryPage from '../../../src/pages/history'
+import AppWrapper from '../../../src/wrapper'
 
 const History: React.FunctionComponent = () => {
 

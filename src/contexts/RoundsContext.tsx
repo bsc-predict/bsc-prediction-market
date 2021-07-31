@@ -1,7 +1,8 @@
 import React from "react"
-import { fetchLatestRounds, fetchRounds, getCurrentEpoch, getGamePaused } from "../contracts/prediction"
+import { usePredictionContract } from "../contracts/prediction"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { createArray } from "../utils/utils"
+import { BlockchainContext } from "./BlockchainContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
 import { UserConfigContext } from "./UserConfigContext"
@@ -21,6 +22,9 @@ const RoundsContext = React.createContext<IRoundsContext>({
 const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
   const [rounds, setRounds] = React.useState<{cur: Round[], latest: Round[]}>({cur: [], latest: []})
   const [paused, setPaused] = React.useState(false)
+
+  const {chain} = React.useContext(BlockchainContext)
+  const { fetchLatestRounds, fetchRounds, getCurrentEpoch, getGamePaused } = usePredictionContract(chain)
 
   const requiresPolling = useRequiresPolling()
 
@@ -96,7 +100,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
           updateRounds(r)
           updatePaused(r)
         })
-        .catch(() => setMessage({type: "error", message: 'Failed to fetch rounds', title: "Error", duration: 5000}))
+        .catch((e) => setMessage({type: "error", message: e, title: "Error", duration: 5000}))
     }
   }, [fast, updateRounds, updatePoll, requiresPolling])
   

@@ -1,9 +1,9 @@
 import React from "react"
 import { BetsContext } from "../../../../contexts/BetsContext"
+import { BlockchainContext } from "../../../../contexts/BlockchainContext"
 import { NotificationsContext } from "../../../../contexts/NotificationsContext"
 import { usePredictionContract } from "../../../../contracts/prediction"
 import web3 from "../../../../utils/web3"
-import { buttonClass } from "./style"
 
 interface ResultProps {
   round: Round
@@ -13,10 +13,11 @@ interface ResultProps {
 
 const Result: React.FunctionComponent<ResultProps> = (props) => {
   const {round, bet, winner} = props
-
-  const {claim} = usePredictionContract()
   const {fetchBets} = React.useContext(BetsContext)
   const {setMessage} = React.useContext(NotificationsContext)
+  const {chain} = React.useContext(BlockchainContext)
+
+  const {claim} = usePredictionContract(chain)
   
   const handleClaim = () => {
     if (bet && bet.epoch) {
@@ -35,14 +36,15 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   }
 
   const betValue = bet ? Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4) : ""
+  const bgColor = bet === undefined ? "" : bet.direction === winner ? "bg-accent" : "bg-secondary"
   return(
-    <td className="px-5 p-1 border border-grey-800 text-center">
-      {bet && bet.direction !== winner && <span className="text-red-600">{betValue}</span>}
+    <td className={`px-5 p-1 border border-grey-800 text-center ${bgColor}`}>
+      {bet && bet.direction !== winner && <span>{betValue}</span>}
       {bet && bet.direction === winner && bet.status === "claimable"  &&
-        <button className={`text-green-600 ${buttonClass}`} onClick={handleClaim}>→ {winAmount} ←</button>}
+        <button className="btn btn-sm btn-accent" onClick={handleClaim}>→ {winAmount} ←</button>}
       {bet && bet.direction === winner && bet.status === "pending" && "Claiming..."}
       {bet && bet.direction === winner && bet.status === "claimed" && <div>
-          <span className="text-green-600">{winAmount}</span>
+          <span >{winAmount}</span>
           <span>&nbsp;({betValue})</span>
          
         </div>}

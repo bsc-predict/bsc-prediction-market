@@ -10,7 +10,6 @@ interface RoundsTableMobileProps {
 
 const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (props) => {  
   const {rounds, bets, page, onChangePage} = props
-  const buttonStyle = "border border-solid w-24 mx-2 p-1 px-4 rounded"
 
   const scrollToTop = () => {
     window.scroll({
@@ -27,15 +26,8 @@ const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (prop
   return(
     <div className="grid m-4 justify-items-center">
       {page > 0 && <div>
-        <button
-          className={buttonStyle}
-          onClick={() => onChangePage(0)}
-        >Current</button>
-        <button
-          className={buttonStyle}
-          onClick={() => onChangePage(page - 1)}
-        >Later</button>
-
+        <button className="btn" onClick={() => onChangePage(0)}>Current</button>
+        <button className="btn" onClick={() => onChangePage(page - 1)}>Later</button>
       </div>}
       {rounds.map(r =>
         <RoundCardMobile
@@ -44,7 +36,7 @@ const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (prop
           bet={bets.find(b => b.epoch === r.epoch)}
         />
       )}
-      <button className={buttonStyle} onClick={handleMore}>Earlier</button>
+      <button className="btn" onClick={handleMore}>Earlier</button>
     </div>
   )
 }

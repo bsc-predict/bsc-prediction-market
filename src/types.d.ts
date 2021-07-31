@@ -6,3 +6,6 @@ interface WindowChain {
     }
   }
   
+  declare module 'theme-change' {
+    export const themeChange: (b: boolean) => void
+  }

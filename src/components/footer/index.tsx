@@ -1,8 +1,8 @@
 import React from "react"
 import Link from "next/link"
-import { UserConfigContext } from "../../contexts/UserConfigContext"
-import Image from "next/image"
 import { linkClass } from "./style"
+import { github } from "../../images/github"
+import { twitter } from "../../images/twitter"
 
 const Links = {
   pancakeSwap: "https://pancakeswap.finance",
@@ -15,7 +15,6 @@ const Links = {
 }
 
 const Footer: React.FunctionComponent = () => {
-  const {isDark} = React.useContext(UserConfigContext)
 
   return(
     <footer className="mt-8">
@@ -27,7 +26,7 @@ const Footer: React.FunctionComponent = () => {
         <div className="w-48">
           <div className="mb-4 block font-bold text-xl mb-8">Games</div>
           <div>
-            <Link href="/games/bnbusdt">
+            <Link href="/main/bnbusdt">
               <a className={linkClass}>
                 BNB Predict
               </a>
@@ -57,16 +56,15 @@ const Footer: React.FunctionComponent = () => {
             <a className={linkClass}>Contact</a>
           </Link>
         </div>
-        <div className="space-x-8">
-          <div className="mb-4 block font-bold text-xl mb-8 sp space-x-4">&nbsp;</div>
-          <Link href={Links.twitter}>
-            <a>
-              <Image alt="twitter" src={isDark ? "/twitter-dark.svg" : "/twitter-light.svg"} width={24} height={24}/>
+        <div className="flex h-10 space-x-8">
+          <Link href={Links.github}>
+            <a className="flex">
+              {github}
             </a>
           </Link>
-          <Link href={Links.github}>
+          <Link href={Links.twitter}>
             <a>
-              <Image alt="twitter" src={isDark ? "/github-dark.svg" : "/github-light.svg"} width={24} height={24}/>
+              {twitter}
             </a>
           </Link>
         </div>
