@@ -3,6 +3,7 @@ import React from "react"
 import AppHeader from "../components/header"
 import AppFooter from "../components/footer"
 import { NotificationsContext } from "../contexts/NotificationsContext"
+import Notification from "../components/notifications"
 
 interface AppWrapperProps {
   title?: string
@@ -12,7 +13,7 @@ interface AppWrapperProps {
 const AppWrapper: React.FunctionComponent<AppWrapperProps> = (props) => {
   const {title, description, children} = props
 
-  const {notification} = React.useContext(NotificationsContext)
+  const {notificationProps} = React.useContext(NotificationsContext)
 
   return(
     <div>
@@ -25,7 +26,12 @@ const AppWrapper: React.FunctionComponent<AppWrapperProps> = (props) => {
         <AppHeader/>
         <div className="my-8 mx-4 mb-auto">
           {children}
-          {notification}
+          <Notification
+            type={notificationProps?.type || "hidden"}
+            title={notificationProps?.title || ""}
+            message={notificationProps?.message || ""}
+            absolute={true}
+          />
         </div>
         <AppFooter />
       </main>

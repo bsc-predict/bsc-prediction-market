@@ -20,7 +20,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   
   const canBet = bet === undefined && round.startBlockNum < block && round.lockBlockNum > block
 
-  const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, latestOracle)
+  const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
 
   return(
     <tr>

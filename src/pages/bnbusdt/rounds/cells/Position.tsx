@@ -12,9 +12,8 @@ type ShowStates = "make-bet" | "direction" | "login" | "position"
 
 const Position: React.FunctionComponent<PositionProps> = (props) => {
   const {bet, canBet} = props
-  
   const router = useRouter()
-
+  
   const {handleActivate} = useLogin()
   const {account} = useWeb3React()
 

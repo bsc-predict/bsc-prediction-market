@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 
-const COLOR_THEME_KEY = "color-theme"
 const SHOW_ROWS_KEY = "show-rows"
 const DEFAULT_SHOW_ROWS = 10
 

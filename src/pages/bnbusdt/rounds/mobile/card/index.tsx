@@ -21,7 +21,7 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   const {block} = React.useContext(BlockContext)
   const {latestOracle} = React.useContext(OracleContext)
 
-  const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, latestOracle)
+  const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
 
   const canBet = round.startBlockNum < block && round.lockBlockNum > block 
 

@@ -18,7 +18,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
 
   const [isLoading, setIsLoading] = React.useState(false)
   const [size, setSize] = React.useState(0)
-  const [perc, setPerc] = React.useState<number | undefined>(0.1)
+  const [selectedPerc, setSelectedPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
 
   const {fetchBets} = React.useContext(BetsContext)
@@ -31,17 +31,17 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const closePath = `${router.pathname}#`
 
   React.useEffect(() => {
-    if (perc !== undefined) {
+    if (selectedPerc !== undefined) {
       const bal = Number(web3.utils.fromWei(balance?.balance || "0"))
       const maxSize = bal - 0.005
-      setSize(Math.round(Math.max(0, Math.min(bal * perc, maxSize)) * 10000) / 10000)  
+      setSize(Math.round(Math.max(0, Math.min(bal * selectedPerc, maxSize)) * 10000) / 10000)  
     }
-  }, [perc, balance?.balance])
+  }, [selectedPerc, balance?.balance])
 
 
   const handleChangeSize = (s: number) => {
     setSize(s)
-    setPerc(undefined)
+    setSelectedPerc(undefined)
   }
   
   const handleOnSuccess = () => {
@@ -54,6 +54,8 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
       .then(() => router.push(closePath))
       .finally(() => setIsLoading(false))
   }
+
+  const percChoices = [0.1, 0.25, 0.5, 1.0]
 
   return(
     <div id={direction === "bear" ? "make-bet-bear-modal" : "make-bet-bull-modal"} className="modal">
@@ -84,14 +86,31 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
         </form>
           <div className="space-y-8">
             <div className="flex w-full space-x-4">
-              <button onClick={() => setCurDirection("bear")} className={`btn btn-sm w-24 grid flex-grow ${curDirection === "bear" ? "btn-secondary" : "btn-outline"}`}>BEAR</button>
-              <button onClick={() => setCurDirection("bull")} className={`btn btn-sm w-24 grid flex-grow ${curDirection === "bull" ? "btn-accent" : "btn-outline"}`}>BULL</button>
+              <button
+                onClick={() => setCurDirection("bear")}
+                className={curDirection === "bear" ? "btn btn-sm w-24 grid flex-grow btn-secondary" : "btn btn-sm w-24 grid flex-grow btn-outline"}
+              >
+                BEAR
+              </button>
+              <button
+                onClick={() => setCurDirection("bull")}
+                className={curDirection === "bull" ? "btn btn-sm w-24 grid flex-grow btn-accent" : "btn btn-sm w-24 grid flex-grow btn-outline"}
+              >
+                BULL
+              </button>
             </div>
             <div className="flex w-full btn-group">
-              <button onClick={() => setPerc(0.10)} className={`btn btn-sm flex-grow ${perc === 0.1 ? "btn-primary" : "btn-outline"}`}>10%</button>
-              <button onClick={() => setPerc(0.25)} className={`btn btn-sm flex-grow ${perc === 0.25 ? "btn-primary" : "btn-outline"}`}>25%</button>
-              <button onClick={() => setPerc(0.50)} className={`btn btn-sm flex-grow ${perc === 0.5 ? "btn-primary" : "btn-outline"}`}>50%</button>
-              <button onClick={() => setPerc(1.00)} className={`btn btn-sm flex-grow ${perc === 1.0 ? "btn-primary" : "btn-outline"}`}>100%</button>
+              {percChoices.map(perc =>
+                <button
+                  key={perc}
+                  onClick={() => setSelectedPerc(perc)}
+                  className={perc === selectedPerc ? "btn btn-sm flex-grow btn-primary" : "btn btn-sm flex-grow btn-outline"}
+                >
+                  {perc}%
+                </button>
+                
+              )}
+              
             </div>
           </div>
                   <div className="modal-action">

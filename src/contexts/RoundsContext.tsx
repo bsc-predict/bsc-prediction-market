@@ -25,7 +25,6 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
 
   const {chain} = React.useContext(BlockchainContext)
   const { fetchLatestRounds, fetchRounds, getCurrentEpoch, getGamePaused } = usePredictionContract(chain)
-  console.log(chain)
 
   const requiresPolling = useRequiresPolling()
 
@@ -73,7 +72,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
       const available = archivedRounds.current.filter(r => r.oracleCalled).map(r => r.epoch)
       fetchLatestRounds(showRows, available)
         .then(updateRounds)
-        .catch(() => setMessage({type: "error", title: "Rrror", message: "Failed to update rounds", duration: 5000}))
+        .catch(() => setMessage({type: "error", title: "Error", message: "Failed to update rounds", duration: 5000}))
         .finally(() => init.current = true)
     } else {
       const to = await getCurrentEpoch()
@@ -101,7 +100,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
           updateRounds(r)
           updatePaused(r)
         })
-        .catch((e) => setMessage({type: "error", message: e, title: "Error", duration: 5000}))
+        .catch((e: Error) => setMessage({type: "error", message: e.message, title: "Error", duration: 5000}))
     }
   }, [fast, updateRounds, updatePoll, requiresPolling])
   

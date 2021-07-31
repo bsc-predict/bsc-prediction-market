@@ -1,32 +1,32 @@
 import React from "react"
-import Notification, { NotificationProps } from "../components/notifications"
+import { NotificationProps } from "../components/notifications"
 
 
 const NotificationsContext = React.createContext<{
   setMessage: (p: Omit<NotificationProps, "absolute"> & {duration: number}) => void,
-  notification: null | JSX.Element}
+  notificationProps?: Omit<NotificationProps, "absolute">}
 >({
   setMessage: () => {/**/},
-  notification: null
 })
 
 const NotificationsContextProvider: React.FunctionComponent = ({ children }) => {
-  const [notification, setNotification] = React.useState<JSX.Element | null>(null)
+  const [notificationProps, setNotificationProps] = React.useState<Omit<NotificationProps, "absolute"> | undefined>(undefined)
   const clear = React.useRef<NodeJS.Timeout>()
 
   const setMessage = React.useCallback((p: Omit<NotificationProps, "absolute"> & {duration: number}) => {
     if (clear.current !== undefined) {
       clearTimeout(clear.current)
     }
-    setNotification(<Notification {...p} absolute={true} />)
+
+    setNotificationProps(p)
     const c = setTimeout(() => {
-      setNotification(null)
+      setNotificationProps(undefined)
     }, p.duration)
     clear.current = c
   }, [])
 
   return <NotificationsContext.Provider value={{
-    notification,
+    notificationProps,
     setMessage,
   }}>
     {children}

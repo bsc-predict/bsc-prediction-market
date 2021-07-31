@@ -15,6 +15,12 @@ const bearBet = "0x0088160f"
 const bullBet = "0x821daba1"
 const claimPrefix = /(?<=0x379607f5).+/g
 
+// TODO: Get this from the actual contract
+export const PredictionConstants = {
+  bufferBlocks: 20,
+  rewardRate: 0.97
+}
+
 export const usePredictionContract = (chain: Chain) => {
   const { library } = useWeb3React()
 
@@ -24,13 +30,12 @@ export const usePredictionContract = (chain: Chain) => {
   const {updateBetStatus} = useContext(BetsContext)
 
   const address = chain === "main" ? PREDICTION_ADDRESS : TESTNET_PREDICTION_ADDRESS
-  const web3 = library ? new Web3(library) : web3Provider()
+  const web3 = web3Provider()
 
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
 
   const makeBet = async (direction: "bull" | "bear", eth: number) => {
-
-    // TODO: Check gas price
+    const web3 = new Web3(library)
     const value = web3.utils.toWei(eth.toString(), "ether")
     const betMethod = direction === "bull" ? "betBull" : "betBear"
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -48,6 +53,7 @@ export const usePredictionContract = (chain: Chain) => {
   }
   
   const claim = async (epoch: string) => {
+    const web3 = new Web3(library)
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
     contract.methods.claim(epoch)
       .send({from: account})
