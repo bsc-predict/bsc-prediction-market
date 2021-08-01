@@ -47,7 +47,7 @@ export const calcMaxDrawdown = (bets: Bet[]) => {
   let cur = 0
   let worst = 0
   bets.forEach(b => {
-    cur = Math.min(cur - (b.wonAmount || 0), 0)
+    cur = Math.min(cur + (b.wonAmount || 0), 0)
     worst = Math.min(cur, worst)
   })
   return worst

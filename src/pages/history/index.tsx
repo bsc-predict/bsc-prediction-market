@@ -16,18 +16,23 @@ const HistoryPage: React.FunctionComponent = () => {
   const [showRounds, setShowRounds] = React.useState<Round[]>([])
   const [enrichedBets, setEnrichedBets] = React.useState<Bet[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
+  const [account, setAccount] = React.useState<string | undefined>()
 
   const router = useRouter()
-
   const {account: userAccount} = useWeb3React()
   const {a: pathAccount} = router.query
-  const account = typeof pathAccount === "string" ? pathAccount : userAccount
-
+    
   const {showRows} = React.useContext(UserConfigContext)
+
+  React.useEffect(() => {
+    const a = typeof pathAccount === "string" ? pathAccount : userAccount
+    setAccount(a || undefined)
+  }, [pathAccount, userAccount])
 
   React.useEffect(() => {
     if (account && rounds.length > 0) {
       setIsLoading(true)
+      setEnrichedBets([])
       fetchBets(account)
         .then(({bets}) => {
           const enriched =
@@ -53,6 +58,8 @@ const HistoryPage: React.FunctionComponent = () => {
     fetchArchivedRounds(false)
       .then(r => setRounds(r))
   }, [])
+
+  const handleSetAccount = React.useCallback((a: string) => setAccount(a), [])
 
   React.useEffect(() => {
     const epochs = new Set(enrichedBets.map(b => b.epoch))
@@ -97,7 +104,7 @@ const HistoryPage: React.FunctionComponent = () => {
 
 	return(
     <div>
-      <HistoricalInfo bets={enrichedBets} account={account || ""}/>
+      <HistoricalInfo bets={enrichedBets} account={account || ""} changeAccount={handleSetAccount}/>
       {message}
       {(isLoading || showRounds.length > 0) &&
       <RoundsTable

@@ -36,7 +36,7 @@ const Notification: React.FunctionComponent<NotificationProps> = (props) => {
       <div className="flex-1 align-center space-x-4">
         {icon}
         <label>
-          <strong>{title}</strong>: {message}</label>
+          <strong>{title}</strong>{message ? `: ${message}`: ""}</label>
       </div>
     </div>
   )

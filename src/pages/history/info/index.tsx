@@ -8,10 +8,11 @@ import web3 from "../../../utils/web3"
 interface HistoricalInfoProps {
   bets: Bet[]
   account: string
+  changeAccount: (a: string) => void
 }
 
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
-  const {bets, account} = props
+  const {bets, account, changeAccount} = props
 
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
@@ -29,6 +30,16 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
     }
   }, [account, web3Provider])
 
+  const handleUpdateAccount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCurAccount(e.currentTarget.value)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      changeAccount(curAccount)
+    }
+  }
+
   const betsWon = bets.filter(b => b.won).length
   const totalBets = bets.length
   const totalWon = Number(
@@ -38,77 +49,64 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   
   const performance = web3.utils.fromWei(bets.slice(0, performanceLast).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
   const maxDrawdown = web3.utils.fromWei(calcMaxDrawdown(bets.slice(0, performanceLast)).toString(), "ether")
-
   return(
     <div className="mb-5 mt-5 overflow-auto">
-      <table className="table-auto border-collapse">
-        <tbody>
-          <tr>
-            <td className="px-5 p-1 border">Account</td>
-            <td className="px-5 p-1 border space-x-4 bg-accent">
-              <form>
-                <label>
-                  <input
-                    className="bg-accent"
-                    type="text"
-                    name="a"
-                    value={curAccount} onChange={e => setCurAccount(e.currentTarget.value)}
-                  />
-                </label>
-            </form>
-            </td>
-          </tr>
-          <tr>
-            <td className="px-5 p-1 border">Balance</td>
-            <td className="px-5 p-1 border">
-              {balance !== undefined ?
-                `${Number(balance.balanceEth).toFixed(2)} 
-                (\$${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()})` :
-                ""}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-5 p-1 border">Games played</td>
-            <td className="px-5 p-1 border">{bets.length.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td className="px-5 p-1 border">Games won</td>
-            <td className="px-5 p-1 border">
-              {betsWon.toLocaleString()} / {totalBets.toLocaleString()}&nbsp;
-              ({((betsWon / totalBets) * 100).toFixed(2)}%)</td>
-          </tr>
-          <tr>
-            <td className="px-5 p-1 border">Total won</td>
-            <td className="px-5 p-1 border">
-              {prettyNumber(totalWon, 2)} BNB (${prettyNumber(balance.bnbPrice * totalWon, 2)})
-            </td>
-          </tr>
-          <tr>
-            <td className="px-5 p-1 border">Biggest win</td>
-            <td className="px-5 p-1 border">
-              {prettyNumber(biggestWinAmount, 2)} BNB
-              (${prettyNumber(balance.bnbPrice * biggestWinAmount, 2)})
-              {biggestWin  && <span> - {prettyNumber(biggestWin?.wonPerc || "", 2)}x</span>}
-            </td>
-          </tr>
-          <tr>
-            <td className="px-5 p-1 border">
-              Performance in last
-              <input
-                type="number"
-                className="bg-accent w-12 mx-4 apperance-none"
-                value={performanceLast}
-                onChange={e => setPerformanceLast(Math.floor(Number(e.currentTarget.value)))}
-              />
-              rounds
-            </td>
-            <td className="px-5 p-1 border">
-                {prettyNumber(performance, 4)}
-                &nbsp; Max drawdown: {prettyNumber(maxDrawdown, 4)}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div>
+        <label className="label">
+          <span className="label-text">Account</span>
+        </label> 
+        <input
+          type="text"
+          placeholder="Account"
+          className="input bg-accent w-full"
+          value={curAccount}
+          onChange={handleUpdateAccount}
+          onKeyDown={handleKeyDown}  
+        />
+      </div>
+      <div className="md:stats">
+        <div className="stat">
+          <div className="stat-title">Balance</div> 
+          <div className="stat-value">
+            {balance !== undefined ? Number(web3.utils.fromWei(balance.balance, "ether")).toFixed(2) : ""}
+          </div>
+          <div className="stat-desc">${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()}</div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Games Played</div> 
+          <div className="stat-value">{bets.length.toLocaleString()}</div>
+          <div className="stat-desc">
+            {betsWon.toLocaleString()} / {totalBets.toLocaleString()} ({((betsWon / totalBets) * 100).toFixed(2)}%)
+          </div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Won</div> 
+          <div className="stat-value">{prettyNumber(totalWon, 2)}</div>
+          <div className="stat-desc"> ${prettyNumber(balance.bnbPrice * totalWon, 2)}</div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Biggest Win</div> 
+          <div className="stat-value">{prettyNumber(biggestWinAmount, 2)}</div>
+          <div className="stat-desc">
+            ${prettyNumber(balance.bnbPrice * biggestWinAmount, 2)}
+            {biggestWin  && <span>&nbsp;({prettyNumber(biggestWin?.wonPerc || "", 2)}x)</span>}
+          </div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">
+            Last
+            <input
+              type="number"
+              className="input input-bordered input-xs w-14 bg-accent mx-2"
+              value={performanceLast}
+              onChange={e => setPerformanceLast(Math.floor(Number(e.currentTarget.value)))}
+            />
+            rounds  
+          </div> 
+          <div className="stat-value">{prettyNumber(performance, 4)}</div>
+          <div className="stat-desc">Max drawdown: {prettyNumber(maxDrawdown, 4)}</div>
+        </div>
+      </div>
     </div>
   )
 }
