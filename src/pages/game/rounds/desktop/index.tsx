@@ -45,7 +45,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
           {rowOptions.map(n =>
             <button
               key={n}
-              className={`btn btn-sm ${rounds.length === n ? "btn-active" : "btn-ghost"}`}
+              className={rounds.length === n ? "btn btn-sm btn-active" : "btn btn-sm btn-ghost"}
               onClick={() => updateShowRows(n)}
             >
               {n}
@@ -55,14 +55,14 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
 
       </div>
       <div className="btn-group float-right mt-4">
-        <button className={`btn btn-sm btn-ghost ${page === 0 ? "hidden" : ""}`} onClick={() => onChangePage(0)}>
+        <button className={page === 0 ? "hidden" : "btn btn-sm btn-ghost"} onClick={() => onChangePage(0)}>
           ⇤
         </button>
         {pages.filter(p => p <= numPages).map(p => 
           <button
             key={p}
             onClick={() => onChangePage(p)}
-            className={`btn btn-sm btn-ghost ${p === page ? "btn-active" : ""}`}>
+            className={p === page ? "btn btn-sm btn-ghost btn-active" : "btn btn-sm btn-ghost"}>
             {p + 1}
           </button>
         )}

@@ -24,7 +24,7 @@ const AppWrapper: React.FunctionComponent<AppWrapperProps> = (props) => {
       </Head>
       <main className="flex flex-col min-h-screen ">
         <AppHeader/>
-        <div className="my-8 mx-4 mb-auto">
+        <div className="mx-4 mb-auto">
           {children}
           <Notification
             type={notificationProps?.type || "hidden"}

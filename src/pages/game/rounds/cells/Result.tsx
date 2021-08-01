@@ -36,9 +36,15 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   }
 
   const betValue = bet ? Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4) : ""
-  const bgColor = bet === undefined ? "" : bet.direction === winner ? "bg-accent" : "bg-secondary"
+
+  let className = "px-5 p-1 border border-grey-800 text-center"
+  if (bet && bet?.direction === winner) {
+    className = "px-5 p-1 border border-grey-800 text-center bg-accent"
+  } else if (bet) {
+    className = "px-5 p-1 border border-grey-800 text-center bg-secondary"
+  }
   return(
-    <td className={`px-5 p-1 border border-grey-800 text-center ${bgColor}`}>
+    <td className={className}>
       {bet && bet.direction !== winner && <span>{betValue}</span>}
       {bet && bet.direction === winner && bet.status === "claimable"  &&
         <button className="btn btn-sm btn-accent" onClick={handleClaim}>→ {winAmount} ←</button>}

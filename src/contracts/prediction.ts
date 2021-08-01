@@ -18,7 +18,8 @@ const claimPrefix = /(?<=0x379607f5).+/g
 // TODO: Get this from the actual contract
 export const PredictionConstants = {
   bufferBlocks: 20,
-  rewardRate: 0.97
+  rewardRate: 0.97,
+  intervalBlocks: 100,
 }
 
 export const usePredictionContract = (chain: Chain) => {

@@ -7,6 +7,7 @@ import { UserConfigContext } from "../../../contexts/UserConfigContext"
 import { usePrevious } from "../../../hooks/usePrevious";
 import RoundsTable from "./table";
 import Notification from "../../../components/notifications"
+import Info from "../info";
 
 const RoundsPage: React.FunctionComponent = () => {
   const [page, setPage] = React.useState(0)
@@ -54,6 +55,7 @@ const RoundsPage: React.FunctionComponent = () => {
           absolute={false}
         />
       </div>}
+      <Info/>
       <RoundsTable
         numPages={rounds.latest.length > 0 ? Math.floor((rounds.latest[0].epochNum - 2) / showRows) : 0}
         rounds={page === 0 ? rounds.latest : rounds.cur}

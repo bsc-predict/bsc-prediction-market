@@ -76,6 +76,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
         .finally(() => init.current = true)
     } else {
       const to = await getCurrentEpoch()
+      console.log(to)
       const available = new Set(archivedRounds.current.map(r => r.epochNum))
       const start = Math.max(0, Number(to) - ((page + 1) * showRows - 1))
       const end = start + showRows

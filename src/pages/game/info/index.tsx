@@ -1,11 +1,11 @@
 import React from "react"
-import { AccountContext } from "../../contexts/AccountContext"
-import { BetsContext } from "../../contexts/BetsContext"
-import { BlockContext } from "../../contexts/BlockContext"
-import { RoundsContext } from "../../contexts/RoundsContext"
-import { useInterval } from "../../hooks/useInterval"
-import { toTimeString } from "../../utils/utils"
-import web3 from "../../utils/web3"
+import { AccountContext } from "../../../contexts/AccountContext"
+import { BetsContext } from "../../../contexts/BetsContext"
+import { BlockContext } from "../../../contexts/BlockContext"
+import { RoundsContext } from "../../../contexts/RoundsContext"
+import { useInterval } from "../../../hooks/useInterval"
+import { toTimeString } from "../../../utils/utils"
+import web3 from "../../../utils/web3"
 
 const Info: React.FunctionComponent = () => {
   const [secondsRemaining, setSecondsRemaining] = React.useState(0)

@@ -6,7 +6,7 @@ import Notification from "../../components/notifications";
 import { UserConfigContext } from "../../contexts/UserConfigContext";
 import { enrichBets } from "../../utils/bets";
 import web3 from "../../utils/web3";
-import RoundsTable from "../bnbusdt/rounds/table";
+import RoundsTable from "../game/rounds/table";
 import HistoricalInfo from "./info";
 
 

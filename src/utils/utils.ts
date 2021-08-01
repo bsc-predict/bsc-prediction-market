@@ -28,7 +28,7 @@ export const getRoundInfo = (round: Round, currentBlock: number, latestOracle?: 
     }
   }
 
-  const canceled = round.closePriceNum === 0 && (round.lockBlockNum + PredictionConstants.bufferBlocks) < currentBlock
+  const canceled = round.closePriceNum === 0 && (round.lockBlockNum + PredictionConstants.intervalBlocks + PredictionConstants.bufferBlocks) < currentBlock
   const live = !canceled && round.closePriceNum === 0 && round.lockPriceNum > 0
   const curPrice = live && latestOracle ? (latestOracle.answer - round.lockPriceNum) : (round.closePriceNum - round.lockPriceNum)
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)

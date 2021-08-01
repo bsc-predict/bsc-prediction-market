@@ -26,11 +26,17 @@ const Position: React.FunctionComponent<PositionProps> = (props) => {
     showEl = "login"
   }
 
+  let className = "justify-center text-center border border-grey-900"
+  if (canBet && account) {
+    className = "justify-center text-center border border-grey-900 bg-gradient-to-r from-secondary to-accent via-base-100"
+  } else if (bet?.direction === "bull") {
+    className = "justify-center text-center border border-grey-900 bg-accent"
+  } else if (bet?.direction === "bear") {
+    className = "justify-center text-center border border-grey-900 bg-secondary"
+  }
+
   return(
-    <td className={`justify-center text-center border border-grey-900
-      ${bet?.direction === "bull" ? "bg-accent" : bet?.direction === "bear" ? "bg-secondary" : ""}
-      ${(canBet && account) ? "bg-gradient-to-r from-secondary to-accent via-base-100" : ""}`}
-    >      
+    <td className={className}>
       {showEl === "direction" &&
           <div className="flex content-center divide-x">
             <a className="px-4 w-1/2" href={`${router.pathname}#make-bet-bear-modal`}>↓</a>
