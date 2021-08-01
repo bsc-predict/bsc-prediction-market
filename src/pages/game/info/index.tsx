@@ -4,6 +4,7 @@ import { BlockContext } from "../../../contexts/BlockContext"
 import { RoundsContext } from "../../../contexts/RoundsContext"
 import { useInterval } from "../../../hooks/useInterval"
 import { shortenAddress } from "../../../utils/accounts"
+import { toTimeString } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
 
 const Info: React.FunctionComponent = () => {
@@ -12,15 +13,17 @@ const Info: React.FunctionComponent = () => {
   const {account, balance} = React.useContext(AccountContext)
   const {block} = React.useContext(BlockContext)
   const {rounds} = React.useContext(RoundsContext)
-  
+
+  const latestEpoch = React.useRef(-1)
+
   useInterval(() => setSecondsRemaining(prior => Math.max(0, prior - 1)), 1000)
 
   React.useEffect(() => {
     const r = rounds.latest.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
-    if (r) {
+    if (r && r.epochNum !== latestEpoch.current) {
       const t = Math.max(0, (r.lockBlockNum - block) * 3)
-      // if its close enough, don't jump
-      setSecondsRemaining(prior => Math.abs(prior - t) < 5 ? prior : t)
+      latestEpoch.current = r.epochNum
+      setSecondsRemaining(t)
     }
   }, [block, rounds.latest])
 
@@ -42,12 +45,7 @@ const Info: React.FunctionComponent = () => {
         <div className="stat">
           <div className="stat-title">Time Remaining</div>
           <div className="stat-value">
-            <span className="stat-value countdown">
-              {/* @ts-ignore */}
-              ~<span style={{"--value": Math.floor(secondsRemaining / 60)}}></span>:
-              {/* @ts-ignore */}
-              <span style={{"--value": secondsRemaining % 60}}></span>
-            </span>
+            ~{toTimeString(secondsRemaining)}
           </div>
           <div className="stat-desc">&nbsp;</div>
         </div>

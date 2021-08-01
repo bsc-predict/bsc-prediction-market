@@ -3,10 +3,7 @@ import React from "react"
 import { AccountContext } from "../../../../../contexts/AccountContext"
 import { BlockContext } from "../../../../../contexts/BlockContext"
 import { OracleContext } from "../../../../../contexts/OracleContext"
-import { usePredictionContract } from "../../../../../contracts/prediction"
-import useLogin from "../../../../../hooks/useLogin"
 import { getRoundInfo } from "../../../../../utils/utils"
-import web3 from "../../../../../utils/web3"
 import Position from "../../cells/Position"
 import Result from "../../cells/Result"
 
@@ -21,13 +18,18 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   const {block} = React.useContext(BlockContext)
   const {latestOracle} = React.useContext(OracleContext)
 
-  const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
+  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
 
   const canBet = round.startBlockNum < block && round.lockBlockNum > block 
-
+  let curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center"
+  if (winner === "bear") {
+    curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center bg-secondary"
+  } else if (winner === "bull") {
+    curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center bg-accent"
+  }
   return(
-    <div className="pb-4">
-      <div className="text-lg p-2 mt-2 font-bold">{round.epoch}</div>
+    <div className="mb-4 border">
+      <div className={live ? "text-xl p-2 mt-2 font-bold bg-primary text-primary-content" : "text-xl p-2 mt-2 font-bold"}>{round.epoch} {live ? " (Live)" : ""}</div>
       <table>
         <tbody>
           <tr>
@@ -48,21 +50,20 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
           </tr>
           <tr>
             <td className="w-48 px-5 p-1 border border-grey-800 text-center">Close</td>
-            <td className={`w-48 px-5 p-1 border border-grey-800 text-center ${winnerColor} ${liveBorder}`}>{curPriceDisplay}</td>
-          </tr>
-          <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Position</td>
-            <Position bet={bet} canBet={canBet} />
-          </tr>
-          <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Result</td>
-            <Result round={round} bet={bet} winner={winner} />
-          </tr>
-        </tbody>
+              <td className={curPriceClass}>{curPriceDisplay}</td>
+            </tr>
+            <tr>
+              <td className="w-48 px-5 p-1 border border-grey-800 text-center">Position</td>
+              <Position bet={bet} canBet={canBet} />
+            </tr>
+            <tr>
+              <td className="w-48 px-5 p-1 border border-grey-800 text-center">Result</td>
+              <Result round={round} bet={bet} winner={winner} />
+            </tr>
+          </tbody>
 
-      </table>
-
-    </div>
+        </table>
+      </div>
   )
 }
 

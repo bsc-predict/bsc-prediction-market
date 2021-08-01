@@ -20,16 +20,22 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   
   const canBet = bet === undefined && round.startBlockNum < block && round.lockBlockNum > block
 
-  const {prizePool, lockPrice, winnerColor, liveBorder, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
+  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
 
+  let curPriceClass = rowClass
+  if (winner === "bear") {
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
+  } else if (winner === "bull") {
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
+  }
   return(
-    <tr>
+    <tr className={live ? "active" : undefined}>
       <td className={rowClass}>{round.epoch}</td>
       <td className={rowClass}>{round.bullPayoutGross.toFixed(4)}</td>
       <td className={rowClass}>{round.bearPayoutGross.toFixed(4)}</td>
       <td className={rowClass}>{prizePool}</td>
       <td className={rowClass}>{lockPrice.toFixed(2)}</td>
-      <td className={`${rowClass} ${winnerColor} ${liveBorder}`}>{curPriceDisplay}</td>
+      <td className={curPriceClass}>{curPriceDisplay}</td>
       <Position bet={bet} canBet={canBet}/>
       <Result round={round} bet={bet} winner={winner}/>
     </tr>

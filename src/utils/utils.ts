@@ -34,18 +34,12 @@ export const getRoundInfo = (round: Round, currentBlock: number, latestOracle?: 
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)
   const prizePool = Number(web3.utils.fromWei(round.prizePool, "ether")).toFixed(2)
   const lockPrice = round.lockPriceNum / Math.pow(10, 8)
-  const winnerColor = winner === "bull" ? "bg-accent" : winner == "bear" ? "bg-secondary" : ""
-  let liveBorder = ""
-  if (live) {
-    liveBorder = curPrice > 0 ? "accent bg-opacity-30" : "secondary bg-opacity-30"
-  }
   return {
     winner,
     curPriceDisplay,
     prizePool,
     lockPrice,
-    winnerColor,
-    liveBorder
+    live
   }
 }
 

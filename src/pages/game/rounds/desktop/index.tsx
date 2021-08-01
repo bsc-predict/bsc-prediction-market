@@ -30,7 +30,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
 
   return(
     <div className="">
-      <table className="w-full border-collapse border border-grey-800">
+      <table className="w-full">
         <thead>
           <RoundHeader/>
         </thead>
