@@ -1,8 +1,6 @@
 import React from "react"
 import { AccountContext } from "../../../contexts/AccountContext"
-import { usePredictionContract } from "../../../contracts/prediction"
 import web3 from "../../../utils/web3"
-import Title from "../components/Title"
 import { BetsContext } from "../../../contexts/BetsContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
 import { BlockchainContext } from "../../../contexts/BlockchainContext"
@@ -24,9 +22,8 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const {fetchBets} = React.useContext(BetsContext)
   const {balance} = React.useContext(AccountContext)
   const {setMessage} = React.useContext(NotificationsContext)
-  const {chain} = React.useContext(BlockchainContext)
 
-  const {makeBet} = usePredictionContract(chain)
+  const {makeBet} = React.useContext(BlockchainContext)
   const router = useRouter()
   const closePath = `${router.pathname}#`
 
@@ -46,7 +43,13 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   
   const handleOnSuccess = () => {
     setIsLoading(true)
-    makeBet(curDirection, size)
+    makeBet(
+      curDirection,
+      size,
+      () => setMessage({type: "info", title: "Bet confirmed", duration: 5000}),
+      () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
+      (e?: Error) => setMessage({type: "info", title: "Bet failed", message: e?.message || "", duration: 7000}),
+      )
       .then(() => {
         fetchBets()
         setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})

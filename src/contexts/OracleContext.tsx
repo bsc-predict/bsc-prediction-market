@@ -1,5 +1,4 @@
 import React from "react"
-import { useOracleContract } from "../contracts/oracle"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { BlockchainContext } from "./BlockchainContext"
 import { NotificationsContext } from "./NotificationsContext"
@@ -10,15 +9,14 @@ const OracleContext = React.createContext<{latestOracle: Oracle | undefined}>({ 
 const OracleContextProvider: React.FunctionComponent = ({ children }) => {
   const [latestOracle, setLatestOracle] = React.useState<Oracle | undefined>(undefined)
 
-  const {chain} = React.useContext(BlockchainContext)
   const requiresPolling = useRequiresPolling()
   const {slow} = React.useContext(RefreshContext)
   const {setMessage} = React.useContext(NotificationsContext)
-  const {getLatestOracleRound} = useOracleContract(chain)
+  const {fetchLatestOracleRound} = React.useContext(BlockchainContext)
   
   React.useEffect(() => {
     if (requiresPolling) {
-      getLatestOracleRound()
+      fetchLatestOracleRound()
         .then(setLatestOracle)
         .catch(() => setMessage({type: "error", message: 'Failed to fetch oracle', title: "Error", duration: 5000}))
       }

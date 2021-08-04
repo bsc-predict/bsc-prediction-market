@@ -1,6 +1,6 @@
 import React from "react"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
-import web3 from "../utils/web3"
+import { BlockchainContext } from "./BlockchainContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
 
@@ -11,11 +11,12 @@ const BlockContextProvider: React.FunctionComponent = ({ children }) => {
 
   const requiresPolling = useRequiresPolling()
   const {setMessage} = React.useContext(NotificationsContext)
+  const {fetchBlockNumber} = React.useContext(BlockchainContext)
   const {fast2} = React.useContext(RefreshContext)
   
   React.useEffect(() => {
     if (requiresPolling) {
-      web3.eth.getBlockNumber()
+      fetchBlockNumber()
       .then(setBlock)
       .catch(() => setMessage({type: "error", message: 'Failed to retrieve blocks', title: "Error", duration: 5000}))
     }

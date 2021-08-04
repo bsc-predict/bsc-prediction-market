@@ -22,7 +22,6 @@ const Info: React.FunctionComponent = () => {
     const r = rounds.latest.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
     if (r && r.epochNum !== latestEpoch.current) {
       const t = Math.max(0, (r.lockBlockNum - block) * 3)
-      latestEpoch.current = r.epochNum
       setSecondsRemaining(t)
     }
   }, [block, rounds.latest])

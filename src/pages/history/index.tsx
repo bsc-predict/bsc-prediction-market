@@ -1,8 +1,8 @@
 import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import React from "react"
-import { fetchArchivedRounds, fetchBets } from "../../api";
 import Notification from "../../components/notifications";
+import { BlockchainContext } from "../../contexts/BlockchainContext";
 import { UserConfigContext } from "../../contexts/UserConfigContext";
 import { enrichBets } from "../../utils/bets";
 import web3 from "../../utils/web3";
@@ -23,6 +23,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const {a: pathAccount} = router.query
     
   const {showRows} = React.useContext(UserConfigContext)
+  const { fetchArchivedRounds, fetchBets } = React.useContext(BlockchainContext)
 
   React.useEffect(() => {
     const a = typeof pathAccount === "string" ? pathAccount : userAccount

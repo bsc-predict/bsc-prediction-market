@@ -5,15 +5,10 @@ import AppWrapper from '../../src/wrapper'
 
 
 const BnbUsdt: React.FunctionComponent = () => {
-  const {setChain} = React.useContext(BlockchainContext)
-
-  React.useEffect(() => {
-    setChain("main")
-  }, [setChain])
 
   return (
     <AppWrapper title="BSC Predictions" description="Binance Smart Chain (BSC) Prediction Markets">
-      <GamePage />
+      <GamePage chain="main"/>
     </AppWrapper>
   )
 }

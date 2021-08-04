@@ -1,7 +1,7 @@
 import React from "react"
-import { fetchBets } from "../api"
 import { usePrevious } from "../hooks/usePrevious"
 import { enrichBets } from "../utils/bets"
+import { BlockchainContext } from "./BlockchainContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RoundsContext } from "./RoundsContext"
 
@@ -25,6 +25,8 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   
   const {setMessage} = React.useContext(NotificationsContext)
   const {rounds} = React.useContext(RoundsContext)
+  const {fetchBets} = React.useContext(BlockchainContext)
+
   const archivedRounds = React.useRef<Round[]>([])
 
   const prevAccount = usePrevious(account)
@@ -48,7 +50,7 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
           // bet might be pending, don't override with new bets!
           const pending = prior.filter(b => b.status === "pending")
           const exclude = new Set(pending.map(p => p.timeStamp))
-          const updated = enrichBets(bets, archivedRounds.current, claimed).filter(b => !exclude.has(b.timeStamp))
+          const updated = enrichBets(bets, archivedRounds.current, new Set(claimed)).filter(b => !exclude.has(b.timeStamp))
           return pending.concat(updated).sort((a, b) => a.timeStamp > b.timeStamp ? -1 : 1)
         }))
         .catch(() => setMessage({type: "error", message: 'Failed to retrieve bets', title: "Error", duration: 5000}))
