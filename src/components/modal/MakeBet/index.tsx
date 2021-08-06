@@ -45,7 +45,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
     makeBet(
       curDirection,
       size,
-      () => setMessage({type: "info", title: "Bet confirmed", duration: 5000}),
+      () => setMessage({type: "info", title: "Bet sent", duration: 5000}),
       () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
       (e?: Error) => setMessage({type: "info", title: "Bet failed", message: e?.message || "", duration: 7000}),
     )

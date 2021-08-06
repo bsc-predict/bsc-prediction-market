@@ -26,13 +26,13 @@ const Urls = {
     test: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
   },
   latestRounds: {
-    main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/latest.csv",
+    main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/main/latest.csv",
     // TODO: Start archiving test
-    test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/latest.csv",
+    test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/test/latest.csv",
   },
   allRounds: {
-    main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/rounds.csv",
-    test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/rounds.csv",
+    main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/main/rounds.csv",
+    test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/test/rounds.csv",
   },
 }
 
