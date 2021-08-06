@@ -1,7 +1,7 @@
 import React from "react"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { createArray } from "../utils/utils"
-import { BlockchainContext } from "./BlockchainContext"
+import { ContractContext } from "./ContractContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
 import { UserConfigContext } from "./UserConfigContext"
@@ -22,7 +22,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
   const [rounds, setRounds] = React.useState<{cur: Round[], latest: Round[]}>({cur: [], latest: []})
   const [paused, setPaused] = React.useState(false)
 
-  const { fetchLatestRounds, fetchRounds, fetchCurrentEpoch, fetchGamePaused } = React.useContext(BlockchainContext)
+  const { fetchLatestRounds, fetchRounds, fetchCurrentEpoch, fetchGamePaused } = React.useContext(ContractContext)
 
   const requiresPolling = useRequiresPolling()
 
@@ -63,7 +63,8 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
       .sort((a, b) => a.epochNum < b.epochNum ? 1 : -1)
       .slice(0, 2) // poll no more than 2 (live and upcoming)
       .map(r => r.epoch))
-    if (!archivedRounds.current.some(r => r.lockPriceNum === 0)) {
+    const last = archivedRounds.current.sort((a, b) => a.epochNum < b.epochNum ? 1 : -1)?.[0]
+    if (last === undefined || last.lockPriceNum === 0) {
       fetchLatestRounds(showRows, archivedRounds.current.filter(r => r.oracleCalled).map(r => r.epoch)).then(updateRounds)
     }
     toPoll.current = p

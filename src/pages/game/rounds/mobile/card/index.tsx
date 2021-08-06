@@ -1,6 +1,4 @@
-import { useWeb3React } from "@web3-react/core"
 import React from "react"
-import { AccountContext } from "../../../../../contexts/AccountContext"
 import { BlockContext } from "../../../../../contexts/BlockContext"
 import { OracleContext } from "../../../../../contexts/OracleContext"
 import { getRoundInfo } from "../../../../../utils/utils"
@@ -29,7 +27,9 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   }
   return(
     <div className="mb-4 border">
-      <div className={live ? "text-xl p-2 mt-2 font-bold bg-primary text-primary-content" : "text-xl p-2 mt-2 font-bold"}>{round.epoch} {live ? " (Live)" : ""}</div>
+      <div className={live ? "text-xl p-2 mt-2 font-bold bg-primary text-primary-content" : "text-xl p-2 mt-2 font-bold"}>
+        {round.epoch} {live ? " (Live)" : ""}
+      </div>
       <table>
         <tbody>
           <tr>

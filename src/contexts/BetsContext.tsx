@@ -1,7 +1,7 @@
 import React from "react"
 import { usePrevious } from "../hooks/usePrevious"
 import { enrichBets } from "../utils/bets"
-import { BlockchainContext } from "./BlockchainContext"
+import { ContractContext } from "./ContractContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RoundsContext } from "./RoundsContext"
 
@@ -25,7 +25,7 @@ const BetsContextProvider: React.FunctionComponent = ({ children }) => {
   
   const {setMessage} = React.useContext(NotificationsContext)
   const {rounds} = React.useContext(RoundsContext)
-  const {fetchBets} = React.useContext(BlockchainContext)
+  const {fetchBets} = React.useContext(ContractContext)
 
   const archivedRounds = React.useRef<Round[]>([])
 

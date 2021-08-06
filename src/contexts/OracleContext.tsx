@@ -1,6 +1,6 @@
 import React from "react"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
-import { BlockchainContext } from "./BlockchainContext"
+import { ContractContext } from "./ContractContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
 
@@ -12,7 +12,7 @@ const OracleContextProvider: React.FunctionComponent = ({ children }) => {
   const requiresPolling = useRequiresPolling()
   const {slow} = React.useContext(RefreshContext)
   const {setMessage} = React.useContext(NotificationsContext)
-  const {fetchLatestOracleRound} = React.useContext(BlockchainContext)
+  const {fetchLatestOracleRound} = React.useContext(ContractContext)
   
   React.useEffect(() => {
     if (requiresPolling) {

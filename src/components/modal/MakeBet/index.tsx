@@ -3,7 +3,7 @@ import { AccountContext } from "../../../contexts/AccountContext"
 import web3 from "../../../utils/web3"
 import { BetsContext } from "../../../contexts/BetsContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
-import { BlockchainContext } from "../../../contexts/BlockchainContext"
+import { ContractContext } from "../../../contexts/ContractContext"
 import { useRouter } from "next/router"
 
 interface MakeBetProps {
@@ -23,9 +23,8 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const {balance} = React.useContext(AccountContext)
   const {setMessage} = React.useContext(NotificationsContext)
 
-  const {makeBet} = React.useContext(BlockchainContext)
+  const {makeBet} = React.useContext(ContractContext)
   const router = useRouter()
-  const closePath = `${router.pathname}#`
 
   React.useEffect(() => {
     if (selectedPerc !== undefined) {
@@ -49,12 +48,12 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
       () => setMessage({type: "info", title: "Bet confirmed", duration: 5000}),
       () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
       (e?: Error) => setMessage({type: "info", title: "Bet failed", message: e?.message || "", duration: 7000}),
-      )
+    )
       .then(() => {
         fetchBets()
         setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})
       })
-      .then(() => router.push(closePath))
+      .then(() => router.back())
       .finally(() => setIsLoading(false))
   }
 
@@ -65,7 +64,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
       <div className="modal-box">
         <div className="flex justify-between items-center pb-3">
           <p className="text-2xl font-bold">Bet</p>
-          <a className="modal-close cursor-pointer z-50" href={closePath}>
+          <a className="modal-close cursor-pointer z-50" onClick={() => router.back()}>
             <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
               <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
             </svg>
@@ -117,7 +116,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
             </div>
           </div>
                   <div className="modal-action">
-            <a href={closePath} className="btn btn-ghost">Close</a>
+            <a onClick={() => router.back()} className="btn btn-ghost">Close</a>
             <button className="btn btn-primary" onClick={handleOnSuccess} disabled={isLoading}>Bet</button>
           </div>
 

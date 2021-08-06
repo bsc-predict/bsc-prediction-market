@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core"
 import React from "react"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
-import { BlockchainContext } from "./BlockchainContext"
+import { ContractContext } from "./ContractContext"
 import { RefreshContext } from "./RefreshContext"
 
 const AccountContext = React.createContext<{account?: string, balance?: BalanceInfo}>({})
@@ -18,7 +18,7 @@ const AccountContextProvider: React.FunctionComponent = ({ children }) => {
   const requiresPolling = useRequiresPolling()
   const {account} = useWeb3React()
   const {slow} = React.useContext(RefreshContext)
-  const {fetchBalance} = React.useContext(BlockchainContext)
+  const {fetchBalance} = React.useContext(ContractContext)
   const first = React.useRef(true)
 
   React.useEffect(() => {

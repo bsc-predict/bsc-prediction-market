@@ -1,5 +1,4 @@
 import React from 'react'
-import { BlockchainContext } from '../../src/contexts/BlockchainContext'
 import GamePage from '../../src/pages/game'
 import AppWrapper from '../../src/wrapper'
 

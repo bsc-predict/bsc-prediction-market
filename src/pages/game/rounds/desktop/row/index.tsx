@@ -27,7 +27,12 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   } else if (winner === "bull") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
+  } else if (Number(curPriceDisplay) > 0) {
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
+  } else if (Number(curPriceDisplay) < 0) {
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
   }
+
   return(
     <tr className={live ? "active" : undefined}>
       <td className={rowClass}>{round.epoch}</td>

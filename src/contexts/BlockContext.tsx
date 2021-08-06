@@ -1,6 +1,6 @@
 import React from "react"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
-import { BlockchainContext } from "./BlockchainContext"
+import { ContractContext } from "./ContractContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
 
@@ -11,7 +11,7 @@ const BlockContextProvider: React.FunctionComponent = ({ children }) => {
 
   const requiresPolling = useRequiresPolling()
   const {setMessage} = React.useContext(NotificationsContext)
-  const {fetchBlockNumber} = React.useContext(BlockchainContext)
+  const {fetchBlockNumber} = React.useContext(ContractContext)
   const {fast2} = React.useContext(RefreshContext)
   
   React.useEffect(() => {

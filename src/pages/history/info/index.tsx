@@ -1,5 +1,5 @@
 import React from "react"
-import { BlockchainContext } from "../../../contexts/BlockchainContext"
+import { ContractContext } from "../../../contexts/ContractContext"
 import { calcMaxDrawdown } from "../../../utils/bets"
 import { prettyNumber } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
@@ -16,7 +16,7 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
   const [curAccount, setCurAccount] = React.useState("")
-  const {fetchBalance} = React.useContext(BlockchainContext)
+  const {fetchBalance} = React.useContext(ContractContext)
   
   React.useEffect(() => {
     setCurAccount(account)

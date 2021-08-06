@@ -2,7 +2,7 @@ import React from 'react'
 import { MakBetBull, MakeBetBear } from '../../components/modal/MakeBet'
 import { AccountContextProvider } from '../../contexts/AccountContext'
 import { BetsContextProvider } from '../../contexts/BetsContext'
-import { BlockchainContext, BlockchainContextProvider, Chain } from '../../contexts/BlockchainContext'
+import { ContractContextProvider, Chain } from '../../contexts/ContractContext'
 import { BlockContextProvider } from '../../contexts/BlockContext'
 import { OracleContextProvider } from '../../contexts/OracleContext'
 import { RoundsContextProvider } from '../../contexts/RoundsContext'
@@ -19,7 +19,7 @@ const GamePage: React.FunctionComponent<{chain: Chain}> = ({chain}) => {
   const tabs: TabTypes[] = ["Play", "History"]
 
   return (
-    <BlockchainContextProvider chain={chain}>
+    <ContractContextProvider chain={chain}>
       <AccountContextProvider>
         <BlockContextProvider>
           <RoundsContextProvider>
@@ -51,7 +51,7 @@ const GamePage: React.FunctionComponent<{chain: Chain}> = ({chain}) => {
           </RoundsContextProvider>
         </BlockContextProvider>
       </AccountContextProvider>
-    </BlockchainContextProvider>
+    </ContractContextProvider>
   )
 }
 

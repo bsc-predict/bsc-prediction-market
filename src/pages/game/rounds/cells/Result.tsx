@@ -1,6 +1,6 @@
 import React from "react"
 import { BetsContext } from "../../../../contexts/BetsContext"
-import { BlockchainContext } from "../../../../contexts/BlockchainContext"
+import { ContractContext } from "../../../../contexts/ContractContext"
 import { NotificationsContext } from "../../../../contexts/NotificationsContext"
 import web3 from "../../../../utils/web3"
 
@@ -14,7 +14,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   const {round, bet, winner} = props
   const {fetchBets} = React.useContext(BetsContext)
   const {setMessage} = React.useContext(NotificationsContext)
-  const {claim} = React.useContext(BlockchainContext)
+  const {claim} = React.useContext(ContractContext)
   
   const handleClaim = () => {
     if (bet && bet.epoch) {

@@ -37,7 +37,7 @@ const Urls = {
 }
 
 
-interface IBlockchainContext {
+interface IContractContext {
   makeBet: (b: BetType, eth: number, onSent: () => void, onConfirmed: () => void, onError: (e?: Error) => void) => Promise<void>
   claim: (epoch: string, onSent: () => void, onConfirmed: () => void, onError: (e?: Error) => void) => Promise<void>
   fetchBalance: (a: string) => Promise<Balance>
@@ -52,7 +52,7 @@ interface IBlockchainContext {
   fetchBlockNumber: () => Promise<number>
 }
 
-const BlockchainContext = React.createContext<IBlockchainContext>({
+const ContractContext = React.createContext<IContractContext>({
   makeBet: () => Promise.reject(),
   claim: () => Promise.reject(),
   fetchBalance: () => Promise.reject(),
@@ -67,9 +67,13 @@ const BlockchainContext = React.createContext<IBlockchainContext>({
   fetchBlockNumber: () => Promise.reject(),
 })
 
-const BlockchainContextProvider: React.FunctionComponent<{chain: Chain}> = ({ children, chain }) => {
+const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ children, chain }) => {
   
   const { library, account } = useWeb3React()
+
+  React.useEffect(() => {
+    
+  }, [])
 
   const web3Provider = React.useCallback(() => {
     const rpc = chain === "test" ? Urls.rpc.test : Urls.rpc.main
@@ -108,7 +112,7 @@ const BlockchainContextProvider: React.FunctionComponent<{chain: Chain}> = ({ ch
       .once('sent', onSent)
       .once('confirmation', onConfirmed)
       .once('error', onError)
-  }, [library])
+  }, [library, account])
   
   const claim = React.useCallback(async (
     epoch: string,
@@ -124,7 +128,7 @@ const BlockchainContextProvider: React.FunctionComponent<{chain: Chain}> = ({ ch
       .once('sending', onSent)
       .once('confirmation', onConfirmed)
       .once('error', onError)
-  }, [library])
+  }, [library, account])
 
   const fetchCurrentEpoch = React.useCallback(async (): Promise<string> => {
     const web3 = web3Provider()
@@ -196,7 +200,7 @@ const BlockchainContextProvider: React.FunctionComponent<{chain: Chain}> = ({ ch
   }, [])
   
 
-  return <BlockchainContext.Provider value={{
+  return <ContractContext.Provider value={{
     makeBet,
     claim,
     fetchBalance,
@@ -209,7 +213,7 @@ const BlockchainContextProvider: React.FunctionComponent<{chain: Chain}> = ({ ch
     fetchBnbPrice,
     fetchArchivedRounds,
     fetchBlockNumber,
-  }}>{children}</BlockchainContext.Provider>
+  }}>{children}</ContractContext.Provider>
 }
   
-export { BlockchainContext, BlockchainContextProvider }
+export { ContractContext, ContractContextProvider }

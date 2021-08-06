@@ -2,7 +2,7 @@ import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import React from "react"
 import Notification from "../../components/notifications";
-import { BlockchainContext } from "../../contexts/BlockchainContext";
+import { ContractContext } from "../../contexts/ContractContext";
 import { UserConfigContext } from "../../contexts/UserConfigContext";
 import { enrichBets } from "../../utils/bets";
 import web3 from "../../utils/web3";
@@ -23,7 +23,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const {a: pathAccount} = router.query
     
   const {showRows} = React.useContext(UserConfigContext)
-  const { fetchArchivedRounds, fetchBets } = React.useContext(BlockchainContext)
+  const { fetchArchivedRounds, fetchBets } = React.useContext(ContractContext)
 
   React.useEffect(() => {
     const a = typeof pathAccount === "string" ? pathAccount : userAccount
@@ -46,7 +46,7 @@ const HistoryPage: React.FunctionComponent = () => {
     } else {
       setIsLoading(false)
     }
-  }, [rounds, account])
+  }, [fetchBets, rounds, account])
 
   React.useEffect(() => {
     if (!account) {
@@ -58,7 +58,7 @@ const HistoryPage: React.FunctionComponent = () => {
   React.useEffect(() => {
     fetchArchivedRounds(false)
       .then(r => setRounds(r))
-  }, [])
+  }, [fetchArchivedRounds])
 
   const handleSetAccount = React.useCallback((a: string) => setAccount(a), [])
 
