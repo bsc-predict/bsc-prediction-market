@@ -1,6 +1,7 @@
 import { useRouter } from "next/router"
 import React from "react"
 
+const pollingMatch = /^\/(main|test)\/.+/g
 
 export const useRequiresPolling = () => {
   const {pathname} = useRouter()
@@ -8,7 +9,7 @@ export const useRequiresPolling = () => {
   const requiresPolling = React.useRef(false)
   
   React.useEffect(() => {
-    if (pathname.toLowerCase().startsWith("/main/")) {
+    if (pathname.match(pollingMatch)) {
       requiresPolling.current = true
     } else {
       requiresPolling.current = false

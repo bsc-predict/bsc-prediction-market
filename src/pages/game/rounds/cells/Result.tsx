@@ -1,8 +1,7 @@
 import React from "react"
 import { BetsContext } from "../../../../contexts/BetsContext"
-import { BlockchainContext } from "../../../../contexts/BlockchainContext"
+import { ContractContext } from "../../../../contexts/ContractContext"
 import { NotificationsContext } from "../../../../contexts/NotificationsContext"
-import { usePredictionContract } from "../../../../contracts/prediction"
 import web3 from "../../../../utils/web3"
 
 interface ResultProps {
@@ -15,17 +14,19 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   const {round, bet, winner} = props
   const {fetchBets} = React.useContext(BetsContext)
   const {setMessage} = React.useContext(NotificationsContext)
-  const {chain} = React.useContext(BlockchainContext)
-
-  const {claim} = usePredictionContract(chain)
+  const {claim} = React.useContext(ContractContext)
   
   const handleClaim = () => {
     if (bet && bet.epoch) {
-      claim(bet.epoch)
-        .then(() => {
+      claim(
+        bet.epoch,
+        () => setMessage({type: "info", title: "Claim confirmed", message: "", duration: 5000}),
+        () => {
           fetchBets()
-          setMessage({type: "success", title: "Winnings claimed", message: "", duration: 5000})
-        })
+          setMessage({type: "success", title: "Claim processed", message: "", duration: 5000})
+        },
+        (e?: Error) => setMessage({type: "success", title: "Claim failed", message: e?.message, duration: 7000}),  
+      )
     }
   }
 

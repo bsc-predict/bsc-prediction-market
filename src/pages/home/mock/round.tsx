@@ -11,7 +11,7 @@ const initRound = {
 
 const MockRound: React.FunctionComponent = () => {
   const [round, setRound] = React.useState(initRound)
-  const [timeRemaining, setTimeRemaining] = React.useState(93)
+  const [timeRemaining, setTimeRemaining] = React.useState(0)
 
   React.useEffect(() => {
     setInterval(() => setTimeRemaining(prior => prior <= -10 ? 300 : prior - 1), 1000)

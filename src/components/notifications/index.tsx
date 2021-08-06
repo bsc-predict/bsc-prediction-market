@@ -3,7 +3,7 @@ import React from "react"
 export interface NotificationProps {
   type: "info" | "success" | "error" | "hidden"
   title: string
-  message: string
+  message?: string
   absolute: boolean
 }
 

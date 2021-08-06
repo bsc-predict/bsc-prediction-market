@@ -12,20 +12,23 @@ const Info: React.FunctionComponent = () => {
 
   const {account, balance} = React.useContext(AccountContext)
   const {block} = React.useContext(BlockContext)
-  const {rounds} = React.useContext(RoundsContext)
+  const {rounds, paused} = React.useContext(RoundsContext)
 
   const latestEpoch = React.useRef(-1)
 
   useInterval(() => setSecondsRemaining(prior => Math.max(0, prior - 1)), 1000)
 
   React.useEffect(() => {
-    const r = rounds.latest.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
-    if (r && r.epochNum !== latestEpoch.current) {
-      const t = Math.max(0, (r.lockBlockNum - block) * 3)
-      latestEpoch.current = r.epochNum
-      setSecondsRemaining(t)
+    if (!paused) {
+      const r = rounds.latest.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
+      if (r && r.epochNum !== latestEpoch.current) {
+        const t = Math.max(0, (r.lockBlockNum - block) * 3)
+        setSecondsRemaining(t)
+      }  
+    } else {
+      setSecondsRemaining(0)
     }
-  }, [block, rounds.latest])
+  }, [paused, block, rounds.latest])
 
   return(
     <div className="mb-5 mt-5">

@@ -1,6 +1,5 @@
 import React from "react"
-import { BlockchainContext } from "../../../contexts/BlockchainContext"
-import { getBalance } from "../../../utils/accounts"
+import { ContractContext } from "../../../contexts/ContractContext"
 import { calcMaxDrawdown } from "../../../utils/bets"
 import { prettyNumber } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
@@ -17,18 +16,17 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
   const [curAccount, setCurAccount] = React.useState("")
-  const {web3Provider} = React.useContext(BlockchainContext)
+  const {fetchBalance} = React.useContext(ContractContext)
   
   React.useEffect(() => {
     setCurAccount(account)
   }, [account])
 
   React.useEffect(() => {
-    const web3 = web3Provider()
     if (account) {
-      getBalance(web3, account).then(setBalance)
+      fetchBalance(account).then(setBalance)
     }
-  }, [account, web3Provider])
+  }, [account, fetchBalance])
 
   const handleUpdateAccount = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurAccount(e.currentTarget.value)

@@ -1,8 +1,7 @@
 import React from "react"
-import { usePredictionContract } from "../contracts/prediction"
 import { useRequiresPolling } from "../hooks/useRequiresPolling"
 import { createArray } from "../utils/utils"
-import { BlockchainContext } from "./BlockchainContext"
+import { ContractContext } from "./ContractContext"
 import { NotificationsContext } from "./NotificationsContext"
 import { RefreshContext } from "./RefreshContext"
 import { UserConfigContext } from "./UserConfigContext"
@@ -23,8 +22,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
   const [rounds, setRounds] = React.useState<{cur: Round[], latest: Round[]}>({cur: [], latest: []})
   const [paused, setPaused] = React.useState(false)
 
-  const {chain} = React.useContext(BlockchainContext)
-  const { fetchLatestRounds, fetchRounds, getCurrentEpoch, getGamePaused } = usePredictionContract(chain)
+  const { fetchLatestRounds, fetchRounds, fetchCurrentEpoch, fetchGamePaused } = React.useContext(ContractContext)
 
   const requiresPolling = useRequiresPolling()
 
@@ -53,15 +51,20 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
 
   const updatePaused = React.useCallback((update: Round[]) => {
     if (update.every(u => u.closePrice === "0")) {
-      getGamePaused().then(p => setPaused(p))
+      fetchGamePaused().then(p => setPaused(p))
     } else {
       setPaused(false)
     }
   }, [])
 
   const updatePoll = React.useCallback(async () => {
-    const p = new Set(archivedRounds.current.filter(r => r.closePriceNum === 0 || r.lockBlockNum === 0).map(r => r.epoch))
-    if (!archivedRounds.current.some(r => r.lockPriceNum === 0)) {
+    const p = new Set(archivedRounds.current
+      .filter(r => r.closePriceNum === 0 || r.lockBlockNum === 0)
+      .sort((a, b) => a.epochNum < b.epochNum ? 1 : -1)
+      .slice(0, 2) // poll no more than 2 (live and upcoming)
+      .map(r => r.epoch))
+    const last = archivedRounds.current.sort((a, b) => a.epochNum < b.epochNum ? 1 : -1)?.[0]
+    if (last === undefined || last.lockPriceNum === 0) {
       fetchLatestRounds(showRows, archivedRounds.current.filter(r => r.oracleCalled).map(r => r.epoch)).then(updateRounds)
     }
     toPoll.current = p
@@ -75,8 +78,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
         .catch(() => setMessage({type: "error", title: "Error", message: "Failed to update rounds", duration: 5000}))
         .finally(() => init.current = true)
     } else {
-      const to = await getCurrentEpoch()
-      console.log(to)
+      const to = await fetchCurrentEpoch()
       const available = new Set(archivedRounds.current.map(r => r.epochNum))
       const start = Math.max(0, Number(to) - ((page + 1) * showRows - 1))
       const end = start + showRows
@@ -101,7 +103,7 @@ const RoundsContextProvider: React.FunctionComponent = ({ children }) => {
           updateRounds(r)
           updatePaused(r)
         })
-        .catch((e: Error) => setMessage({type: "error", message: e.message, title: "Error", duration: 5000}))
+        .catch((e: Error | undefined) => setMessage({type: "error", message: e?.message, title: "Error", duration: 5000}))
     }
   }, [fast, updateRounds, updatePoll, requiresPolling])
   
