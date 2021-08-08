@@ -20,7 +20,6 @@ const AppWrapper: React.FunctionComponent<AppWrapperProps> = (props) => {
       <Head>
         <title>{title || "BSC Predictions"}</title>
         <meta name="description" content={description || "Binance Smart Chain (BSC) Prediction Markets"} />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex flex-col min-h-screen ">
         <AppHeader/>

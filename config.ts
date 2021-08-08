@@ -6,6 +6,6 @@ export const MY_SEO = {
       url: 'https://www.bscpredict.com',
       title: 'BSC Predict',
       description: 'Binance Smart Chain (BSC) Prediction Markets',
-      // image: '/steve-varley.jpg',
+      image: '/android-chrome-192x192.png',
   }
 };
