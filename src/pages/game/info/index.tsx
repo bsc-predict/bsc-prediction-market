@@ -16,14 +16,18 @@ const Info: React.FunctionComponent = () => {
 
   const latestEpoch = React.useRef(-1)
 
-  useInterval(() => setSecondsRemaining(prior => Math.max(0, prior - 1)), 1000)
+  React.useEffect(() => {
+    const interval = setInterval(() => setSecondsRemaining(prior => Math.max(0, prior - 1)), 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   React.useEffect(() => {
     if (!paused) {
       const r = rounds.latest.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
-      if (r && r.epochNum !== latestEpoch.current) {
+      if (r) {
         const t = Math.max(0, (r.lockBlockNum - block) * 3)
-        setSecondsRemaining(t)
+        latestEpoch.current = r.epochNum
+        setSecondsRemaining(prior => Math.abs(prior - t) < 10 ? prior : t)
       }  
     } else {
       setSecondsRemaining(0)

@@ -4,6 +4,7 @@ import React from "react"
 import Notification from "../../components/notifications";
 import { ContractContext } from "../../contexts/ContractContext";
 import { UserConfigContext } from "../../contexts/UserConfigContext";
+import useOnScreen from "../../hooks/useOnScreen";
 import { enrichBets } from "../../utils/bets";
 import web3 from "../../utils/web3";
 import RoundsTable from "../game/rounds/table";
@@ -25,13 +26,16 @@ const HistoryPage: React.FunctionComponent = () => {
   const {showRows} = React.useContext(UserConfigContext)
   const { fetchArchivedRounds, fetchBets } = React.useContext(ContractContext)
 
+  const ref = React.useRef<HTMLDivElement>(null)
+  const isVisble = useOnScreen(ref)
+
   React.useEffect(() => {
     const a = typeof pathAccount === "string" ? pathAccount : userAccount
     setAccount(a || undefined)
   }, [pathAccount, userAccount])
 
   React.useEffect(() => {
-    if (account && rounds.length > 0) {
+    if (isVisble && account && rounds.length > 0) {
       setIsLoading(true)
       setEnrichedBets([])
       fetchBets(account)
@@ -46,7 +50,7 @@ const HistoryPage: React.FunctionComponent = () => {
     } else {
       setIsLoading(false)
     }
-  }, [fetchBets, rounds, account])
+  }, [isVisble, fetchBets, rounds, account])
 
   React.useEffect(() => {
     if (!account) {
@@ -104,7 +108,7 @@ const HistoryPage: React.FunctionComponent = () => {
     }
 
 	return(
-    <div>
+    <div ref={ref}>
       <HistoricalInfo bets={enrichedBets} account={account || ""} changeAccount={handleSetAccount}/>
       {message}
       {(isLoading || showRounds.length > 0) &&

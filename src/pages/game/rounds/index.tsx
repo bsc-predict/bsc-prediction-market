@@ -15,17 +15,9 @@ const RoundsPage: React.FunctionComponent = () => {
 
   const {account} = useWeb3React()
   const {paused, rounds, loadRounds} = React.useContext(RoundsContext)
-  const {bets, fetchBets, setAccount} = React.useContext(BetsContext)
+  const {bets, setAccount} = React.useContext(BetsContext)
   const {showRows} = React.useContext(UserConfigContext)
-  const prevRounds = usePrevious(rounds)
 
-  React.useEffect(() => {
-    if (rounds.latest && prevRounds) {
-      if (Math.max(...prevRounds.latest.map(p => p.epochNum), 0) !== Math.max(...rounds.latest.map(p => p.epochNum), 0)) {
-        fetchBets()
-      }
-    }
-  }, [rounds, fetchBets, prevRounds])
 
   React.useEffect(() => {
     setAccount(account || undefined)

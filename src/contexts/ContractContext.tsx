@@ -27,7 +27,6 @@ const Urls = {
   },
   latestRounds: {
     main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/main/latest.csv",
-    // TODO: Start archiving test
     test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/test/latest.csv",
   },
   allRounds: {
@@ -145,6 +144,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchRounds = React.useCallback(async (epochs: Array<string | number>): Promise<Round[]> => {
+    console.log('fetching rounds')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -157,6 +157,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchLatestRounds = React.useCallback(async (n: number, skip: string[]): Promise<Round[]> => {  
+    console.log('fetching latest rounds')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
