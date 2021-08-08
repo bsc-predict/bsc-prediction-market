@@ -25,7 +25,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
           fetchBets()
           setMessage({type: "success", title: "Claim processed", message: "", duration: 5000})
         },
-        (e?: Error) => setMessage({type: "success", title: "Claim failed", message: e?.message, duration: 7000}),  
+        (e?: Error) => setMessage({type: "error", title: "Claim failed", message: e?.message, duration: 7000}),  
       )
     }
   }
