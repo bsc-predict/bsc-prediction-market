@@ -1,8 +1,8 @@
 import React from "react"
 import { AccountContext } from "../../../contexts/AccountContext"
 import { BlockContext } from "../../../contexts/BlockContext"
+import { ContractContext } from "../../../contexts/ContractContext"
 import { RoundsContext } from "../../../contexts/RoundsContext"
-import { useInterval } from "../../../hooks/useInterval"
 import { shortenAddress } from "../../../utils/accounts"
 import { toTimeString } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
@@ -13,6 +13,7 @@ const Info: React.FunctionComponent = () => {
   const {account, balance} = React.useContext(AccountContext)
   const {block} = React.useContext(BlockContext)
   const {rounds, paused} = React.useContext(RoundsContext)
+  const {chain} = React.useContext(ContractContext)
 
   const latestEpoch = React.useRef(-1)
 
@@ -27,6 +28,7 @@ const Info: React.FunctionComponent = () => {
       if (r) {
         const t = Math.max(0, (r.lockBlockNum - block) * 3)
         latestEpoch.current = r.epochNum
+        // rounds are updated every 5 seconds so if seconds remaining is correct +/- 10 seconds, don't update
         setSecondsRemaining(prior => Math.abs(prior - t) < 10 ? prior : t)
       }  
     } else {
@@ -53,6 +55,13 @@ const Info: React.FunctionComponent = () => {
           <div className="stat-title">Time Remaining</div>
           <div className="stat-value">
             ~{toTimeString(secondsRemaining)}
+          </div>
+          <div className="stat-desc">&nbsp;</div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Chain</div>
+          <div className={`stat-value ${chain === "main" ? "text-success" : "text-warning"}`}>
+            {chain}
           </div>
           <div className="stat-desc">&nbsp;</div>
         </div>

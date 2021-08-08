@@ -49,6 +49,7 @@ interface IContractContext {
   fetchBnbPrice: () => Promise<number>
   fetchArchivedRounds: (latest: boolean) => Promise<Round[]>
   fetchBlockNumber: () => Promise<number>
+  chain: Chain
 }
 
 const ContractContext = React.createContext<IContractContext>({
@@ -64,15 +65,12 @@ const ContractContext = React.createContext<IContractContext>({
   fetchBnbPrice: () => Promise.reject(),
   fetchArchivedRounds: () => Promise.reject(),
   fetchBlockNumber: () => Promise.reject(),
+  chain: "main",
 })
 
 const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ children, chain }) => {
   
   const { library, account } = useWeb3React()
-
-  React.useEffect(() => {
-    
-  }, [])
 
   const web3Provider = React.useCallback(() => {
     const rpc = chain === "test" ? Urls.rpc.test : Urls.rpc.main
@@ -214,6 +212,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
     fetchBnbPrice,
     fetchArchivedRounds,
     fetchBlockNumber,
+    chain,
   }}>{children}</ContractContext.Provider>
 }
   
