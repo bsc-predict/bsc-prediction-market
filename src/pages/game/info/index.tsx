@@ -1,3 +1,4 @@
+import Link from "next/link"
 import React from "react"
 import { AccountContext } from "../../../contexts/AccountContext"
 import { BlockContext } from "../../../contexts/BlockContext"
@@ -36,6 +37,8 @@ const Info: React.FunctionComponent = () => {
     }
   }, [paused, block, rounds.latest])
 
+  const otherChain = chain === "main" ? "test" : "main"
+
   return(
     <div className="mb-5 mt-5">
       <div className="md:stats">
@@ -61,7 +64,16 @@ const Info: React.FunctionComponent = () => {
         <div className="stat">
           <div className="stat-title">Chain</div>
           <div className={`stat-value ${chain === "main" ? "text-success" : "text-warning"}`}>
-            {chain}
+            <div className="dropdown dropdown-hover static cursor-default">
+              {chain}
+              <ul tabIndex={0} className="p-2 shadow menu dropdown-content text-base-content bg-base-100 rounded-box w-52">
+                <Link href={`/${otherChain}/bnbusdt`} passHref>
+                  <li>
+                    <a>{otherChain}</a>
+                  </li>
+                </Link>
+              </ul>
+            </div>
           </div>
           <div className="stat-desc">&nbsp;</div>
         </div>

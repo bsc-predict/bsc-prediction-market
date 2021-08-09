@@ -23,7 +23,7 @@ const Footer: React.FunctionComponent = () => {
         BSC Prediction Markets
       </div>
       <div className="hidden md:flex mt-12 mb-12 flex-row justify-center space-x-20">
-        <div className="w-48">
+        <div className="w-52">
           <div className="mb-4 block font-bold text-xl mb-8">Games</div>
           <div>
             <Link href="/main/bnbusdt">
@@ -32,8 +32,15 @@ const Footer: React.FunctionComponent = () => {
               </a>
             </Link>
           </div>
+          <div>
+            <Link href="/test/bnbusdt">
+              <a className={linkClass}>
+                BNB Predict (testnet)
+              </a>
+            </Link>
+          </div>
         </div>
-        <div className="w-48">
+        <div className="w-52">
           <div className="mb-4 block font-bold text-xl mb-8">Links</div>
           <div>
           <Link href={Links.pancakeSwap}>
@@ -47,7 +54,7 @@ const Footer: React.FunctionComponent = () => {
             </Link>
           </div>
         </div>
-        <div className="w-48">
+        <div className="w-52">
           <div className="mb-4 block font-bold text-xl mb-8">Help</div>
           <Link href={Links.about}>
             <a className={linkClass}>About</a>
