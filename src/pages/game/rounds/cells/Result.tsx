@@ -1,4 +1,5 @@
 import React from "react"
+import { BetsContext } from "../../../../contexts/BetsContext"
 import { ContractContext } from "../../../../contexts/ContractContext"
 import { NotificationsContext } from "../../../../contexts/NotificationsContext"
 import web3 from "../../../../utils/web3"
@@ -7,7 +8,7 @@ interface ResultProps {
   round: Round
   bet: Bet | undefined
   winner: string | undefined
-  claimCallback: () => void
+  claimCallback?: () => void
 }
 
 const Result: React.FunctionComponent<ResultProps> = (props) => {
@@ -16,7 +17,8 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
 
   const {setMessage} = React.useContext(NotificationsContext)
   const {claim} = React.useContext(ContractContext)
-  
+  const {fetchBets} = React.useContext(BetsContext)
+
   const handleClaim = () => {
     setClaiming(true)
     if (bet && bet.epoch) {
@@ -24,7 +26,8 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
         bet.epoch,
         () => setMessage({type: "info", title: "Claim confirmed", message: "", duration: 5000}),
         () => {
-          claimCallback()
+          fetchBets()
+          claimCallback?.()
           setMessage({type: "success", title: "Claim processed", message: "", duration: 5000})
           setClaiming(false)
         },

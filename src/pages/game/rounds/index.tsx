@@ -14,7 +14,7 @@ const RoundsPage: React.FunctionComponent = () => {
 
   const {account} = useWeb3React()
   const {paused, rounds, loadRounds} = React.useContext(RoundsContext)
-  const {bets, setAccount, fetchBets} = React.useContext(BetsContext)
+  const {bets, setAccount} = React.useContext(BetsContext)
   const {showRows} = React.useContext(UserConfigContext)
 
 
@@ -53,7 +53,6 @@ const RoundsPage: React.FunctionComponent = () => {
         setPage={handleSetPage}
         page={page}
         bets={bets}
-        claimCallback={fetchBets}
       />
     </React.Fragment>
   )

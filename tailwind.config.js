@@ -63,11 +63,11 @@ module.exports = {
           'neutral-content' : '#ffffff',   /* Foreground content color to use on neutral color */
 
           'base-100' : '#ffffff',          /* Base color of page, used for blank backgrounds */
-          'base-200' : '#f9fafb',          /* Base color, a little darker */
-          'base-300' : '#d1d5db',          /* Base color, even more darker */
+          'base-200' : '#ECF0F1',          /* Base color, a little darker */
+          'base-300' : '#BDC3C7',          /* Base color, even more darker */
           'base-content' : '#1f2937',      /* Foreground content color to use on base color */
 
-          'info' : '#3B82F6',              /* Info */
+          'info' : '#b9d5fd',              /* Info */
           'success' : '#059669',           /* Success */
           'warning' : '#F59E0B',           /* Warning */
           'error' : '#EF4444',             /* Error */
@@ -94,7 +94,7 @@ module.exports = {
           'base-300' : '#0a0813',          /* Base color, even more darker */
           'base-content' : '#eeeeee',      /* Foreground content color to use on base color */
 
-          'info' : '#93C5FD',              /* Info */
+          'info' : '#3F88C5',              /* Info */
           'success' : '#064E3B',           /* Success */
           'warning' : '#D97706',           /* Warning */
           'error' : '#831843',             /* Error */

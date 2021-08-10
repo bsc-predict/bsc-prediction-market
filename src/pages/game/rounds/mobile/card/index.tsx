@@ -8,7 +8,7 @@ import Result from "../../cells/Result"
 interface RoundCardProps {
   round: Round
   bet?: Bet
-  claimCallback: () => void
+  claimCallback?: () => void
 }
 
 const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {

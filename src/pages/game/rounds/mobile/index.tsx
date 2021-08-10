@@ -6,7 +6,7 @@ interface RoundsTableMobileProps {
   bets: Bet[]
   page: number
   onChangePage: (p: number) => void
-  claimCallback: () => void
+  claimCallback?: () => void
 }
 
 const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (props) => {  

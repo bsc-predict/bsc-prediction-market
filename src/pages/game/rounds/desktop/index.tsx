@@ -11,7 +11,7 @@ interface RoundsTableDesktopProps {
   page: number
   onChangePage: (p: number) => void
   numPages: number
-  claimCallback: () => void
+  claimCallback?: () => void
 }
 
 

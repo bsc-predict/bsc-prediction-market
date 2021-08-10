@@ -10,7 +10,7 @@ import { rowClass } from "../style"
 interface RoundRowProps {
   round: Round
   bet?: Bet
-  claimCallback: () => void
+  claimCallback?: () => void
 }
 
 const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {

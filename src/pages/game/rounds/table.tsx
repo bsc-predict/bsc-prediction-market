@@ -8,7 +8,7 @@ interface RoundsTableProps {
   setPage: (n: number) => void
   rounds: Round[]
   numPages: number
-  claimCallback: () => void
+  claimCallback?: () => void
 }
 
 const RoundsTable: React.FunctionComponent<RoundsTableProps> = (props) => {

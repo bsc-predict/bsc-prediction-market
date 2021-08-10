@@ -51,14 +51,14 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const maxDrawdown = web3.utils.fromWei(calcMaxDrawdown(bets.slice(0, performanceLast)).toString(), "ether")
   return(
     <div className="mb-5 mt-5 overflow-auto">
-      <div>
+      <div className="p-4">
         <label className="label">
-          <span className="label-text">Account</span>
+          <span className="label-text font-bold text-lg">Account</span>
         </label> 
         <input
           type="text"
           placeholder="Account"
-          className="input bg-accent w-full"
+          className="input bg-base-200 w-full"
           value={curAccount}
           onChange={handleUpdateAccount}
           onKeyDown={handleKeyDown}  
