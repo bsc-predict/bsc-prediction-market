@@ -63,3 +63,13 @@ interface Balance {
   balanceUsd: number
   bnbPrice: number
 }
+
+interface BetResponse {
+  bets: Array<{
+    value: string
+    blockNumber: string
+    direction: BetType
+    timeStamp: string
+  }>
+  claimed: number[]
+}

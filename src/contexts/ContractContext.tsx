@@ -45,7 +45,7 @@ interface IContractContext {
   fetchRounds: (epochs: Array<string | number>) => Promise<Round[]>
   fetchLatestRounds: (n: number, skip: string[]) => Promise<Round[]>
   fetchLatestOracleRound: () => Promise<Oracle>
-  fetchBets: (a: string) => Promise<{claimed: number[], bets: Bet[]}>
+  fetchBets: (a: string) => Promise<{claimed: Set<number>, bets: Bet[]}>
   fetchBnbPrice: () => Promise<number>
   fetchArchivedRounds: (latest: boolean) => Promise<Round[]>
   fetchBlockNumber: () => Promise<number>
@@ -176,8 +176,15 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   const fetchBets = React.useCallback(async (address: string) => {
     const web3 = web3Provider()
     const url = Urls.bets[chain](web3.utils.toChecksumAddress(address))
-    const res = await axios.get(url)
-    return {...res.data, claimed: new Set(res.data.claimed)}
+    const res = await axios.get(url) as {data: BetResponse}
+    const bets: Bet[] = res.data.bets.map(b => ({
+      ...b,
+      valueNum: Number(b.value),
+      valueEthNum: Number(web3.utils.fromWei(b.value, "ether")),
+      blockNumberNum: Number(b.blockNumber),
+    }))
+    const claimed = new Set(res.data.claimed)
+    return {bets, claimed}
   }, [])
   
   const fetchBnbPrice = React.useCallback(async (): Promise<number> => {

@@ -41,7 +41,7 @@ const HistoryPage: React.FunctionComponent = () => {
       setEnrichedBets([])
       fetchBets(account)
         .then(({bets, claimed}) => {
-          const c = userAccount === account ? new Set(claimed) : new Set(rounds.map(r => r.epochNum))
+          const c = userAccount === account ? claimed : new Set(rounds.map(r => r.epochNum))
           const enriched =
             enrichBets(bets, rounds, c)
               .filter(b => b.epoch)
@@ -98,13 +98,13 @@ const HistoryPage: React.FunctionComponent = () => {
         absolute={false}
         message="No account provided. Login or provide account in the account text field above"
       /> 
-  } else if (!isLoading && rounds.length === 0) {
+  } else if (!isLoading && showRounds.length === 0) {
       message =
         <Notification
           type="info"
-          title="No bets made"
+          title={unclaimed ? "No unclaimed bets" : "No bets made"}
           absolute={false}
-          message={`Account ${account} has not made any bets`}
+          message={`Account ${account} has ${unclaimed ? "no unclaimed bets" : "not made any bets"}`}
       />
     } else if (account && !web3.utils.isAddress(account)) {
       message = 
@@ -126,7 +126,6 @@ const HistoryPage: React.FunctionComponent = () => {
         setUnclaimed={handleSetUnclaimed}
       />
       {message}
-      {(!isLoading && showRounds.length === 0) && <div>Nothing to see here</div>}
       {(isLoading || showRounds.length > 0) &&
       <RoundsTable
         rounds={showRounds}
