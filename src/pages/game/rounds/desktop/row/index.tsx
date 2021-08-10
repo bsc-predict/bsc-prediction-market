@@ -10,10 +10,11 @@ import { rowClass } from "../style"
 interface RoundRowProps {
   round: Round
   bet?: Bet
+  claimCallback: () => void
 }
 
 const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
-  const {round, bet} = props
+  const {round, bet, claimCallback} = props
   
   const {block} = React.useContext(BlockContext)
   const {latestOracle} = React.useContext(OracleContext)
@@ -42,7 +43,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
       <td className={rowClass}>{lockPrice.toFixed(2)}</td>
       <td className={curPriceClass}>{curPriceDisplay}</td>
       <Position bet={bet} canBet={canBet}/>
-      <Result round={round} bet={bet} winner={winner}/>
+      <Result round={round} bet={bet} winner={winner} claimCallback={claimCallback}/>
     </tr>
   )
 }

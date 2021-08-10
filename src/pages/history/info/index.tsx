@@ -8,10 +8,12 @@ interface HistoricalInfoProps {
   bets: Bet[]
   account: string
   changeAccount: (a: string) => void
+  unclaimed?: boolean
+  setUnclaimed: (b: boolean) => void
 }
 
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
-  const {bets, account, changeAccount} = props
+  const {bets, account, changeAccount, unclaimed, setUnclaimed} = props
 
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
@@ -104,6 +106,21 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
           <div className="stat-value">{prettyNumber(performance, 4)}</div>
           <div className="stat-desc">Max drawdown: {prettyNumber(maxDrawdown, 4)}</div>
         </div>
+        {unclaimed !== undefined && <div className="stat">
+          <div className="stat-title flex align-center">
+            Unclaimed
+          </div>
+          <div className="stat-value">
+            <input
+              type="checkbox"
+              checked={unclaimed}
+              onChange={e => setUnclaimed(e.currentTarget.checked)}
+              className="toggle toggle-accent"
+            />
+          </div>
+          <div className="stat-desc">&nbsp;</div>
+
+        </div>}
       </div>
     </div>
   )

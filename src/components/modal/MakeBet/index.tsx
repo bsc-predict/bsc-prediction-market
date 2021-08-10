@@ -108,9 +108,8 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
                   onClick={() => setSelectedPerc(perc)}
                   className={perc === selectedPerc ? "btn btn-sm flex-grow btn-primary" : "btn btn-sm flex-grow btn-outline"}
                 >
-                  {perc}%
+                  {perc * 100}%
                 </button>
-                
               )}
               
             </div>

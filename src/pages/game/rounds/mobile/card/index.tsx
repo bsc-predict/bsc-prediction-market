@@ -8,10 +8,11 @@ import Result from "../../cells/Result"
 interface RoundCardProps {
   round: Round
   bet?: Bet
+  claimCallback: () => void
 }
 
 const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
-  const {round, bet} = props
+  const {round, bet, claimCallback} = props
  
   const {block} = React.useContext(BlockContext)
   const {latestOracle} = React.useContext(OracleContext)
@@ -58,7 +59,7 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
             </tr>
             <tr>
               <td className="w-48 px-5 p-1 border border-grey-800 text-center">Result</td>
-              <Result round={round} bet={bet} winner={winner} />
+              <Result round={round} bet={bet} winner={winner} claimCallback={claimCallback} />
             </tr>
           </tbody>
         </table>

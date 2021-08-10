@@ -6,10 +6,11 @@ interface RoundsTableMobileProps {
   bets: Bet[]
   page: number
   onChangePage: (p: number) => void
+  claimCallback: () => void
 }
 
 const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (props) => {  
-  const {rounds, bets, page, onChangePage} = props
+  const {rounds, bets, page, onChangePage, claimCallback} = props
 
   const scrollToTop = () => {
     window.scroll({
@@ -34,6 +35,7 @@ const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (prop
           key={r.epoch}
           round={r}
           bet={bets.find(b => b.epoch === r.epoch)}
+          claimCallback={claimCallback}
         />
       )}
       <button className="btn" onClick={handleMore}>Earlier</button>

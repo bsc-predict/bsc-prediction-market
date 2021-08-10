@@ -18,6 +18,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const [enrichedBets, setEnrichedBets] = React.useState<Bet[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [account, setAccount] = React.useState<string | undefined>()
+  const [unclaimed, setUnclaimed] = React.useState(false)
 
   const router = useRouter()
   const {account: userAccount} = useWeb3React()
@@ -34,14 +35,15 @@ const HistoryPage: React.FunctionComponent = () => {
     setAccount(a || undefined)
   }, [pathAccount, userAccount])
 
-  React.useEffect(() => {
+  const refreshBets = React.useCallback(() => {
     if (isVisble && account && rounds.length > 0) {
       setIsLoading(true)
       setEnrichedBets([])
       fetchBets(account)
-        .then(({bets}) => {
+        .then(({bets, claimed}) => {
+          const c = userAccount === account ? new Set(claimed) : new Set(rounds.map(r => r.epochNum))
           const enriched =
-            enrichBets(bets, rounds, new Set(rounds.map(r => r.epochNum)))
+            enrichBets(bets, rounds, c)
               .filter(b => b.epoch)
               .sort((a, b) => a.blockNumberNum > b.blockNumberNum ? -1 : 1)
             setEnrichedBets(enriched)            
@@ -50,8 +52,12 @@ const HistoryPage: React.FunctionComponent = () => {
     } else {
       setIsLoading(false)
     }
-  }, [isVisble, fetchBets, rounds, account])
-
+  }, [isVisble, fetchBets, rounds, account, userAccount])
+  
+  React.useEffect(() => {
+    refreshBets()
+  }, [refreshBets])
+  
   React.useEffect(() => {
     if (!account) {
       setEnrichedBets([])
@@ -65,17 +71,20 @@ const HistoryPage: React.FunctionComponent = () => {
   }, [fetchArchivedRounds])
 
   const handleSetAccount = React.useCallback((a: string) => setAccount(a), [])
+  const handleSetUnclaimed = React.useCallback((b: boolean) => setUnclaimed(b), [])
 
   React.useEffect(() => {
     const epochs = new Set(enrichedBets.map(b => b.epoch))
+    const unclaimedRounds = new Set(enrichedBets.filter(b => b.status === "claimable").map(b => b.epoch))
     const start = page * showRows
 
     const show = rounds
       .filter(r => epochs.has(r.epoch))
+      .filter(r => unclaimed === false || unclaimedRounds.has(r.epoch))
       .sort((r1, r2) => r2.epochNum < r1.epochNum ? -1 : 1)
       .slice(start, start + showRows)
     setShowRounds(show)
-  }, [enrichedBets, rounds, page, showRows])
+  }, [enrichedBets, rounds, page, showRows, unclaimed])
 
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
   
@@ -109,15 +118,23 @@ const HistoryPage: React.FunctionComponent = () => {
 
 	return(
     <div ref={ref}>
-      <HistoricalInfo bets={enrichedBets} account={account || ""} changeAccount={handleSetAccount}/>
+      <HistoricalInfo
+        bets={enrichedBets}
+        account={account || ""}
+        changeAccount={handleSetAccount}
+        unclaimed={userAccount === account ? unclaimed : undefined}
+        setUnclaimed={handleSetUnclaimed}
+      />
       {message}
+      {(!isLoading && showRounds.length === 0) && <div>Nothing to see here</div>}
       {(isLoading || showRounds.length > 0) &&
       <RoundsTable
         rounds={showRounds}
         setPage={handleSetPage}
         page={page}
         bets={enrichedBets}
-        numPages={Math.floor((enrichedBets.length - 1) / showRows)}
+        numPages={Math.floor((showRounds.length - 1) / showRows)}
+        claimCallback={refreshBets}
       />}
     </div>
   )

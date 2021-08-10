@@ -11,11 +11,12 @@ interface RoundsTableDesktopProps {
   page: number
   onChangePage: (p: number) => void
   numPages: number
+  claimCallback: () => void
 }
 
 
 const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (props) => {
-  const {rounds, bets, page, onChangePage, numPages} = props
+  const {rounds, bets, page, onChangePage, numPages, claimCallback} = props
 
   const {showRows, updateShowRows} = React.useContext(UserConfigContext)
   const betsMap = new Map<string, Bet>()
@@ -36,7 +37,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
         </thead>
         <tbody>
           {rounds.length === 0 && createArray(0, showRows).map(idx => <EmptyRow key={idx}/>)}
-          {rounds.map(r => <RoundRow key={r.epoch} round={r} bet={betsMap.get(r.epoch)}/>)}
+          {rounds.map(r => <RoundRow key={r.epoch} round={r} bet={betsMap.get(r.epoch)} claimCallback={claimCallback}/>)}
         </tbody>
       </table>
       <div className="flex float-left mt-4 items-center">
