@@ -40,7 +40,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   }
 
   let winAmount = ""
-  if (bet && bet?.direction === winner) {
+  if (bet && bet?.won) {
     const payout = winner === "bull" ? round.bullPayout : round.bearPayout
     winAmount = (bet.valueEthNum * payout).toFixed(4)
   }
@@ -48,18 +48,20 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
   const betValue = bet ? Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4) : ""
 
   let className = "px-5 p-1 border border-grey-800 text-center"
-  if (bet && bet?.direction === winner) {
+  if (bet && bet?.won) {
     className = "px-5 p-1 border border-grey-800 text-center bg-accent"
   } else if (bet) {
     className = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   }
+
   return(
     <td className={className}>
-      {bet && bet.direction !== winner && <span>{betValue}</span>}
-      {bet && bet.direction === winner && bet.status === "claimable" && !claiming &&
+      {bet && !bet.won && <span>{betValue}</span>}
+      {bet && bet.won && bet.status === "claimable" && !claiming &&
         <button className="btn btn-sm btn-accent text-accent-content font-bold" onClick={handleClaim}>→ {winAmount} ←</button>}
-      {bet && bet.direction === winner && (bet.status === "pending" || claiming) && "Claiming..."}
-      {bet && bet.direction === winner && bet.status !== "claimable" && <div>
+      {bet && bet.won && (bet.status === "pending" || claiming) && "Claiming..."}
+      {bet && bet.won && bet.status !== "claimable" &&
+        <div>
           <span >{winAmount}</span>
           <span>&nbsp;({betValue})</span>
         </div>}

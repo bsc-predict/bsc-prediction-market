@@ -17,7 +17,6 @@ const RoundsPage: React.FunctionComponent = () => {
   const {bets, setAccount} = React.useContext(BetsContext)
   const {showRows} = React.useContext(UserConfigContext)
 
-
   React.useEffect(() => {
     setAccount(account || undefined)
   }, [account, setAccount])

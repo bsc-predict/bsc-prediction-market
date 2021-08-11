@@ -2,6 +2,7 @@ import { useWeb3React } from "@web3-react/core";
 import { useRouter } from "next/router";
 import React from "react"
 import Notification from "../../components/notifications";
+import { BlockContext } from "../../contexts/BlockContext";
 import { ContractContext } from "../../contexts/ContractContext";
 import { UserConfigContext } from "../../contexts/UserConfigContext";
 import useOnScreen from "../../hooks/useOnScreen";
@@ -26,6 +27,7 @@ const HistoryPage: React.FunctionComponent = () => {
     
   const {showRows} = React.useContext(UserConfigContext)
   const { fetchArchivedRounds, fetchBets } = React.useContext(ContractContext)
+  const {blockRef} = React.useContext(BlockContext)
 
   const ref = React.useRef<HTMLDivElement>(null)
   const isVisble = useOnScreen(ref)
@@ -43,7 +45,7 @@ const HistoryPage: React.FunctionComponent = () => {
         .then(({bets, claimed}) => {
           const c = userAccount === account ? claimed : new Set(rounds.map(r => r.epochNum))
           const enriched =
-            enrichBets(bets, rounds, c)
+            enrichBets(bets, rounds, blockRef.current, c)
               .filter(b => b.epoch)
               .sort((a, b) => a.blockNumberNum > b.blockNumberNum ? -1 : 1)
             setEnrichedBets(enriched)            
@@ -52,8 +54,9 @@ const HistoryPage: React.FunctionComponent = () => {
     } else {
       setIsLoading(false)
     }
-  }, [isVisble, fetchBets, rounds, account, userAccount])
+  }, [isVisble, fetchBets, blockRef, rounds, account, userAccount])
   
+  console.log(enrichedBets.find(b => b.epoch === "597"))
   React.useEffect(() => {
     refreshBets()
   }, [refreshBets])
