@@ -36,7 +36,7 @@ interface RoundResponse {
   epoch: string
   lockBlock: string
   lockPrice: string
-  oracleCalled: boolean
+  oracleCalled: string
   rewardAmount: string
   rewardBaseCalAmount: string
   startBlock: string

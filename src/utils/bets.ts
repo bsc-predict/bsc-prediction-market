@@ -1,14 +1,19 @@
 import { PredictionConstants } from "../contracts/prediction"
 
 export const enrichBets = (bets: Bet[], rounds: Round[], blockNum: number, claimed?: Set<number>) => {
-  console.log(blockNum)
   const enriched = bets.map(bet => {
     const r = rounds.find(r_1 => bet.blockNumberNum > r_1.startBlockNum && bet.blockNumberNum < r_1.lockBlockNum)
     let won = false
     let wonAmount = -bet.valueNum
     let wonPerc = -1.0
+
+
     if (r) {
-      if (r.closePriceNum < r.lockPriceNum && bet.direction === "bear") {
+      if (r.oracleCalled === false && (blockNum > (r.lockBlockNum + PredictionConstants.bufferBlocks + PredictionConstants.intervalBlocks))) {
+        won = true
+        wonAmount = bet.valueNum
+        wonPerc = 0.0
+      } else  if (r.closePriceNum < r.lockPriceNum && bet.direction === "bear") {
         won = true
         wonAmount = (r.bearPayout - 1.0) * bet.valueNum
         wonPerc = (r.bearPayout - 1.0)
@@ -16,10 +21,6 @@ export const enrichBets = (bets: Bet[], rounds: Round[], blockNum: number, claim
         won = true
         wonAmount = (r.bullPayout - 1.0) * bet.valueNum
         wonPerc = (r.bullPayout - 1.0)
-      } else if (r.oracleCalled === false && (blockNum > (r.lockBlockNum + PredictionConstants.bufferBlocks))) {
-        won = true
-        wonAmount = bet.valueNum
-        wonPerc = 0.0
       } else {
         wonPerc = -1.0
         wonAmount = -bet.valueNum 

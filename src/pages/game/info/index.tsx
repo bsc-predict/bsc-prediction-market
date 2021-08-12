@@ -5,7 +5,7 @@ import { BlockContext } from "../../../contexts/BlockContext"
 import { ContractContext } from "../../../contexts/ContractContext"
 import { RoundsContext } from "../../../contexts/RoundsContext"
 import { shortenAddress } from "../../../utils/accounts"
-import { toTimeString } from "../../../utils/utils"
+import { toEther, toTimeString } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
 
 const Info: React.FunctionComponent = () => {
@@ -50,7 +50,7 @@ const Info: React.FunctionComponent = () => {
         <div className="stat">
           <div className="stat-title">Balance</div> 
           <div className="stat-value">
-            {balance !== undefined ? Number(web3.utils.fromWei(balance.balance, "ether")).toFixed(2) : ""}
+            {balance !== undefined ? Number(toEther(balance.balance, 2)) : ""}
           </div>
           <div className="stat-desc"> {balance ? `\$${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()}` : ""}</div>
         </div>

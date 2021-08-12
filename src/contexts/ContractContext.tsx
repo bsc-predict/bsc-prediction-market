@@ -142,7 +142,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchRounds = React.useCallback(async (epochs: Array<string | number>): Promise<Round[]> => {
-    console.log('fetching rounds')
+    // console.log('fetching rounds')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -155,7 +155,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchLatestRounds = React.useCallback(async (n: number, skip: string[]): Promise<Round[]> => {  
-    console.log('fetching latest rounds')
+    // console.log('fetching latest rounds')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)

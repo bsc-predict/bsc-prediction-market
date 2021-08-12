@@ -5,6 +5,7 @@ import { BetsContext } from "../../../contexts/BetsContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
 import { ContractContext } from "../../../contexts/ContractContext"
 import { useRouter } from "next/router"
+import { toEther } from "../../../utils/utils"
 
 interface MakeBetProps {
   direction: "bull" | "bear"
@@ -82,7 +83,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
               onChange={v => handleChangeSize(Number(v.currentTarget.value))}/>
             <p className="text-xs italic">
               Bet: ${Math.round(size * (balance?.bnbPrice || 0) * 100) / 100 }&nbsp;
-              Balance: {web3.utils.fromWei(balance?.balance || "0", "ether").slice(0,6)} (${balance?.balanceUsd.toLocaleString()})
+              Balance: {toEther(balance?.balance || "0", 6)} (${balance?.balanceUsd.toLocaleString()})
             </p>
           </div>
         </form>

@@ -2,6 +2,7 @@ import React from "react"
 import { BetsContext } from "../../../../contexts/BetsContext"
 import { ContractContext } from "../../../../contexts/ContractContext"
 import { NotificationsContext } from "../../../../contexts/NotificationsContext"
+import { toEther } from "../../../../utils/utils"
 import web3 from "../../../../utils/web3"
 
 interface ResultProps {
@@ -39,11 +40,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
     }
   }
 
-  let winAmount = ""
-  if (bet && bet?.won) {
-    const payout = winner === "bull" ? round.bullPayout : round.bearPayout
-    winAmount = (bet.valueEthNum * payout).toFixed(4)
-  }
+  let winAmount = bet?.wonAmount !== undefined ? toEther(bet.wonAmount, 4) : ""
 
   const betValue = bet ? Number(web3.utils.fromWei(bet.value, "ether")).toFixed(4) : ""
 

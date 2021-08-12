@@ -56,7 +56,6 @@ const HistoryPage: React.FunctionComponent = () => {
     }
   }, [isVisble, fetchBets, blockRef, rounds, account, userAccount])
   
-  console.log(enrichedBets.find(b => b.epoch === "597"))
   React.useEffect(() => {
     refreshBets()
   }, [refreshBets])
@@ -92,6 +91,9 @@ const HistoryPage: React.FunctionComponent = () => {
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
   
   let message: JSX.Element | null = null
+  const numPages = unclaimed ?
+    Math.floor((enrichedBets.filter(b => b.status === "claimable").length - 1) / showRows) :
+    Math.floor((rounds.length - 1) / showRows)
 
   if (!isLoading && !account) {
     message =
@@ -135,7 +137,7 @@ const HistoryPage: React.FunctionComponent = () => {
         setPage={handleSetPage}
         page={page}
         bets={enrichedBets}
-        numPages={Math.floor((showRounds.length - 1) / showRows)}
+        numPages={numPages}
         claimCallback={refreshBets}
       />}
     </div>

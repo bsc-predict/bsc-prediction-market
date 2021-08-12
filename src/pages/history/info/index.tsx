@@ -1,7 +1,7 @@
 import React from "react"
 import { ContractContext } from "../../../contexts/ContractContext"
 import { calcMaxDrawdown } from "../../../utils/bets"
-import { prettyNumber } from "../../../utils/utils"
+import { prettyNumber, toEther } from "../../../utils/utils"
 import web3 from "../../../utils/web3"
 
 interface HistoricalInfoProps {
@@ -68,7 +68,7 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
         <div className="stat">
           <div className="stat-title">Balance</div> 
           <div className="stat-value">
-            {balance !== undefined ? Number(web3.utils.fromWei(balance.balance, "ether")).toFixed(2) : ""}
+            {balance !== undefined ? toEther(balance.balance, 2): ""}
           </div>
           <div className="stat-desc">${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()}</div>
         </div>
