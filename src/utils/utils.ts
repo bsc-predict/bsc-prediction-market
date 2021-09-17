@@ -1,5 +1,25 @@
-import { PredictionConstants } from "../contracts/prediction";
-import web3 from "./web3";
+import Web3 from "web3";
+import { PredictionConstants } from "../contexts/ContractContext";
+
+const web3 = new Web3()
+
+interface BlockProps { initial: number, time: Date }
+
+export function binarySearch<T>(arr: Array<T>, f: (item: T) => 0 | 1 | -1): T | undefined {
+  let low = 0
+  let high = arr.length - 1
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+    const res = f(arr[mid])
+    if (res === 1) {
+      low = mid + 1
+    } else if (res === -1) {
+      high = mid - 1
+    } else {
+      return arr[mid]
+    }
+  }
+}
 
 export function randomChoice<T>(arr: T[]): T {
   return arr[Math.floor(arr.length * Math.random())];
@@ -18,7 +38,7 @@ export const camelToUnderscore = (key: string) => {
   return key.replace( /([A-Z])/g, "_$1").toLowerCase()
 }
 
-export const getRoundInfo = (round: Round, currentBlock: number, latestOracle?: Oracle) => {
+export const getRoundInfo = (round: Round, currentBlock: number, constants: PredictionConstants, latestOracle?: Oracle) => {
   let winner: "bull" | "bear" | undefined = undefined
   if (round.lockPriceNum && round.closePriceNum) {
     if (round.closePriceNum > round.lockPriceNum) {
@@ -28,7 +48,7 @@ export const getRoundInfo = (round: Round, currentBlock: number, latestOracle?: 
     }
   }
 
-  const canceled = !round.oracleCalled && (round.lockBlockNum + PredictionConstants.intervalBlocks + PredictionConstants.bufferBlocks) < currentBlock
+  const canceled = !round.oracleCalled && (round.lockBlockNum + constants.intervalBlocks + constants.bufferBlocks) < currentBlock
   const live = !canceled && round.closePriceNum === 0 && round.lockPriceNum > 0
   const curPrice = live && latestOracle ? (latestOracle.answer - round.lockPriceNum) : (round.closePriceNum - round.lockPriceNum)
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)
@@ -41,6 +61,24 @@ export const getRoundInfo = (round: Round, currentBlock: number, latestOracle?: 
     lockPrice,
     live
   }
+}
+
+export const fromWei = web3.utils.fromWei
+export const toWei = web3.utils.toWei
+export const toChecksumAddress = web3.utils.toChecksumAddress
+export const isAddress = web3.utils.isAddress
+
+export const calcBlockNumber = (p: { initial: number, time: Date }) => {
+  const {initial, time} = p
+  const now = new Date()
+  const seconds = (now.getTime() - time.getTime()) / 1000
+  const diff = Math.floor(seconds / 3)
+  return initial + diff
+}
+
+export const roundComplete = (r: Round, block: BlockProps, intervalBlocks: number, bufferBlocks: number) => {
+  const blockNum = calcBlockNumber(block)
+  return blockNum > (r.lockBlockNum + intervalBlocks + bufferBlocks)
 }
 
 export const toTimeString = (seconds: number) =>`${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, "0")}`
@@ -60,7 +98,10 @@ export const prettyNumber = (amount: string | number, percision: number) => {
   }
 }
 
-export const toEther = (wei: string | number, precision: number) => Number(web3.utils.fromWei(wei.toString(), "ether")).toFixed(precision)
+export const toEther = (wei: string | number, precision: number) => {
+  const n = typeof wei === "string" ? wei : Math.floor(wei).toString()
+  return Number(web3.utils.fromWei(n, "ether")).toFixed(precision)
+}
 
 export function isEqual(x: any, y: any) {
     if ( x === y ) return true;

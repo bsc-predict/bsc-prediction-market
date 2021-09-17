@@ -1,38 +1,53 @@
 import { useWeb3React } from "@web3-react/core";
-import { useRouter } from "next/router";
 import React from "react"
-import { BetsContext } from "../../../contexts/BetsContext"
-import { RoundsContext } from "../../../contexts/RoundsContext"
 import { UserConfigContext } from "../../../contexts/UserConfigContext"
 import RoundsTable from "./table";
 import Notification from "../../../components/notifications"
 import Info from "../info";
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
+import { fetchRounds } from "../../../thunks/round"
+import { fetchBets } from "../../../thunks/bet"
+import { createArray } from "../../../utils/utils"
 
 const RoundsPage: React.FunctionComponent = () => {
   const [page, setPage] = React.useState(0)
-  const { query } = useRouter()
+  const [displayRounds, setDisplayRounds] = React.useState<Round[]>([])
 
   const {account} = useWeb3React()
-  const {paused, rounds, loadRounds} = React.useContext(RoundsContext)
-  const {bets, setAccount} = React.useContext(BetsContext)
+  const game = useAppSelector(s => s.game.game)
+  const rounds = useAppSelector(s => s.game.rounds)
+  const paused = useAppSelector(s => s.game.paused)
+  
+  const latestEpoch = useAppSelector(s => s.game.rounds.reduce((prior, r) => r.epochNum > prior ? r.epochNum : prior, -1))
+  const bets = useAppSelector(s => s.game.bets)
+
+  const dispatch = useAppDispatch()
   const {showRows} = React.useContext(UserConfigContext)
 
   React.useEffect(() => {
-    setAccount(account || undefined)
-  }, [account, setAccount])
+    if (rounds.length === 0) {
+      setDisplayRounds([])
+    } else {
+      const startEpoch = latestEpoch - ((page + 1) * showRows) + 1
+      const endEpoch = startEpoch + showRows
+      const r = rounds.filter(r => (r.epochNum >= startEpoch) && (r.epochNum <= endEpoch))
+      setDisplayRounds(r)
+    }
+  }, [page, showRows, rounds, latestEpoch])
 
   React.useEffect(() => {
-    loadRounds(page)
-  }, [loadRounds, page])
+    if (account && game) {
+      dispatch<any>(fetchBets(account))
+    }
+  }, [account, dispatch, game])
 
-  React.useEffect(() => {
-    const page = Number(query.page)
-		if (!Number.isNaN(page)) {
-			setPage(page)
-		}
-  }, [loadRounds, query.page])
-
-	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
+	const handleSetPage = React.useCallback((p: number) => {
+    const startEpoch = latestEpoch - ((p + 1) * showRows)
+    const endEpoch = startEpoch + showRows
+    const epochs = createArray(startEpoch, endEpoch)
+    dispatch<any>(fetchRounds({epochs}))
+    setPage(p)
+  }, [latestEpoch, dispatch, showRows])
 
   return(
     <React.Fragment>
@@ -47,8 +62,8 @@ const RoundsPage: React.FunctionComponent = () => {
       </div>}
       <Info/>
       <RoundsTable
-        numPages={rounds.latest.length > 0 ? Math.floor((rounds.latest[0].epochNum - 2) / showRows) : 0}
-        rounds={page === 0 ? rounds.latest : rounds.cur}
+        numPages={displayRounds.length > 0 ? Math.floor((displayRounds[0].epochNum - 2) / showRows) : 0}
+        rounds={displayRounds}
         setPage={handleSetPage}
         page={page}
         bets={bets}

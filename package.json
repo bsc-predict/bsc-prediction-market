@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev":  "NODE_OPTIONS='--inspect' next dev -p 3002",
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 3002",
     "build": "next build",
     "start": "next start -p 3002",
     "lint": "next lint",
@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@binance-chain/bsc-connector": "^1.0.0",
+    "@reduxjs/toolkit": "^1.6.1",
     "@svgr/webpack": "^5.5.0",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",

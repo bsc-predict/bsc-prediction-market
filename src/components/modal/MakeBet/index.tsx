@@ -1,11 +1,10 @@
 import React from "react"
 import { AccountContext } from "../../../contexts/AccountContext"
-import web3 from "../../../utils/web3"
-import { BetsContext } from "../../../contexts/BetsContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
-import { ContractContext } from "../../../contexts/ContractContext"
 import { useRouter } from "next/router"
-import { toEther } from "../../../utils/utils"
+import { fromWei, toEther } from "../../../utils/utils"
+import { useAppDispatch } from "../../../hooks/reduxHooks"
+import { makeBet } from "../../../thunks/bet"
 
 interface MakeBetProps {
   direction: "bull" | "bear"
@@ -20,16 +19,16 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const [selectedPerc, setSelectedPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
 
-  const {fetchBets} = React.useContext(BetsContext)
-  const {balance} = React.useContext(AccountContext)
+  const {balance, account} = React.useContext(AccountContext)
   const {setMessage} = React.useContext(NotificationsContext)
 
-  const {makeBet} = React.useContext(ContractContext)
+  const dispatch = useAppDispatch()
+
   const router = useRouter()
 
   React.useEffect(() => {
     if (selectedPerc !== undefined) {
-      const bal = Number(web3.utils.fromWei(balance?.balance || "0"))
+      const bal = Number(fromWei(balance?.balance || "0"))
       const maxSize = bal - 0.005
       setSize(Math.round(Math.max(0, Math.min(bal * selectedPerc, maxSize)) * 10000) / 10000)  
     }
@@ -43,19 +42,17 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   
   const handleOnSuccess = () => {
     setIsLoading(true)
-    makeBet(
-      curDirection,
-      size,
-      () => setMessage({type: "info", title: "Bet sent", duration: 5000}),
-      () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
-      (e?: Error) => setMessage({type: "info", title: "Bet failed", message: e?.message || "", duration: 7000}),
-    )
-      .then(() => {
-        fetchBets()
-        setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})
-      })
-      .then(() => router.back())
-      .finally(() => setIsLoading(false))
+    dispatch<any>(makeBet({
+        direction: curDirection,
+        eth: size,
+        onSent: () => setMessage({type: "info", title: "Bet sent", duration: 5000}),
+        onConfirmed: () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
+        onError: (e?: Error) => setMessage({type: "info", title: "Bet failed", message: e?.message || "", duration: 7000})
+      },
+    ))
+    setIsLoading(false)
+
+    setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})
   }
 
   const percChoices = [0.1, 0.25, 0.5, 1.0]

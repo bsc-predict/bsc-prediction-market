@@ -1,7 +1,7 @@
 import React from "react"
-import { BlockContext } from "../../../../../contexts/BlockContext"
 import { OracleContext } from "../../../../../contexts/OracleContext"
-import { getRoundInfo } from "../../../../../utils/utils"
+import { useAppSelector } from "../../../../../hooks/reduxHooks"
+import { calcBlockNumber, getRoundInfo } from "../../../../../utils/utils"
 import Position from "../../cells/Position"
 import Result from "../../cells/Result"
 
@@ -14,10 +14,11 @@ interface RoundCardProps {
 const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   const {round, bet, claimCallback} = props
  
-  const {block} = React.useContext(BlockContext)
+  const block = useAppSelector(s => calcBlockNumber(s.game.block))
+  const constants = useAppSelector(s => ({bufferBlocks: s.game.bufferBlocks, rewardRate: s.game.rewardRate, intervalBlocks: s.game.intervalBlocks}))
   const {latestOracle} = React.useContext(OracleContext)
 
-  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
+  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, constants, latestOracle)
 
   const canBet = round.startBlockNum < block && round.lockBlockNum > block 
   let curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center"

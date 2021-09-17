@@ -3,11 +3,12 @@ import React from "react"
 import Web3 from "web3"
 import predictionAbi from "../contracts/prediction_abi.json"
 import oracleAbi from "../contracts/oracle_abi.json"
-import {AbiItem} from "web3-utils"
+import type {AbiItem} from "web3-utils"
 import { PredictionAddress, toRound } from "../contracts/prediction"
 import { OracleAddresses } from "../contracts/oracle"
 import axios from "axios"
 import { csvToJson } from "../api/utils"
+import { NotificationsContext } from "./NotificationsContext"
 
 export type Chain = "main" | "test"
 
@@ -36,7 +37,20 @@ const Urls = {
 }
 
 
+export interface PredictionConstants {
+  bufferBlocks: number
+  rewardRate: number
+  intervalBlocks: number
+}
+
+const initialConstants = {
+  bufferBlocks: 20,
+  rewardRate: 0.97,
+  intervalBlocks: 100
+}
+
 interface IContractContext {
+  constants: PredictionConstants
   makeBet: (b: BetType, eth: number, onSent: () => void, onConfirmed: () => void, onError: (e?: Error) => void) => Promise<void>
   claim: (epoch: string, onSent: () => void, onConfirmed: () => void, onError: (e?: Error) => void) => Promise<void>
   fetchBalance: (a: string) => Promise<Balance>
@@ -53,6 +67,7 @@ interface IContractContext {
 }
 
 const ContractContext = React.createContext<IContractContext>({
+  constants: initialConstants,
   makeBet: () => Promise.reject(),
   claim: () => Promise.reject(),
   fetchBalance: () => Promise.reject(),
@@ -69,13 +84,28 @@ const ContractContext = React.createContext<IContractContext>({
 })
 
 const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ children, chain }) => {
-  
+  const [constants, setConstants] = React.useState<PredictionConstants>(initialConstants)
+
+  const { setMessage } = React.useContext(NotificationsContext)
   const { library, account } = useWeb3React()
+
+  // initialize the contract constants
+  React.useEffect(() => {
+    const web3 = web3Provider()
+    const address = PredictionAddress[chain]
+    const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
+    const b = contract.methods.bufferBlocks().call() as Promise<string>
+    const r = contract.methods.rewardRate().call() as Promise<string>
+    const i = contract.methods.intervalBlocks().call() as Promise<string>
+    Promise.all([b, r, i]).then(([b, r, i]) => {
+      setConstants({bufferBlocks: Number(b), rewardRate: Number(r), intervalBlocks: Number(i)})
+    })
+  }, [chain])
 
   const web3Provider = React.useCallback(() => {
     const rpc = chain === "test" ? Urls.rpc.test : Urls.rpc.main
     return new Web3(rpc)
-  }, [])
+  }, [chain])
 
 
   const fetchBalance = React.useCallback(async (account: string): Promise<Balance> => {
@@ -128,6 +158,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [library, account])
 
   const fetchCurrentEpoch = React.useCallback(async (): Promise<string> => {
+    // console.log('fetching current epoch')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -135,6 +166,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchGamePaused = React.useCallback(async (): Promise<boolean> => {
+    // console.log('fetching paused')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -142,7 +174,6 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchRounds = React.useCallback(async (epochs: Array<string | number>): Promise<Round[]> => {
-    // console.log('fetching rounds')
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -155,7 +186,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchLatestRounds = React.useCallback(async (n: number, skip: string[]): Promise<Round[]> => {  
-    // console.log('fetching latest rounds')
+    // console.log(`fetching latest rounds ${n} ${skip}`)
     const web3 = web3Provider()
     const address = PredictionAddress[chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -166,6 +197,7 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [fetchRounds])
 
   const fetchLatestOracleRound = React.useCallback(async (): Promise<Oracle> => {
+    // console.log(`fetching latest oracle`)
     const web3 = web3Provider()
     const address = OracleAddresses[chain]
     const contract = new web3.eth.Contract(oracleAbi as AbiItem[], address)
@@ -174,20 +206,28 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
   
   const fetchBets = React.useCallback(async (address: string) => {
+    // console.log('fetching bets')
     const web3 = web3Provider()
     const url = Urls.bets[chain](web3.utils.toChecksumAddress(address))
-    const res = await axios.get(url) as {data: BetResponse}
-    const bets: Bet[] = res.data.bets.map(b => ({
-      ...b,
-      valueNum: Number(b.value),
-      valueEthNum: Number(web3.utils.fromWei(b.value, "ether")),
-      blockNumberNum: Number(b.blockNumber),
-    }))
-    const claimed = new Set(res.data.claimed)
-    return {bets, claimed}
+    return axios.get(url)
+      .then((res: {data: BetResponse}) => {
+        const bets: Bet[] = res.data.bets.map(b => ({
+          ...b,
+          valueNum: Number(b.value),
+          valueEthNum: Number(web3.utils.fromWei(b.value, "ether")),
+          blockNumberNum: Number(b.blockNumber),
+        }))
+        const claimed = new Set(res.data.claimed)
+        return {bets, claimed}
+      })
+      .catch(() => {
+        setMessage({type: "error", title: "Failed to fetch bets", duration: 5000})
+        return {bets: [], claimed: new Set<number>()}
+      })
   }, [])
   
   const fetchBnbPrice = React.useCallback(async (): Promise<number> => {
+    // console.log('fetching bnb price')
     const url = Urls.bnbPrice[chain]
     const res = await axios.get(url)
     return res.data.price
@@ -201,12 +241,14 @@ const ContractContextProvider: React.FunctionComponent<{chain: Chain}> = ({ chil
   }, [])
 
   const fetchBlockNumber = React.useCallback(() => {
+    // console.log('fetching block number')
     const web3 = web3Provider()
     return web3.eth.getBlockNumber()
   }, [])
   
 
   return <ContractContext.Provider value={{
+    constants,
     makeBet,
     claim,
     fetchBalance,

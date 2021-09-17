@@ -1,8 +1,7 @@
 import React from "react"
 import { ContractContext } from "../../../contexts/ContractContext"
 import { calcMaxDrawdown } from "../../../utils/bets"
-import { prettyNumber, toEther } from "../../../utils/utils"
-import web3 from "../../../utils/web3"
+import { fromWei, prettyNumber, toEther } from "../../../utils/utils"
 
 interface HistoricalInfoProps {
   bets: Bet[]
@@ -43,12 +42,12 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const betsWon = bets.filter(b => b.won).length
   const totalBets = bets.length
   const totalWon = Number(
-    web3.utils.fromWei(bets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
+    fromWei(bets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
   const biggestWin = bets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a, bets?.[0])
-  const biggestWinAmount = biggestWin ? Number(web3.utils.fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
+  const biggestWinAmount = biggestWin ? Number(fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
   
-  const performance = web3.utils.fromWei(bets.slice(0, performanceLast).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
-  const maxDrawdown = web3.utils.fromWei(calcMaxDrawdown(bets.slice(0, performanceLast)).toString(), "ether")
+  const performance = fromWei(bets.slice(0, performanceLast).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
+  const maxDrawdown = fromWei(calcMaxDrawdown(bets.slice(0, performanceLast)).toString(), "ether")
   return(
     <div className="mb-5 mt-5 overflow-auto">
       <div className="p-4">

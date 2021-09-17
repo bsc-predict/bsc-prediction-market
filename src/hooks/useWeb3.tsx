@@ -1,6 +1,5 @@
 import { useWeb3React } from "@web3-react/core"
 import Web3 from "web3"
-import { Chain } from "../contexts/ContractContext"
 
 export const useWeb3 = (chain: Chain) => {
   const { library } = useWeb3React()

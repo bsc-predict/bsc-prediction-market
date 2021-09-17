@@ -1,7 +1,7 @@
 import React from "react"
-import { BlockContext } from "../../../../../contexts/BlockContext"
 import { OracleContext } from "../../../../../contexts/OracleContext"
-import { getRoundInfo } from "../../../../../utils/utils"
+import { useAppSelector } from "../../../../../hooks/reduxHooks"
+import { calcBlockNumber, getRoundInfo } from "../../../../../utils/utils"
 import Position from "../../cells/Position"
 import Result from "../../cells/Result"
 import { rowClass } from "../style"
@@ -16,12 +16,13 @@ interface RoundRowProps {
 const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   const {round, bet, claimCallback} = props
   
-  const {block} = React.useContext(BlockContext)
+  const block = useAppSelector(s => calcBlockNumber(s.game.block))
+  const constants = useAppSelector(s => ({bufferBlocks: s.game.bufferBlocks, rewardRate: s.game.rewardRate, intervalBlocks: s.game.intervalBlocks}))
   const {latestOracle} = React.useContext(OracleContext)
   
   const canBet = bet === undefined && round.startBlockNum < block && round.lockBlockNum > block
 
-  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
+  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, constants, latestOracle)
 
   let curPriceClass = rowClass
   if (winner === "bear") {
