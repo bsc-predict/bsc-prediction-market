@@ -1,7 +1,5 @@
-import Link from "next/link"
 import { useRouter } from "next/router"
 import React from "react"
-import { AccountContext } from "../../../contexts/AccountContext"
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks"
 import { setGame } from "../../../stores/gameSlice"
 import { setupGame } from "../../../thunks/game"
@@ -16,8 +14,10 @@ const Info: React.FunctionComponent = () => {
   const block = useAppSelector(s => calcBlockNumber(s.game.block))
   const paused = useAppSelector(s => s.game.paused)
 
-  const {account, balance} = React.useContext(AccountContext)
   const dispatch = useAppDispatch()
+  const balance = useAppSelector(s => s.game.balance)
+  const account = useAppSelector(s => s.game.account)
+  
   const router = useRouter()
 
   const latestEpoch = React.useRef(-1)

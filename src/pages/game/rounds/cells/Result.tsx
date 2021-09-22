@@ -1,6 +1,4 @@
 import React from "react"
-import { AccountContext } from "../../../../contexts/AccountContext"
-import { ContractContext } from "../../../../contexts/ContractContext"
 import { NotificationsContext } from "../../../../contexts/NotificationsContext"
 import { useAppDispatch } from "../../../../hooks/reduxHooks"
 import { claim, fetchBets } from "../../../../thunks/bet"
@@ -12,12 +10,12 @@ interface ResultProps {
   winner: string | undefined
   claimCallback?: () => void
 }
+const account = "" // TODO: Hook up address
 
 const Result: React.FunctionComponent<ResultProps> = (props) => {
   const {bet, claimCallback} = props
   const [claiming, setClaiming] = React.useState(false)
 
-  const {account} = React.useContext(AccountContext)
   const {setMessage} = React.useContext(NotificationsContext)
   const dispatch = useAppDispatch()
   

@@ -1,9 +1,8 @@
 import React from "react"
-import { AccountContext } from "../../../contexts/AccountContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
 import { useRouter } from "next/router"
 import { fromWei, toEther } from "../../../utils/utils"
-import { useAppDispatch } from "../../../hooks/reduxHooks"
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks"
 import { makeBet } from "../../../thunks/bet"
 
 interface MakeBetProps {
@@ -19,10 +18,11 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const [selectedPerc, setSelectedPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
 
-  const {balance, account} = React.useContext(AccountContext)
   const {setMessage} = React.useContext(NotificationsContext)
 
   const dispatch = useAppDispatch()
+
+  const balance = useAppSelector(s => s.game.balance)
 
   const router = useRouter()
 

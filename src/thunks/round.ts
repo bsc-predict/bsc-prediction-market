@@ -51,7 +51,6 @@ export const fetchLatestRounds = createAsyncThunk(
     if (game === undefined || fetchingRounds !== "rounds/fetchLatest") {
       return {updatedRounds: [], paused: false}
     }
-    console.log(`fetching... ${game.chain}`)
 
     const availableEpochs = new Set(rounds.filter(r => roundComplete(r, block, intervalBlocks, bufferBlocks)).map(r => Number(r.id)))
     const contract = getContract(game)

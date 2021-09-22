@@ -13,7 +13,6 @@ export const enrichBets = (p: {
   const blockNum = calcBlockNumber(block)
   const enriched = bets.map(bet => {
     const r = binarySearch(rounds, r_1 => bet.blockNumberNum < r_1.startBlockNum ? 1 : bet.blockNumberNum >= r_1.lockBlockNum ? -1 : 0)
-    console.log(r === undefined)
     let won = false
     let wonAmount = -bet.valueNum
     let wonPerc = -1.0

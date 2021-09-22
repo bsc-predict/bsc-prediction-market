@@ -1,5 +1,6 @@
 import React from "react"
-import { ContractContext } from "../../../contexts/ContractContext"
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks"
+import { fetchBalance } from "../../../thunks/account"
 import { calcMaxDrawdown } from "../../../utils/bets"
 import { fromWei, prettyNumber, toEther } from "../../../utils/utils"
 
@@ -15,9 +16,10 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const {bets, account, changeAccount, unclaimed, setUnclaimed} = props
 
   const [performanceLast, setPerformanceLast] = React.useState(20)
-  const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceUsd: 0, bnbPrice: 0, balanceEth: "0"})
   const [curAccount, setCurAccount] = React.useState("")
-  const {fetchBalance} = React.useContext(ContractContext)
+
+  const dispatch = useAppDispatch()
+  const balance = useAppSelector(s => s.game.balance)
   
   React.useEffect(() => {
     setCurAccount(account)
@@ -25,9 +27,9 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
 
   React.useEffect(() => {
     if (account) {
-      fetchBalance(account).then(setBalance)
+      dispatch<any>(fetchBalance(account))
     }
-  }, [account, fetchBalance])
+  }, [account, dispatch])
 
   const handleUpdateAccount = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurAccount(e.currentTarget.value)

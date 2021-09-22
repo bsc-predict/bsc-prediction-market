@@ -1,5 +1,4 @@
 import React from "react"
-import { OracleContext } from "../../../../../contexts/OracleContext"
 import { useAppSelector } from "../../../../../hooks/reduxHooks"
 import { calcBlockNumber, getRoundInfo } from "../../../../../utils/utils"
 import Position from "../../cells/Position"
@@ -16,7 +15,7 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
  
   const block = useAppSelector(s => calcBlockNumber(s.game.block))
   const constants = useAppSelector(s => ({bufferBlocks: s.game.bufferBlocks, rewardRate: s.game.rewardRate, intervalBlocks: s.game.intervalBlocks}))
-  const {latestOracle} = React.useContext(OracleContext)
+  const latestOracle = undefined // TODO: Hook up oracle
 
   const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, constants, latestOracle)
 

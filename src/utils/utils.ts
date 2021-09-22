@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { PredictionConstants } from "../contexts/ContractContext";
+import { PredictionConstants } from "../constants";
 
 const web3 = new Web3()
 

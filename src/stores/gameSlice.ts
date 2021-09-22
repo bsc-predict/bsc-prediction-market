@@ -4,6 +4,7 @@ import { setupGame } from "../thunks/game"
 import { fetchBets } from "../thunks/bet"
 import { enrichBets } from "../utils/bets"
 import type { RootState } from "./index"
+import { fetchBalance } from "../thunks/account"
 
 export interface GameState {
   account?: string
@@ -17,6 +18,12 @@ export interface GameState {
   bets: Bet[]
   paused: boolean
   fetchingRounds?: string
+  balance: {
+    balance: string
+    balanceEth: string
+    balanceUsd: number
+    bnbPrice: number
+  }
 }
 
 const initialState: GameState = {
@@ -28,6 +35,12 @@ const initialState: GameState = {
   rounds: [],
   bets: [],
   paused: false,
+  balance: {
+    balance: "0",
+    balanceEth: "0",
+    balanceUsd: 0,
+    bnbPrice: 0,
+  }
 }
 
 export const gameSlice = createSlice({
@@ -125,6 +138,11 @@ export const gameSlice = createSlice({
           intervalBlocks: state.intervalBlocks
         })
         state.bets = enriched
+    })
+    .addCase(fetchBalance.fulfilled, (state, action) => {
+      if (action.payload) {
+        state.balance = action.payload
+      }
     })
   }
 })
