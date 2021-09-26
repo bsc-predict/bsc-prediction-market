@@ -12,7 +12,7 @@ const HomePage: React.FunctionComponent = () => {
         </div>
         <h1 className="text-4xl">BSC Predict</h1>
         <div className="text-xl">Predict BNB-USD movements in 5 minute intervals</div>
-        <Link href="/main/bnbusdt" passHref>
+        <Link href="/bnbusdt" passHref>
           <button className="btn btn-primary"><a>Play Now</a></button>
         </Link>
       </div>

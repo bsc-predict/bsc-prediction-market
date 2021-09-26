@@ -37,13 +37,8 @@ const AppHeader: React.FunctionComponent = () => {
               <div tabIndex={0} className="m-1 btn btn-ghost">Games</div>
               <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-60">
                 <li className="btn btn-square btn-block btn-ghost">
-                  <Link href="/main/bnbusdt" passHref>
+                  <Link href="/bnbusdt" passHref>
                     <a>BNB-USDT</a>
-                  </Link>
-                </li>
-                <li className="btn btn-square btn-block btn-ghost">
-                  <Link href="/test/bnbusdt" passHref>
-                    <a>BNB-USDT (testnet)</a>
                   </Link>
                 </li>
               </ul>

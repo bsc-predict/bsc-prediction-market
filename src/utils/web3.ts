@@ -1,3 +1,7 @@
 import Web3 from "web3"
+import { Urls } from "../constants"
 
-export default new Web3('https://bsc-dataseed1.binance.org:443')
+export const web3Provider = (chain: Chain) => {
+  const rpc = chain === "test" ? Urls.rpc.test : Urls.rpc.main
+  return new Web3(rpc)
+}

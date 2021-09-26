@@ -1,11 +1,10 @@
 import React from "react"
-import { AccountContext } from "../../../contexts/AccountContext"
-import web3 from "../../../utils/web3"
-import { BetsContext } from "../../../contexts/BetsContext"
 import { NotificationsContext } from "../../../contexts/NotificationsContext"
-import { ContractContext } from "../../../contexts/ContractContext"
 import { useRouter } from "next/router"
-import { toEther } from "../../../utils/utils"
+import { calcBlockTimestamp, fromWei, toEther } from "../../../utils/utils"
+import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks"
+import { makeBet } from "../../../thunks/bet"
+import { calcCanBet } from "../../../utils/bets"
 
 interface MakeBetProps {
   direction: "bull" | "bear"
@@ -20,16 +19,20 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   const [selectedPerc, setSelectedPerc] = React.useState<number | undefined>(0.1)
   const [curDirection, setCurDirection] = React.useState(direction)
 
-  const {fetchBets} = React.useContext(BetsContext)
-  const {balance} = React.useContext(AccountContext)
   const {setMessage} = React.useContext(NotificationsContext)
 
-  const {makeBet} = React.useContext(ContractContext)
-  const router = useRouter()
+  const dispatch = useAppDispatch()
+
+  const balance = useAppSelector(s => s.game.balance)
+  const epoch = useAppSelector(s => {
+    const timestamp = calcBlockTimestamp(s.game.block)
+    return s.game.rounds.find(r => calcCanBet(r, timestamp))?.epoch})
+
+    const router = useRouter()
 
   React.useEffect(() => {
     if (selectedPerc !== undefined) {
-      const bal = Number(web3.utils.fromWei(balance?.balance || "0"))
+      const bal = Number(fromWei(balance?.balance || "0"))
       const maxSize = bal - 0.005
       setSize(Math.round(Math.max(0, Math.min(bal * selectedPerc, maxSize)) * 10000) / 10000)  
     }
@@ -43,19 +46,20 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   
   const handleOnSuccess = () => {
     setIsLoading(true)
-    makeBet(
-      curDirection,
-      size,
-      () => setMessage({type: "info", title: "Bet sent", duration: 5000}),
-      () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
-      (e?: Error) => setMessage({type: "info", title: "Bet failed", message: e?.message || "", duration: 7000}),
-    )
-      .then(() => {
-        fetchBets()
-        setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})
-      })
-      .then(() => router.back())
-      .finally(() => setIsLoading(false))
+    if (epoch) {
+      dispatch<any>(makeBet({
+          epoch,
+          direction: curDirection,
+          eth: size,
+          onSent: () => setMessage({type: "info", title: "Bet sent", duration: 5000}),
+          onConfirmed: () => setMessage({type: "success", title: "Bet processed", duration: 5000}),
+          onError: (e?: Error) => setMessage({type: "error", title: "Bet failed", message: e?.message || "", duration: 7000})
+        },
+      ))
+      setIsLoading(false)
+
+      setMessage({type: "success", title: "Success", message: "Bet placed", duration: 5000})
+    }
   }
 
   const percChoices = [0.1, 0.25, 0.5, 1.0]
@@ -64,7 +68,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
     <div id={direction === "bear" ? "make-bet-bear-modal" : "make-bet-bull-modal"} className="modal">
       <div className="modal-box">
         <div className="flex justify-between items-center pb-3">
-          <p className="text-2xl font-bold">Bet</p>
+          <p className="text-2xl font-bold">Bet [{epoch}]</p>
           <a className="modal-close cursor-pointer z-50" onClick={() => router.back()}>
             <svg className="fill-current" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
               <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>

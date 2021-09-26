@@ -1,25 +1,24 @@
 interface Round {
-  id: string
   oracleCalled: boolean
   bearAmount: string
   bullAmount: string
   closePrice: string
   epoch: string
-  lockBlock: string
+  lockTimestamp: string
   lockPrice: string
   rewardAmount: string
   rewardBaseCalAmount: string
-  startBlock: string
+  startTimestamp: string
   totalAmount: string
   bearAmountNum: number
   bullAmountNum: number
   closePriceNum: number
   epochNum: number
-  lockBlockNum: number
+  lockTimestampNum: number
   lockPriceNum: number
   rewardAmountNum: number
   rewardBaseCalAmountNum: number
-  startBlockNum: number
+  startTimestampNum: number
   totalAmountNum: number
   bullPayout: number
   bearPayout: number
@@ -29,18 +28,28 @@ interface Round {
 }
 
 interface RoundResponse {
-  id: string
   bearAmount: string
   bullAmount: string
+  closeOracleId: string
   closePrice: string
+  closeTimestamp: string
   epoch: string
-  lockBlock: string
+  lockOracleId: string
   lockPrice: string
-  oracleCalled: string
+  lockTimestamp: string
+  oracleCalled: boolean
   rewardAmount: string
   rewardBaseCalAmount: string
-  startBlock: string
+  startTimestamp: string
   totalAmount: string
+}
+
+interface OracleResponse {
+  answer: string
+  answeredInRound: string
+  roundId: string
+  startedAt: string
+  updatedAt: string
 }
 
 interface Oracle {

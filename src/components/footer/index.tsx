@@ -26,16 +26,9 @@ const Footer: React.FunctionComponent = () => {
         <div className="w-52">
           <div className="mb-4 block font-bold text-xl mb-8">Games</div>
           <div>
-            <Link href="/main/bnbusdt">
+            <Link href="/bnbusdt">
               <a className={linkClass}>
                 BNB Predict
-              </a>
-            </Link>
-          </div>
-          <div>
-            <Link href="/test/bnbusdt">
-              <a className={linkClass}>
-                BNB Predict (testnet)
               </a>
             </Link>
           </div>

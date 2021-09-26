@@ -1,18 +1,33 @@
-import { PredictionConstants } from "../contracts/prediction"
+import { calcBlockTimestamp } from "./utils"
 
-export const enrichBets = (bets: Bet[], rounds: Round[], blockNum: number, claimed?: Set<number>) => {
+export const enrichBets = (p: {
+  bets: Bet[],
+  rounds: Round[],
+  block: {initial: { timestamp: number }, time: Date},
+  bufferSeconds: number
+  intervalSeconds: number
+}) => {
+  const {bets, rounds, block, intervalSeconds, bufferSeconds} = p
+  const timestamp = calcBlockTimestamp(block)
+  const roundsMap = new Map<string, Round>()
+  rounds.forEach(r => roundsMap.set(r.epoch, r))
   const enriched = bets.map(bet => {
-    const r = rounds.find(r_1 => bet.blockNumberNum > r_1.startBlockNum && bet.blockNumberNum < r_1.lockBlockNum)
+    const r = roundsMap.get(bet.epoch)
+
     let won = false
     let wonAmount = -bet.valueNum
     let wonPerc = -1.0
-
-
     if (r) {
-      if (r.oracleCalled === false && (blockNum > (r.lockBlockNum + PredictionConstants.bufferBlocks + PredictionConstants.intervalBlocks))) {
+      const endTimestamp = r.lockTimestampNum + intervalSeconds + bufferSeconds
+      const passed = timestamp > endTimestamp
+      const canceled = r.oracleCalled === false && passed
+      if (canceled) {
         won = true
         wonAmount = bet.valueNum
         wonPerc = 0.0
+      } else if (!r.oracleCalled) {
+        won = false
+        wonAmount = -bet.valueNum
       } else  if (r.closePriceNum < r.lockPriceNum && bet.direction === "bear") {
         won = true
         wonAmount = (r.bearPayout - 1.0) * bet.valueNum
@@ -31,9 +46,9 @@ export const enrichBets = (bets: Bet[], rounds: Round[], blockNum: number, claim
     }
 
     let status: BetStatus | undefined
-    if (r !== undefined && claimed?.has(r.epochNum)) {
+    if (bet.claimed) {
       status = "claimed"
-    } else if (won && claimed !== undefined) {
+    } else if (won) {
       status = "claimable"
     } else {
       status = bet?.status
@@ -42,7 +57,6 @@ export const enrichBets = (bets: Bet[], rounds: Round[], blockNum: number, claim
     return {
       ...bet,
       won,
-      epoch: r?.epoch,
       status,
       wonAmount,
       wonPerc,
@@ -59,4 +73,8 @@ export const calcMaxDrawdown = (bets: Bet[]) => {
     worst = Math.min(cur, worst)
   })
   return worst
+}
+
+export const calcCanBet = (round: Round, currentTimestamp: number) => {
+  return round.startTimestampNum < currentTimestamp && round.lockTimestampNum > currentTimestamp
 }

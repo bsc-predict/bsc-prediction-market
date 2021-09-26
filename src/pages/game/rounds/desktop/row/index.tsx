@@ -1,7 +1,7 @@
 import React from "react"
-import { BlockContext } from "../../../../../contexts/BlockContext"
-import { OracleContext } from "../../../../../contexts/OracleContext"
-import { getRoundInfo } from "../../../../../utils/utils"
+import { useAppSelector } from "../../../../../hooks/reduxHooks"
+import { calcCanBet } from "../../../../../utils/bets"
+import { calcBlockTimestamp, getRoundInfo } from "../../../../../utils/utils"
 import Position from "../../cells/Position"
 import Result from "../../cells/Result"
 import { rowClass } from "../style"
@@ -10,18 +10,18 @@ import { rowClass } from "../style"
 interface RoundRowProps {
   round: Round
   bet?: Bet
-  claimCallback?: () => void
 }
 
 const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
-  const {round, bet, claimCallback} = props
+  const {round, bet} = props
   
-  const {block} = React.useContext(BlockContext)
-  const {latestOracle} = React.useContext(OracleContext)
-  
-  const canBet = bet === undefined && round.startBlockNum < block && round.lockBlockNum > block
+  const currentTimestamp = useAppSelector(s => calcBlockTimestamp(s.game.block))
+  const constants = useAppSelector(s => ({bufferSeconds: s.game.bufferSeconds, rewardRate: s.game.rewardRate, intervalSeconds: s.game.intervalSeconds}))
+  const latestOracle = useAppSelector(s => s.game.oracle)
 
-  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, latestOracle)
+  const canBet = bet === undefined && calcCanBet(round, currentTimestamp)
+
+  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, currentTimestamp, constants, latestOracle)
 
   let curPriceClass = rowClass
   if (winner === "bear") {
@@ -43,7 +43,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
       <td className={rowClass}>{lockPrice.toFixed(2)}</td>
       <td className={curPriceClass}>{curPriceDisplay}</td>
       <Position bet={bet} canBet={canBet}/>
-      <Result round={round} bet={bet} winner={winner} claimCallback={claimCallback}/>
+      <Result bet={bet} />
     </tr>
   )
 }

@@ -8,11 +8,10 @@ interface RoundsTableProps {
   setPage: (n: number) => void
   rounds: Round[]
   numPages: number
-  claimCallback?: () => void
 }
 
 const RoundsTable: React.FunctionComponent<RoundsTableProps> = (props) => {
-  const {bets, rounds, page, setPage, numPages, claimCallback} = props
+  const {bets, rounds, page, setPage, numPages} = props
 
   return(
     <div>
@@ -23,7 +22,6 @@ const RoundsTable: React.FunctionComponent<RoundsTableProps> = (props) => {
           page={page}
           onChangePage={setPage}
           numPages={numPages}
-          claimCallback={claimCallback}
         />
       </div>
       <div className="contents md:hidden">
@@ -32,7 +30,6 @@ const RoundsTable: React.FunctionComponent<RoundsTableProps> = (props) => {
           rounds={rounds}
           page={page}
           onChangePage={setPage}
-          claimCallback={claimCallback}
         />
         </div>
     </div>
