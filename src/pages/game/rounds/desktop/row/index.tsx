@@ -43,7 +43,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
       <td className={rowClass}>{lockPrice.toFixed(2)}</td>
       <td className={curPriceClass}>{curPriceDisplay}</td>
       <Position bet={bet} canBet={canBet}/>
-      <Result round={round} bet={bet} winner={winner} />
+      <Result bet={bet} />
     </tr>
   )
 }

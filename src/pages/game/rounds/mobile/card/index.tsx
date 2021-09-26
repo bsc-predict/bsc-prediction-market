@@ -59,7 +59,7 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
             </tr>
             <tr>
               <td className="w-48 px-5 p-1 border border-grey-800 text-center">Result</td>
-              <Result round={round} bet={bet} winner={winner} />
+              <Result bet={bet} />
             </tr>
           </tbody>
         </table>

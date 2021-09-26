@@ -68,7 +68,7 @@ export const gameSlice = createSlice({
       state.bets = []
       state.block = {initial: { timestamp: 0 }, time: new Date()}
       state.paused = false
-    }
+    },
   },
   extraReducers: builder => {
     builder
