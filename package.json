@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next dev -p 3002",
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 3003",
     "build": "next build",
-    "start": "next start -p 3002",
+    "start": "next start -p 3003",
     "lint": "next lint",
     "build:style": "tailwind build public/assets/styles/vendors.css -o public/assets/styles/tailwind.css"
   },
@@ -19,6 +19,8 @@
     "autoprefixer": "^10.3.1",
     "axios": "^0.21.1",
     "daisyui": "^1.10.0",
+    "graphql": "^15.6.0",
+    "graphql-request": "^3.5.0",
     "next": "11.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",

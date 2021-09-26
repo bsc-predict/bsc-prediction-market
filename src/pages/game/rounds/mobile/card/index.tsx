@@ -1,25 +1,25 @@
 import React from "react"
 import { useAppSelector } from "../../../../../hooks/reduxHooks"
-import { calcBlockNumber, getRoundInfo } from "../../../../../utils/utils"
+import { calcCanBet } from "../../../../../utils/bets"
+import { calcBlockTimestamp, getRoundInfo } from "../../../../../utils/utils"
 import Position from "../../cells/Position"
 import Result from "../../cells/Result"
 
 interface RoundCardProps {
   round: Round
   bet?: Bet
-  claimCallback?: () => void
 }
 
 const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
-  const {round, bet, claimCallback} = props
+  const {round, bet} = props
  
-  const block = useAppSelector(s => calcBlockNumber(s.game.block))
-  const constants = useAppSelector(s => ({bufferBlocks: s.game.bufferBlocks, rewardRate: s.game.rewardRate, intervalBlocks: s.game.intervalBlocks}))
-  const latestOracle = undefined // TODO: Hook up oracle
+  const currentTimestamp = useAppSelector(s => calcBlockTimestamp(s.game.block))
+  const constants = useAppSelector(s => ({bufferSeconds: s.game.bufferSeconds, rewardRate: s.game.rewardRate, intervalSeconds: s.game.intervalSeconds}))
+  const latestOracle = useAppSelector(s => s.game.oracle)
 
-  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, block, constants, latestOracle)
+  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, currentTimestamp, constants, latestOracle)
 
-  const canBet = round.startBlockNum < block && round.lockBlockNum > block 
+  const canBet = calcCanBet(round, currentTimestamp) 
   let curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center"
   if (winner === "bear") {
     curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center bg-secondary"
@@ -59,7 +59,7 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
             </tr>
             <tr>
               <td className="w-48 px-5 p-1 border border-grey-800 text-center">Result</td>
-              <Result round={round} bet={bet} winner={winner} claimCallback={claimCallback} />
+              <Result round={round} bet={bet} winner={winner} />
             </tr>
           </tbody>
         </table>

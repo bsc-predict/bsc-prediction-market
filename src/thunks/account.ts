@@ -7,7 +7,7 @@ export const fetchBalance = createAsyncThunk(
   "balance",
   async (address: string, thunkApi) => {
     const {game: { game }} = thunkApi.getState() as RootState
-    console.log(game)
+
     if (game === undefined) {
       return
     }

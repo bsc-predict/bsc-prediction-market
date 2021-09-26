@@ -9,6 +9,7 @@ import { RefreshContext } from '../../contexts/RefreshContext'
 import { useWeb3React } from '@web3-react/core'
 import { setAccount } from '../../stores/gameSlice'
 import { fetchBalance } from '../../thunks/account'
+import { fetchLatestOracle } from '../../thunks/oracle'
 
 type TabTypes = "Play" | "History"
 
@@ -41,6 +42,7 @@ const GamePage: React.FunctionComponent<{chain: Chain}> = ({chain}) => {
   React.useEffect(() => {
     if (active === "Play") {
       dispatch<any>(fetchLatestRounds(showRows))
+      dispatch<any>(fetchLatestOracle())
     }
   }, [dispatch, showRows, fast, active, game])
 

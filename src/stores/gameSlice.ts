@@ -5,19 +5,23 @@ import { fetchBets } from "../thunks/bet"
 import { enrichBets } from "../utils/bets"
 import type { RootState } from "./index"
 import { fetchBalance } from "../thunks/account"
+import { fetchLatestOracle } from "../thunks/oracle"
 
+
+export interface GameBlock {initial: { timestamp: number }, time: Date}
 export interface GameState {
   account?: string
   library?: any
-  bufferBlocks: number
-  intervalBlocks: number
+  bufferSeconds: number
+  intervalSeconds: number
   rewardRate: number
-  block: {initial: number, time: Date}
+  block: GameBlock
   game?: GameType
   rounds: Round[]
   bets: Bet[]
   paused: boolean
   fetchingRounds?: string
+  oracle: Oracle
   balance: {
     balance: string
     balanceEth: string
@@ -27,14 +31,21 @@ export interface GameState {
 }
 
 const initialState: GameState = {
-  bufferBlocks: 20,
-  intervalBlocks: 100,
+  bufferSeconds: 20,
+  intervalSeconds: 300,
   rewardRate: 0.97,
-  block: {initial: 0, time: new Date()},
+  block: {initial: { timestamp: 0 }, time: new Date()},
   game: undefined,
   rounds: [],
   bets: [],
   paused: false,
+  oracle: {
+    answer: 0,
+    answeredInRound: 0,
+    roundId: 0,
+    startedAt: 0,
+    updatedAt: 0
+  },
   balance: {
     balance: "0",
     balanceEth: "0",
@@ -55,7 +66,7 @@ export const gameSlice = createSlice({
       state.game = action.payload
       state.rounds = []
       state.bets = []
-      state.block = {initial: 0, time: new Date()}
+      state.block = {initial: { timestamp: 0 }, time: new Date()}
       state.paused = false
     }
   },
@@ -72,8 +83,8 @@ export const gameSlice = createSlice({
           bets: state.bets,
           rounds: merged,
           block: state.block,
-          bufferBlocks: state.bufferBlocks,
-          intervalBlocks: state.intervalBlocks,
+          bufferSeconds: state.bufferSeconds,
+          intervalSeconds: state.intervalSeconds,
         })
         state.bets = enriched
         state.rounds = merged
@@ -84,14 +95,19 @@ export const gameSlice = createSlice({
           state.fetchingRounds = "archive/rounds/fetch"
         }
       })
+      .addCase(fetchLatestOracle.fulfilled, (state, action) => {
+        if (action.payload) {
+          state.oracle = action.payload
+        }
+      })
       .addCase(fetchArchivedRounds.fulfilled, (state, action) => {
         const merged = mergeRounds(state.rounds, action.payload)
         const enriched = enrichBets({
           bets: state.bets,
           rounds: merged,
           block: state.block,
-          bufferBlocks: state.bufferBlocks,
-          intervalBlocks: state.intervalBlocks,
+          bufferSeconds: state.bufferSeconds,
+          intervalSeconds: state.intervalSeconds,
         })
         state.bets = enriched
         state.rounds = merged
@@ -101,8 +117,8 @@ export const gameSlice = createSlice({
         if (action.payload === undefined) {
           state = initialState
         } else {
-          state.intervalBlocks = action.payload.intervalBlocks
-          state.bufferBlocks = action.payload.bufferBlocks
+          state.intervalSeconds = action.payload.intervalBlocks
+          state.bufferSeconds = action.payload.bufferBlocks
           state.rewardRate = action.payload.rewardRate
           state.block = action.payload.block
           state.game = action.payload.game
@@ -120,8 +136,8 @@ export const gameSlice = createSlice({
           bets: state.bets,
           rounds: merged,
           block: state.block,
-          bufferBlocks: state.bufferBlocks,
-          intervalBlocks: state.intervalBlocks,
+          bufferSeconds: state.bufferSeconds,
+          intervalSeconds: state.intervalSeconds,
         })
         state.paused = paused
         state.bets = enriched
@@ -133,9 +149,8 @@ export const gameSlice = createSlice({
           bets: action.payload.bets,
           rounds: state.rounds,
           block: state.block,
-          claimed: action.payload.claimed,
-          bufferBlocks: state.bufferBlocks,
-          intervalBlocks: state.intervalBlocks
+          bufferSeconds: state.bufferSeconds,
+          intervalSeconds: state.intervalSeconds
         })
         state.bets = enriched
     })
@@ -154,10 +169,10 @@ export const rounds = (state: RootState) => state.game.rounds
 export default gameSlice.reducer
 
 const mergeRounds = (orig: Round[], update: Round[]) => {
-  const toUpdate = new Set(update.map(r => r.id))
+  const toUpdate = new Set(update.map(r => r.epochNum))
   const updated = orig
-    .filter(r => !toUpdate.has(r.id))
+    .filter(r => !toUpdate.has(r.epochNum))
     .concat(update)
-    .sort((r1, r2) => Number(r1.id) < Number(r2.id) ? 1 : -1)
+    .sort((r1, r2) => Number(r1.epochNum) < Number(r2.epochNum) ? 1 : -1)
   return updated
 }

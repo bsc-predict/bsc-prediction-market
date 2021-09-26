@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
 import { fetchRounds } from "../../../thunks/round"
 import { fetchBets } from "../../../thunks/bet"
 import { createArray } from "../../../utils/utils"
+import { usePrevious } from "../../../hooks/usePrevious";
 
 const RoundsPage: React.FunctionComponent = () => {
   const [page, setPage] = React.useState(0)
@@ -19,6 +20,8 @@ const RoundsPage: React.FunctionComponent = () => {
   const paused = useAppSelector(s => s.game.paused)
   
   const latestEpoch = useAppSelector(s => s.game.rounds.reduce((prior, r) => r.epochNum > prior ? r.epochNum : prior, -1))
+  const previousLatestEpoch = usePrevious(latestEpoch)
+
   const bets = useAppSelector(s => s.game.bets)
 
   const dispatch = useAppDispatch()
@@ -36,10 +39,10 @@ const RoundsPage: React.FunctionComponent = () => {
   }, [page, showRows, rounds, latestEpoch])
 
   React.useEffect(() => {
-    if (account && game) {
+    if (account && previousLatestEpoch && latestEpoch && latestEpoch !== previousLatestEpoch) {
       dispatch<any>(fetchBets(account))
     }
-  }, [account, dispatch, game])
+  }, [account, dispatch, latestEpoch, previousLatestEpoch])
 
 	const handleSetPage = React.useCallback((p: number) => {
     const startEpoch = latestEpoch - ((p + 1) * showRows)

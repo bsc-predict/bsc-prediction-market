@@ -1,9 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit"
 import { web3Provider } from "../utils/web3"
-import predictionAbi from "../contracts/prediction_abi.json"
-import type {AbiItem} from "web3-utils"
-import { PredictionAddress } from "../contracts/prediction"
 import { RootState } from "../stores"
+import { getPredictionContract } from "./utils"
 
 export const setupGame = createAsyncThunk(
     "game",
@@ -12,19 +10,19 @@ export const setupGame = createAsyncThunk(
       if (game === undefined) {
         return
       }
-      console.log(`setting up game ${game.chain}`)
+      // console.log(`setting up game ${game.chain}`)
       const web3 = web3Provider(game.chain)
-      const address = PredictionAddress[game.chain]
-      const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
-      const buffer = contract.methods.bufferBlocks().call()
-      const interval = contract.methods.intervalBlocks().call()
-      const rewardRate = contract.methods.rewardRate().call()
-      const blockNumber = web3.eth.getBlockNumber()
-      return Promise.all([buffer, interval, rewardRate, blockNumber]).then(([b, i, p, block]) => ({
+      const contract = getPredictionContract(game)
+      const buffer = contract.methods.bufferSeconds().call()
+      const interval = contract.methods.intervalSeconds().call()
+      const rewardRate = contract.methods.treasuryFee().call()
+      const blockNumber = await web3.eth.getBlockNumber()
+      const block = await web3.eth.getBlock(blockNumber)
+      return Promise.all([buffer, interval, rewardRate]).then(([b, i, p]) => ({
         bufferBlocks: Number(b),
         intervalBlocks: Number(i),
-        rewardRate: Number(p),
-        block: {initial: block, time: new Date()},
+        rewardRate: 1.0 - (Number(p) / 10000), // treasury fee is in bps
+        block: {initial: { timestamp: Number(block.timestamp) }, time: new Date()},
         game
       }))
     }

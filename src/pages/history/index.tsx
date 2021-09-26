@@ -4,10 +4,8 @@ import React from "react"
 import Notification from "../../components/notifications"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks"
-import useOnScreen from "../../hooks/useOnScreen"
 import { fetchArchivedRounds } from "../../thunks/round"
-import { fetchBets } from "../../thunks/bet"
-import { calcBlockNumber, isAddress } from "../../utils/utils"
+import { isAddress } from "../../utils/utils"
 import RoundsTable from "../game/rounds/table"
 import HistoricalInfo from "./info"
 
@@ -30,10 +28,7 @@ const HistoryPage: React.FunctionComponent = () => {
 
   const dispatch = useAppDispatch()
 
-  const block = useAppSelector(s => calcBlockNumber(s.game.block))
-  
   const ref = React.useRef<HTMLDivElement>(null)
-  const isVisble = useOnScreen(ref)
 
   React.useEffect(() => {
     const a = typeof pathAccount === "string" ? pathAccount : userAccount
@@ -48,11 +43,12 @@ const HistoryPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     dispatch<any>(fetchArchivedRounds({latest: false}))
-  }, [])
+  }, [dispatch])
 
   React.useEffect(() => {
     if (account) {
-      dispatch<any>(fetchBets(account))
+      console.log('fetching bets from history')
+      // dispatch<any>(fetchBets(account))
     }
   }, [account, dispatch])
 
@@ -104,7 +100,6 @@ const HistoryPage: React.FunctionComponent = () => {
           message="Invalid account"
         />
     }
-
 	return(
     <div ref={ref}>
       <HistoricalInfo
@@ -115,14 +110,14 @@ const HistoryPage: React.FunctionComponent = () => {
         setUnclaimed={handleSetUnclaimed}
       />
       {message}
-      {(isLoading || showRounds.length > 0) &&
-      <RoundsTable
-        rounds={showRounds}
-        setPage={handleSetPage}
-        page={page}
-        bets={bets}
-        numPages={numPages}
-      />}
+      {(isLoading || showRounds.length > 0) && <div>Loading...</div>}
+       <RoundsTable
+         rounds={showRounds}
+         setPage={handleSetPage}
+         page={page}
+         bets={bets}
+         numPages={numPages}
+       />
     </div>
   )
 }

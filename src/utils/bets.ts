@@ -1,25 +1,25 @@
-import { binarySearch, calcBlockNumber } from "./utils"
+import { calcBlockTimestamp } from "./utils"
 
 export const enrichBets = (p: {
   bets: Bet[],
   rounds: Round[],
-  block: {initial: number, time: Date},
-  claimed?: Set<number>,
-  bufferBlocks: number
-  intervalBlocks: number
+  block: {initial: { timestamp: number }, time: Date},
+  bufferSeconds: number
+  intervalSeconds: number
 }) => {
-  const {bets, rounds, block, claimed, bufferBlocks, intervalBlocks} = p
-  const c = claimed || new Set(bets.filter(b => b.status === "claimed").map(b => Number(b.epoch)))
-  const blockNum = calcBlockNumber(block)
+  const {bets, rounds, block, intervalSeconds, bufferSeconds} = p
+  const timestamp = calcBlockTimestamp(block)
+  const roundsMap = new Map<string, Round>()
+  rounds.forEach(r => roundsMap.set(r.epoch, r))
   const enriched = bets.map(bet => {
-    const r = binarySearch(rounds, r_1 => bet.blockNumberNum < r_1.startBlockNum ? 1 : bet.blockNumberNum >= r_1.lockBlockNum ? -1 : 0)
+    const r = roundsMap.get(bet.epoch)
+
     let won = false
     let wonAmount = -bet.valueNum
     let wonPerc = -1.0
     if (r) {
-      const startBlock = r.lockBlockNum
-      const endBlock = startBlock + intervalBlocks + bufferBlocks
-      const passed = blockNum > endBlock
+      const endTimestamp = r.lockTimestampNum + intervalSeconds + bufferSeconds
+      const passed = timestamp > endTimestamp
       const canceled = r.oracleCalled === false && passed
       if (canceled) {
         won = true
@@ -46,7 +46,7 @@ export const enrichBets = (p: {
     }
 
     let status: BetStatus | undefined
-    if (r !== undefined && c.has(r.epochNum)) {
+    if (bet.claimed) {
       status = "claimed"
     } else if (won) {
       status = "claimable"
@@ -57,7 +57,6 @@ export const enrichBets = (p: {
     return {
       ...bet,
       won,
-      epoch: r?.epoch,
       status,
       wonAmount,
       wonPerc,
@@ -74,4 +73,8 @@ export const calcMaxDrawdown = (bets: Bet[]) => {
     worst = Math.min(cur, worst)
   })
   return worst
+}
+
+export const calcCanBet = (round: Round, currentTimestamp: number) => {
+  return round.startTimestampNum < currentTimestamp && round.lockTimestampNum > currentTimestamp
 }

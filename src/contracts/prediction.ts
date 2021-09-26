@@ -3,19 +3,19 @@ import predictionAbi from "../contracts/prediction_abi.json"
 import type {AbiItem} from "web3-utils"
 
 export const PredictionAddress = {
-  main: "0x516ffd7D1e0Ca40b1879935B2De87cb20Fc1124b",
-  test: "0x257D3e7A74947bf7a8E2ac012b680cbb98642CE5"
+  main: "0x18B2A687610328590Bc8F2e5fEdDe3b582A49cdA",
+  test: "0x5E5D4d6337Ac83Ef71fEb143669D95073D0e9462"
 }
 
-const bearBet = "0x0088160f"
-const bullBet = "0x821daba1"
-const claimPrefix = /(?<=0x379607f5).+/g
+const bearBet = "0xaa6b873a"
+const bullBet = "0x57fb096f"
+const claimPrefix = /(?<=0x6ba4c138).+/g
 
 
 export const getInputType = (input: string): InputType | undefined => {
-  if (input === bearBet) {
+  if (input.startsWith(bearBet)) {
     return {tag: "bear"}
-  } else if (input === bullBet) {
+  } else if (input.startsWith(bullBet)) {
     return {tag: "bull"}
   } else {
     const match = input.match(claimPrefix)
@@ -51,27 +51,26 @@ export const toRound = (r: RoundResponse): Round => {
   const prizePool = (Number(r.bearAmount) + Number(r.bullAmount)).toString()
 
   return {
-    id: r.epoch,
     oracleCalled: r.oracleCalled.toString().toLowerCase().startsWith("true"),
     bearAmount: r.bearAmount,
     bullAmount: r.bullAmount,
     closePrice: r.closePrice,
     epoch: r.epoch,
-    lockBlock: r.lockBlock,
+    lockTimestamp: r.lockTimestamp,
     lockPrice: r.lockPrice,
     rewardAmount: r.rewardAmount,
     rewardBaseCalAmount: r.rewardBaseCalAmount,
-    startBlock: r.startBlock,
+    startTimestamp: r.startTimestamp,
     totalAmount: r.totalAmount,
     bearAmountNum: Number(r.bearAmount),
     bullAmountNum: Number(r.bullAmount),
     closePriceNum: Number(r.closePrice),
     epochNum: Number(r.epoch),
-    lockBlockNum: Number(r.lockBlock),
+    lockTimestampNum: Number(r.lockTimestamp),
     lockPriceNum: Number(r.lockPrice),
     rewardAmountNum: Number(r.rewardAmount),
     rewardBaseCalAmountNum: Number(r.rewardBaseCalAmount),
-    startBlockNum: Number(r.startBlock),
+    startTimestampNum: Number(r.startTimestamp),
     totalAmountNum: Number(r.totalAmount),
     bullPayout,
     bearPayout,

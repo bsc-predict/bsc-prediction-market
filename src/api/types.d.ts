@@ -46,10 +46,8 @@ interface Bet {
   valueNum: number
   valueEthNum: number
   direction: BetType
-  timeStamp: string
-  blockNumber: string
-  blockNumberNum: number
-  epoch?: string
+  claimed: boolean
+  epoch: string
   won?: boolean
   status?: BetStatus
   wonAmount?: number
@@ -66,10 +64,59 @@ interface Balance {
 
 interface BetResponse {
   bets: Array<{
+    createdAt: string
     value: string
     blockNumber: string
     direction: BetType
     timeStamp: string
+    claimed: boolean
+    epoch: number
   }>
   claimed: number[]
+}
+
+interface GraphQlBetResponse {
+  bets: Array<{
+    amount: string
+    block: string
+    claimed: boolean
+    position: "Bull" | "Bear"
+    round: {
+      epoch: string
+      failed: boolean
+      closePrice: string | null
+      lockPrice: string | null
+    }
+    // user: {
+    //   averageBNB: string
+    //   block: string
+    //   createdAt: string
+    //   id: string
+    //   netBNB: string
+    //   totalBNB: string
+    //   totalBNBBear: string
+    //   totalBNBBull: string
+    //   totalBNBClaimed: string
+    //   totalBets: string
+    //   totalBetsBear: string
+    //   totalBearBull: string
+    //   totalBetsClaimed: string
+    //   updatedAt: string
+    //   winRate: string
+    // }
+  }>
+}
+
+interface GraphQlRoundResponse {
+  rounds: Array<{
+    bearAmount: string
+    bullAmount: string
+    closePrice: string | null
+    epoch: string
+    lockAt: string | null
+    lockPrice: string | null
+    startAt: string
+    totalAmount: string
+  }>
+  
 }

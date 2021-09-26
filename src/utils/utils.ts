@@ -3,23 +3,7 @@ import { PredictionConstants } from "../constants";
 
 const web3 = new Web3()
 
-interface BlockProps { initial: number, time: Date }
-
-export function binarySearch<T>(arr: Array<T>, f: (item: T) => 0 | 1 | -1): T | undefined {
-  let low = 0
-  let high = arr.length - 1
-  while (low <= high) {
-    const mid = Math.floor((low + high) / 2)
-    const res = f(arr[mid])
-    if (res === 1) {
-      low = mid + 1
-    } else if (res === -1) {
-      high = mid - 1
-    } else {
-      return arr[mid]
-    }
-  }
-}
+interface BlockProps { initial: { timestamp: number }, time: Date }
 
 export function randomChoice<T>(arr: T[]): T {
   return arr[Math.floor(arr.length * Math.random())];
@@ -38,7 +22,7 @@ export const camelToUnderscore = (key: string) => {
   return key.replace( /([A-Z])/g, "_$1").toLowerCase()
 }
 
-export const getRoundInfo = (round: Round, currentBlock: number, constants: PredictionConstants, latestOracle?: Oracle) => {
+export const getRoundInfo = (round: Round, timestamp: number, constants: PredictionConstants, latestOracle?: Oracle) => {
   let winner: "bull" | "bear" | undefined = undefined
   if (round.lockPriceNum && round.closePriceNum) {
     if (round.closePriceNum > round.lockPriceNum) {
@@ -48,7 +32,7 @@ export const getRoundInfo = (round: Round, currentBlock: number, constants: Pred
     }
   }
 
-  const canceled = !round.oracleCalled && (round.lockBlockNum + constants.intervalBlocks + constants.bufferBlocks) < currentBlock
+  const canceled = !round.oracleCalled && (round.lockTimestampNum + constants.intervalSeconds + constants.bufferSeconds) < timestamp
   const live = !canceled && round.closePriceNum === 0 && round.lockPriceNum > 0
   const curPrice = live && latestOracle ? (latestOracle.answer - round.lockPriceNum) : (round.closePriceNum - round.lockPriceNum)
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)
@@ -68,20 +52,19 @@ export const toWei = web3.utils.toWei
 export const toChecksumAddress = web3.utils.toChecksumAddress
 export const isAddress = web3.utils.isAddress
 
-export const calcBlockNumber = (p: { initial: number, time: Date }) => {
+export const calcBlockTimestamp = (p: { initial: { timestamp: number }, time: Date }) => {
   const {initial, time} = p
   const now = new Date()
   const seconds = (now.getTime() - time.getTime()) / 1000
-  const diff = Math.floor(seconds / 3)
-  return initial + diff
+  return initial.timestamp + seconds
 }
 
-export const roundComplete = (r: Round, block: BlockProps, intervalBlocks: number, bufferBlocks: number) => {
-  const blockNum = calcBlockNumber(block)
-  return blockNum > (r.lockBlockNum + intervalBlocks + bufferBlocks)
+export const roundComplete = (r: Round, block: BlockProps, intervalSeconds: number, bufferSeconds: number) => {
+  const timestamp = calcBlockTimestamp(block)
+  return timestamp > (r.lockTimestampNum + intervalSeconds + bufferSeconds)
 }
 
-export const toTimeString = (seconds: number) =>`${Math.floor(seconds / 60)}:${(seconds % 60).toString().padStart(2, "0")}`
+export const toTimeString = (seconds: number) =>`${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(0).toString().padStart(2, "0")}`
 
 export const createArray = (from: number, to: number) => {
   const mult = to > from ? 1 : -1
