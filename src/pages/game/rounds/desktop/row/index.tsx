@@ -24,10 +24,14 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, currentTimestamp, constants, latestOracle)
 
   let curPriceClass = rowClass
+  let bearCellClass = rowClass
+  let bullCellClass = rowClass
   if (winner === "bear") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
+    bearCellClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   } else if (winner === "bull") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
+    bullCellClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
   } else if (Number(curPriceDisplay) > 0) {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
   } else if (Number(curPriceDisplay) < 0) {
@@ -37,8 +41,8 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   return(
     <tr className={live ? "active" : undefined}>
       <td className={rowClass}>{round.epoch}</td>
-      <td className={rowClass}>{round.bullPayoutGross.toFixed(4)}</td>
-      <td className={rowClass}>{round.bearPayoutGross.toFixed(4)}</td>
+      <td className={bullCellClass}>{round.bullPayoutGross.toFixed(4)}</td>
+      <td className={bearCellClass}>{round.bearPayoutGross.toFixed(4)}</td>
       <td className={rowClass}>{prizePool}</td>
       <td className={rowClass}>{lockPrice.toFixed(2)}</td>
       <td className={curPriceClass}>{curPriceDisplay}</td>

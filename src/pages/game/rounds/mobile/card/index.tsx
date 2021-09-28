@@ -22,10 +22,15 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   const canBet = calcCanBet(round, currentTimestamp) 
   let curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center"
   if (winner === "bear") {
-    curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center bg-secondary"
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   } else if (winner === "bull") {
-    curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center bg-accent"
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
+  } else if (Number(curPriceDisplay) > 0) {
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
+  } else if (Number(curPriceDisplay) < 0) {
+    curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
   }
+
   return(
     <div className="mb-4 border">
       <div className={live ? "text-xl p-2 mt-2 font-bold bg-primary text-primary-content" : "text-xl p-2 mt-2 font-bold"}>

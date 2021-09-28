@@ -32,7 +32,7 @@ export const getRoundInfo = (round: Round, timestamp: number, constants: Predict
     }
   }
 
-  const canceled = !round.oracleCalled && (round.lockTimestampNum + constants.intervalSeconds + constants.bufferSeconds) < timestamp
+  const canceled = round.oracleCalled === false && (round.lockTimestampNum + constants.intervalSeconds + constants.bufferSeconds) < timestamp
   const live = !canceled && round.closePriceNum === 0 && round.lockPriceNum > 0
   const curPrice = live && latestOracle ? (latestOracle.answer - round.lockPriceNum) : (round.closePriceNum - round.lockPriceNum)
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)
@@ -61,7 +61,8 @@ export const calcBlockTimestamp = (p: { initial: { timestamp: number }, time: Da
 
 export const roundComplete = (r: Round, block: BlockProps, intervalSeconds: number, bufferSeconds: number) => {
   const timestamp = calcBlockTimestamp(block)
-  return timestamp > (r.lockTimestampNum + intervalSeconds + bufferSeconds)
+  // NOTE: Buffer to allow some more time for oracle to be called
+  return timestamp > (r.lockTimestampNum + intervalSeconds + bufferSeconds + 30)
 }
 
 export const toTimeString = (seconds: number) =>`${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(0).toString().padStart(2, "0")}`

@@ -84,6 +84,14 @@ const Info: React.FunctionComponent = () => {
     <div className="mb-5 mt-5">
       <div className="md:stats">
         <div className="stat">
+          <div className="stat-title">Game</div>
+          <div className="stat-value">
+              <div tabIndex={0} className="font-bold">{game?.pair === "bnbusdt" ? "BNB-USDT" : ""}</div>
+            </div>
+          <div className="stat-desc">{game?.chain === "main" ? "mainnet" : game?.chain === "test" ? "testnet" : ""}</div>
+        </div>
+
+        <div className="stat">
           <div className="stat-title">Account</div> 
           <div className="stat-value">{account ? shortenAddress(account): ""}</div>
           <div className="stat-desc">&nbsp;</div>
@@ -94,11 +102,6 @@ const Info: React.FunctionComponent = () => {
             {balance !== undefined ? Number(toEther(balance.balance, 2)) : "0.00"}
           </div>
           <div className="stat-desc"> {balance ? `\$${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()}` : ""}</div>
-        </div>
-        <div className="stat">
-          <div className="stat-title">Time Remaining</div>
-          <div className="stat-value">{toTimeString(secondsRemaining)}</div>
-          <div className="stat-desc">&nbsp;</div>
         </div>
         <div className="stat">
           <div className="stat-title">Claim</div>
@@ -119,20 +122,11 @@ const Info: React.FunctionComponent = () => {
               </button>
             </div>
           </div>
-          <div className="stat-desc">{claimable.length} rounds</div>
+          <div className="stat-desc">{claimable.length} round{claimable.length !== 1 ? "s" : ""}</div>
         </div>
         <div className="stat">
-          <div className="stat-title">Chain</div>
-          <div className={`stat-value ${game?.chain === "main" ? "text-success" : "text-warning"}`}>
-            <div className="dropdown dropdown-hover static cursor-default">
-              <div tabIndex={0} className="font-bold">{game?.chain}</div>
-              {/* <ul tabIndex={0} className="p-2 shadow menu dropdown-content text-base-content bg-base-100 rounded-box w-52">
-                <li className="cursor-pointer" onClick={() => handleSetChain(otherChain)}>
-                  {otherChain}
-                 </li>
-              </ul> */}
-            </div>
-            </div>
+          <div className="stat-title">Time Remaining</div>
+          <div className="stat-value">{toTimeString(secondsRemaining)}</div>
           <div className="stat-desc">&nbsp;</div>
         </div>
       </div>

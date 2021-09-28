@@ -61,6 +61,8 @@ export const gameSlice = createSlice({
     setAccount(state, action: PayloadAction<{account?: string, library?: any}>) {
       state.account = action.payload.account
       state.library = action.payload.library
+      state.bets = []
+      state.balance = {balance: "0", balanceUsd: 0, balanceEth: "0", bnbPrice: state.balance.bnbPrice}
     },
     setGame(state, action: PayloadAction<GameType>) {
       state.game = action.payload

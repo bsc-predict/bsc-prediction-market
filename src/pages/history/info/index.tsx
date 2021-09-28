@@ -15,6 +15,8 @@ interface HistoricalInfoProps {
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
   const {bets, account, changeAccount, unclaimed, setUnclaimed} = props
 
+  const sortedBets = bets.slice().sort((a, b) => Number(a.epoch) > Number(b.epoch) ? -1 : 1)
+
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [curAccount, setCurAccount] = React.useState("")
 
@@ -41,15 +43,15 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
     }
   }
 
-  const betsWon = bets.filter(b => b.won).length
-  const totalBets = bets.length
+  const betsWon = sortedBets.filter(b => b.won).length
+  const totalBets = sortedBets.length
   const totalWon = Number(
-    fromWei(bets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
-  const biggestWin = bets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a, bets?.[0])
+    fromWei(sortedBets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
+  const biggestWin = sortedBets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a)
   const biggestWinAmount = biggestWin ? Number(fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
   
-  const performance = fromWei(bets.slice(0, performanceLast).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
-  const maxDrawdown = fromWei(calcMaxDrawdown(bets.slice(0, performanceLast)).toString(), "ether")
+  const performance = fromWei(sortedBets.slice(0, performanceLast + 1).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
+  const maxDrawdown = fromWei(calcMaxDrawdown(sortedBets.slice(0, performanceLast)).toString(), "ether")
   return(
     <div className="mb-5 mt-5 overflow-auto">
       <div className="p-4">
@@ -75,7 +77,7 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
         </div>
         <div className="stat">
           <div className="stat-title">Games Played</div> 
-          <div className="stat-value">{bets.length.toLocaleString()}</div>
+          <div className="stat-value">{sortedBets.length.toLocaleString()}</div>
           <div className="stat-desc">
             {betsWon.toLocaleString()} / {totalBets.toLocaleString()} ({((betsWon / totalBets) * 100).toFixed(2)}%)
           </div>

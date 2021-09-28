@@ -4,6 +4,7 @@ import React from "react"
 import Notification from "../../components/notifications"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks"
+import { fetchBets } from "../../thunks/bet"
 import { fetchArchivedRounds } from "../../thunks/round"
 import { isAddress } from "../../utils/utils"
 import RoundsTable from "../game/rounds/table"
@@ -47,8 +48,7 @@ const HistoryPage: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     if (account) {
-      console.log('fetching bets from history')
-      // dispatch<any>(fetchBets(account))
+      dispatch<any>(fetchBets(account))
     }
   }, [account, dispatch])
 
@@ -110,7 +110,7 @@ const HistoryPage: React.FunctionComponent = () => {
         setUnclaimed={handleSetUnclaimed}
       />
       {message}
-      {(isLoading || showRounds.length > 0) && <div>Loading...</div>}
+      {(isLoading || showRounds.length === 0) && <div>Loading...</div>}
        <RoundsTable
          rounds={showRounds}
          setPage={handleSetPage}

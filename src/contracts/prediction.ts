@@ -49,9 +49,8 @@ export const toRound = (r: RoundResponse): Round => {
   const bearPayoutGross = ((Number(r.bearAmount) + Number(r.bullAmount))) / Number(r.bearAmount)
   const bullPayoutGross = ((Number(r.bearAmount) + Number(r.bullAmount))) / Number(r.bullAmount)
   const prizePool = (Number(r.bearAmount) + Number(r.bullAmount)).toString()
-
   return {
-    oracleCalled: r.oracleCalled.toString().toLowerCase().startsWith("true"),
+    oracleCalled: r.oracleCalled,
     bearAmount: r.bearAmount,
     bullAmount: r.bullAmount,
     closePrice: r.closePrice,
