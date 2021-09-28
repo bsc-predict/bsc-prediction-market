@@ -55,12 +55,12 @@ export const fetchRounds = createAsyncThunk(
 export const fetchLatestRounds = createAsyncThunk(
   "rounds/fetchLatest",
   async (n: number, thunkApi) => {
-    const {game: {rounds, game, block, intervalSeconds: intervalBlocks, bufferSeconds: bufferBlocks, fetchingRounds}} = thunkApi.getState() as RootState
+    const {game: {rounds, game, block, intervalSeconds, bufferSeconds: bufferBlocks, fetchingRounds}} = thunkApi.getState() as RootState
     if (game === undefined || fetchingRounds !== "rounds/fetchLatest") {
       return {updatedRounds: [], paused: false}
     }
 
-    const availableEpochs = new Set(rounds.filter(r => roundComplete(r, block, intervalBlocks, bufferBlocks)).map(r => r.epochNum))
+    const availableEpochs = new Set(rounds.filter(r => roundComplete(r, block, intervalSeconds, bufferBlocks)).map(r => r.epochNum))
     const contract = getPredictionContract(game)
     const currentBlock = calcBlockTimestamp(block)
     const latest = await contract.methods.currentEpoch().call().then((l: string) => Number(l)) as number
@@ -74,7 +74,7 @@ export const fetchLatestRounds = createAsyncThunk(
     const latestLockBlock = updatedRounds.reduce((lock, r) => r.lockTimestampNum > lock ? r.lockTimestampNum : lock, 0)
 
     let paused = false
-    if ((currentBlock + bufferBlocks + intervalBlocks) > latestLockBlock) {
+    if ((currentBlock + bufferBlocks + intervalSeconds) > latestLockBlock) {
       paused = await contract.methods.paused().call()
     }
     return {updatedRounds, paused}

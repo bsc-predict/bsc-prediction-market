@@ -47,7 +47,7 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const totalBets = sortedBets.length
   const totalWon = Number(
     fromWei(sortedBets.reduce((acc, cur) => acc + (cur.wonAmount || 0), 0).toString(16), "ether"))
-  const biggestWin = sortedBets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a)
+  const biggestWin = sortedBets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a, {wonAmount: 0, wonPerc: 0} as Pick<Bet, "wonAmount" | "wonPerc">)
   const biggestWinAmount = biggestWin ? Number(fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
   
   const performance = fromWei(sortedBets.slice(0, performanceLast + 1).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
