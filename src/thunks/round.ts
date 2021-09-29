@@ -38,17 +38,6 @@ export const fetchRounds = createAsyncThunk(
       return []
     }
     return fetchRoundHistory(game, { "epoch_in": remaining } )
-    // const {epochs} = props
-    // const available = new Set()
-    // rounds.forEach(r => available.add(r.epochNum))
-    // const contract = getPredictionContract(game)
-    // const updated = epochs
-    //   .filter(e => !available.has(e))
-    //   .map(async epoch => {
-    //     const r = await contract.methods.rounds(epoch.toString()).call() as Object
-    //     return toRound(r as RoundResponse)
-    //   })
-    // return Promise.all(updated)
   }
 )
 
@@ -60,7 +49,12 @@ export const fetchLatestRounds = createAsyncThunk(
       return {updatedRounds: [], paused: false}
     }
 
-    const availableEpochs = new Set(rounds.filter(r => roundComplete(r, block, intervalSeconds, bufferBlocks)).map(r => r.epochNum))
+    const availableEpochs = new Set(
+      rounds
+        .slice(0, rounds.length - 2) // last two rounds are always "live"
+        .filter(r => roundComplete(r, block, intervalSeconds, bufferBlocks))
+        .map(r => r.epochNum)
+    )
     const contract = getPredictionContract(game)
     const currentBlock = calcBlockTimestamp(block)
     const latest = await contract.methods.currentEpoch().call().then((l: string) => Number(l)) as number

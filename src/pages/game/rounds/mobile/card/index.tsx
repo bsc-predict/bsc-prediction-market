@@ -20,15 +20,24 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, currentTimestamp, constants, latestOracle)
 
   const canBet = calcCanBet(round, currentTimestamp) 
-  let curPriceClass = "w-48 px-5 p-1 border border-grey-800 text-center"
+  
+  const rowClass = "w-48 px-5 p-1 border border-grey-800 text-center"
+
+  let curPriceClass = rowClass
+  let bearCellClass = rowClass
+  let bullCellClass = rowClass
   if (winner === "bear") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
+    bearCellClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   } else if (winner === "bull") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
+    bullCellClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
   } else if (Number(curPriceDisplay) > 0) {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
+    bullCellClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
   } else if (Number(curPriceDisplay) < 0) {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
+    bearCellClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
   }
 
   return(
@@ -39,31 +48,31 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
       <table>
         <tbody>
           <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Bull Payout</td>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">{round.bullPayoutGross.toFixed(4)}</td>
+            <td className={rowClass}>Bull Payout</td>
+            <td className={bullCellClass}>{round.bullPayoutGross.toFixed(4)}</td>
           </tr>
           <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Bear Payout</td>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">{round.bearPayoutGross.toFixed(4)}</td>
+            <td className={rowClass}>Bear Payout</td>
+            <td className={bearCellClass}>{round.bearPayoutGross.toFixed(4)}</td>
           </tr>
           <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Prize Pool</td>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">{prizePool}</td>
+            <td className={rowClass}>Prize Pool</td>
+            <td className={rowClass}>{prizePool}</td>
           </tr>
           <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Lock Price</td>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">{lockPrice.toFixed(2)}</td>
+            <td className={rowClass}>Lock Price</td>
+            <td className={rowClass}>{lockPrice.toFixed(2)}</td>
           </tr>
           <tr>
-            <td className="w-48 px-5 p-1 border border-grey-800 text-center">Close</td>
+            <td className={rowClass}>Close</td>
               <td className={curPriceClass}>{curPriceDisplay}</td>
             </tr>
             <tr>
-              <td className="w-48 px-5 p-1 border border-grey-800 text-center">Position</td>
+              <td className={rowClass}>Position</td>
               <Position bet={bet} canBet={canBet} />
             </tr>
             <tr>
-              <td className="w-48 px-5 p-1 border border-grey-800 text-center">Result</td>
+              <td className={rowClass}>Result</td>
               <Result bet={bet} />
             </tr>
           </tbody>
