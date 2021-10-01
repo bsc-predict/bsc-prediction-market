@@ -55,11 +55,13 @@ export const fetchLatestRounds = createAsyncThunk(
         .filter(r => roundComplete(r, block, intervalSeconds, bufferBlocks))
         .map(r => r.epochNum)
     )
+
+    const backfill = rounds.slice(0,20).filter(r => r.oracleCalled === false).map(r => r.epochNum)
     const contract = getPredictionContract(game)
     const currentBlock = calcBlockTimestamp(block)
     const latest = await contract.methods.currentEpoch().call().then((l: string) => Number(l)) as number
-    const epochs = createArray(Math.max(0, latest - n), latest + 1).filter(e => !availableEpochs.has(e))
-    const updated = epochs.map(async epoch => {
+    const epochs = new Set(createArray(Math.max(0, latest - n), latest + 1).filter(e => !availableEpochs.has(e)).concat(backfill))
+    const updated = Array(...epochs).map(async epoch => {
       const r = await contract.methods.rounds(epoch.toString()).call() as Object
       return toRound(r as RoundResponse)
     })

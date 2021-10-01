@@ -4,7 +4,6 @@ import { NotificationsContext } from "../../../contexts/NotificationsContext"
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks"
 import { setGame } from "../../../stores/gameSlice"
 import { claim, fetchBets } from "../../../thunks/bet"
-import { setupGame } from "../../../thunks/game"
 import { shortenAddress } from "../../../utils/accounts"
 import { calcBlockTimestamp, toEther, toTimeString } from "../../../utils/utils"
 
