@@ -84,6 +84,8 @@ interface GraphQlBetResponse {
     round: {
       epoch: string
       failed: boolean
+      bearAmount: string
+      bullAmount: string
       closePrice: string | null
       lockPrice: string | null
     }

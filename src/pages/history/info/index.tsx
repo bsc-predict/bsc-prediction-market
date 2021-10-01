@@ -1,6 +1,6 @@
 import React from "react"
-import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks"
-import { fetchBalance } from "../../../thunks/account"
+import { getBalance } from "../../../api"
+import { useAppSelector } from "../../../hooks/reduxHooks"
 import { calcMaxDrawdown } from "../../../utils/bets"
 import { fromWei, prettyNumber, toEther } from "../../../utils/utils"
 
@@ -14,24 +14,24 @@ interface HistoricalInfoProps {
 
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
   const {bets, account, changeAccount, unclaimed, setUnclaimed} = props
+  const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceEth: "0", balanceUsd: 0, bnbPrice: 0})
 
   const sortedBets = bets.slice().sort((a, b) => Number(a.epoch) > Number(b.epoch) ? -1 : 1)
 
   const [performanceLast, setPerformanceLast] = React.useState(20)
   const [curAccount, setCurAccount] = React.useState("")
 
-  const dispatch = useAppDispatch()
-  const balance = useAppSelector(s => s.game.balance)
+  const game = useAppSelector(s => s.game.game)
   
   React.useEffect(() => {
     setCurAccount(account)
   }, [account])
 
   React.useEffect(() => {
-    if (account) {
-      dispatch<any>(fetchBalance(account))
+    if (account && game) {
+      getBalance(game, account).then(b => setBalance(b))
     }
-  }, [account, dispatch])
+  }, [account, game])
 
   const handleUpdateAccount = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurAccount(e.currentTarget.value)
@@ -50,7 +50,7 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
   const biggestWin = sortedBets.reduce((a, b) => (b.wonAmount || 0) > (a.wonAmount || 0) ? b : a, {wonAmount: 0, wonPerc: 0} as Pick<Bet, "wonAmount" | "wonPerc">)
   const biggestWinAmount = biggestWin ? Number(fromWei(biggestWin.wonAmount?.toString() || "0", "ether")) : 0
   
-  const performance = fromWei(sortedBets.slice(0, performanceLast + 1).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
+  const performance = fromWei(sortedBets.slice(0, performanceLast).reduce((acc, b) => acc + (b?.wonAmount || 0), 0).toString(), "ether")
   const maxDrawdown = fromWei(calcMaxDrawdown(sortedBets.slice(0, performanceLast)).toString(), "ether")
   return(
     <div className="mb-5 mt-5 overflow-auto">

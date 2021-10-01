@@ -51,7 +51,7 @@ export const fetchLatestRounds = createAsyncThunk(
 
     const availableEpochs = new Set(
       rounds
-        .slice(0, rounds.length - 2) // last two rounds are always "live"
+        .slice(0, rounds.length - 3) // last two rounds are always "live"
         .filter(r => roundComplete(r, block, intervalSeconds, bufferBlocks))
         .map(r => r.epochNum)
     )

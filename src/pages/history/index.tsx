@@ -4,7 +4,7 @@ import React from "react"
 import Notification from "../../components/notifications"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks"
-import { fetchBets } from "../../thunks/bet"
+import { fetchBets, getBetHistory } from "../../thunks/bet"
 import { fetchArchivedRounds } from "../../thunks/round"
 import { isAddress } from "../../utils/utils"
 import RoundsTable from "../game/rounds/table"
@@ -17,6 +17,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = React.useState(true)
   const [account, setAccount] = React.useState<string | undefined>()
   const [unclaimed, setUnclaimed] = React.useState(false)
+  const [userBets, setUserBets] = React.useState<Bet[]>([])
 
   const router = useRouter()
   const {account: userAccount} = useWeb3React()
@@ -25,7 +26,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const {showRows} = React.useContext(UserConfigContext)
 
   const rounds = useAppSelector(s => s.game.rounds)
-  const bets = useAppSelector(s => s.game.bets)
+  const game = useAppSelector(s => s.game.game)
 
   const dispatch = useAppDispatch()
 
@@ -40,24 +41,24 @@ const HistoryPage: React.FunctionComponent = () => {
     if (!account) {
       setShowRounds([])
     }
-  }, [account, rounds, bets])
+  }, [account, rounds])
 
   React.useEffect(() => {
     dispatch<any>(fetchArchivedRounds({latest: false}))
   }, [dispatch])
 
   React.useEffect(() => {
-    if (account) {
-      dispatch<any>(fetchBets(account))
+    if (account && game) {
+      getBetHistory(game, { user: account.toLowerCase() }).then(b => setUserBets(b))
     }
-  }, [account, dispatch])
+  }, [account, game])
 
   const handleSetAccount = React.useCallback((a: string) => setAccount(a), [])
   const handleSetUnclaimed = React.useCallback((b: boolean) => setUnclaimed(b), [])
 
   React.useEffect(() => {
-    const epochs = new Set(bets.map(b => b.epoch))
-    const unclaimedRounds = new Set(bets.filter(b => b.status === "claimable").map(b => b.epoch))
+    const epochs = new Set(userBets.map(b => b.epoch))
+    const unclaimedRounds = new Set(userBets.filter(b => b.status === "claimable").map(b => b.epoch))
     const start = page * showRows
 
     const show = rounds
@@ -66,13 +67,13 @@ const HistoryPage: React.FunctionComponent = () => {
       .sort((r1, r2) => r2.epochNum < r1.epochNum ? -1 : 1)
       .slice(start, start + showRows)
     setShowRounds(show)
-  }, [bets, rounds, page, showRows, unclaimed])
+  }, [userBets, rounds, page, showRows, unclaimed])
 
 	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
   
   let message: JSX.Element | null = null
   const numPages = unclaimed ?
-    Math.floor((bets.filter(b => b.status === "claimable").length - 1) / showRows) :
+    Math.floor((userBets.filter(b => b.status === "claimable").length - 1) / showRows) :
     Math.floor((rounds.length - 1) / showRows)
 
   if (!isLoading && !account) {
@@ -103,7 +104,7 @@ const HistoryPage: React.FunctionComponent = () => {
 	return(
     <div ref={ref}>
       <HistoricalInfo
-        bets={bets}
+        bets={userBets}
         account={account || ""}
         changeAccount={handleSetAccount}
         unclaimed={userAccount === account ? unclaimed : undefined}
@@ -115,7 +116,7 @@ const HistoryPage: React.FunctionComponent = () => {
          rounds={showRounds}
          setPage={handleSetPage}
          page={page}
-         bets={bets}
+         bets={userBets}
          numPages={numPages}
        />
     </div>

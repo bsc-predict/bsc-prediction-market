@@ -14,11 +14,11 @@ const RoundsPage: React.FunctionComponent = () => {
   const [page, setPage] = React.useState(0)
   const [displayRounds, setDisplayRounds] = React.useState<Round[]>([])
 
-  const {account} = useWeb3React()
+  const { account } = useWeb3React()
   const game = useAppSelector(s => s.game.game)
   const rounds = useAppSelector(s => s.game.rounds)
   const paused = useAppSelector(s => s.game.paused)
-  
+
   const latestEpoch = useAppSelector(s => s.game.rounds.reduce((prior, r) => r.epochNum > prior ? r.epochNum : prior, -1))
   const previousLatestEpoch = usePrevious(latestEpoch)
   const previousAccount = usePrevious(account)
@@ -26,7 +26,7 @@ const RoundsPage: React.FunctionComponent = () => {
   const bets = useAppSelector(s => s.game.bets)
 
   const dispatch = useAppDispatch()
-  const {showRows} = React.useContext(UserConfigContext)
+  const { showRows } = React.useContext(UserConfigContext)
 
   React.useEffect(() => {
     if (rounds.length === 0) {
@@ -40,7 +40,7 @@ const RoundsPage: React.FunctionComponent = () => {
   }, [page, showRows, rounds, latestEpoch])
 
   React.useEffect(() => {
-    if (!account || previousLatestEpoch === undefined || latestEpoch === undefined){
+    if (!account || previousLatestEpoch === undefined || latestEpoch === undefined) {
       return
     }
     if ((latestEpoch !== previousLatestEpoch) || (account !== previousAccount)) {
@@ -48,26 +48,26 @@ const RoundsPage: React.FunctionComponent = () => {
     }
   }, [account, dispatch, latestEpoch, previousAccount, previousLatestEpoch])
 
-	const handleSetPage = React.useCallback((p: number) => {
+  const handleSetPage = React.useCallback((p: number) => {
     const startEpoch = latestEpoch - ((p + 1) * showRows)
     const endEpoch = startEpoch + showRows
     const epochs = createArray(startEpoch, endEpoch)
-    dispatch<any>(fetchRounds({epochs}))
+    dispatch<any>(fetchRounds({ epochs }))
     setPage(p)
   }, [latestEpoch, dispatch, showRows])
 
-  return(
+  return (
     <React.Fragment>
       {paused &&
-      <div className="mb-6">
-        <Notification
-          type="info"
-          title="Markets Paused"
-          message="Markets have been paused. All open bets prior to pause are reclaimable"
-          absolute={false}
-        />
-      </div>}
-      <Info/>
+        <div className="mb-6">
+          <Notification
+            type="info"
+            title="Markets Paused"
+            message="Markets have been paused. All open bets prior to pause are reclaimable"
+            absolute={false}
+          />
+        </div>}
+      <Info />
       <RoundsTable
         numPages={displayRounds.length > 0 ? Math.floor((displayRounds[0].epochNum - 2) / showRows) : 0}
         rounds={displayRounds}
