@@ -1,11 +1,11 @@
 import { gql, request } from "graphql-request"
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { fromWei, toWei } from "../utils/utils"
+import { createArray, fromWei, toWei } from "../utils/utils"
 import { RootState } from "../stores"
 import { Urls } from "../constants"
 import { PredictionAddress } from "../contracts/prediction"
 import predictionAbi from "../contracts/prediction_abi.json"
-import type {AbiItem} from "web3-utils"
+import type { AbiItem } from "web3-utils"
 import Web3 from "web3"
 
 interface BetCallbacks {
@@ -29,7 +29,7 @@ export const claim = createAsyncThunk(
   async (props: ClaimBetProps, thunkApi) => {
 
     const { epochs, onSent, onConfirmed, onError } = props
-    const {game: { game, account, library }} = thunkApi.getState() as RootState
+    const { game: { game, account, library } } = thunkApi.getState() as RootState
     if (!game) {
       return
     }
@@ -37,7 +37,7 @@ export const claim = createAsyncThunk(
     const address = PredictionAddress[game.chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
     return contract.methods.claim(epochs)
-      .send({from: account})
+      .send({ from: account })
       .once('sending', onSent)
       .once('confirmation', onConfirmed)
       .once('error', onError)
@@ -49,7 +49,7 @@ export const makeBet = createAsyncThunk(
   async (props: MakeBetProps, thunkApi) => {
     const { epoch, direction, eth, onSent, onConfirmed, onError } = props
 
-    const {game: { game, account, library }} = thunkApi.getState() as RootState
+    const { game: { game, account, library } } = thunkApi.getState() as RootState
     if (game === undefined) {
       onError(new Error("Game not defined"))
     } else if (account === undefined || library === undefined) {
@@ -65,30 +65,32 @@ export const makeBet = createAsyncThunk(
         .once('sent', onSent)
         .once('confirmation', onConfirmed)
         .once('error', onError)
-    }  
+    }
   }
 )
 
 export const fetchBets = createAsyncThunk(
   "bets/fetch",
   async (address: string, thunkApi) => {
-    const {game: { game }} = thunkApi.getState() as RootState
+    const { game: { game, library } } = thunkApi.getState() as RootState
 
-    if (game === undefined) {
-      return {bets: []}
+    if (game === undefined || library === undefined) {
+      return { bets: [] }
     }
-    let bets = await getBetHistory(game, { user: address.toLowerCase() })
-    let numBets = bets.length
-    let idx = 1
-    const MAX_QUERIES = 5
-    while (numBets === 1000 && idx < MAX_QUERIES) {
-      const additional = await getBetHistory(game, { user: address.toLowerCase() }, 1000, 1000 * idx)
-      bets = bets.concat(additional)
-      numBets = additional.length
-      idx += 1
-    }
-      
+    const bets = await getUserRounds(library, game, address)
     return { bets }
+    // let bets = await getBetHistory(game, { user: address.toLowerCase() })
+    // let numBets = bets.length
+    // let idx = 1
+    // const MAX_QUERIES = 5
+    // while (numBets === 1000 && idx < MAX_QUERIES) {
+    //   const additional = await getBetHistory(game, { user: address.toLowerCase() }, 1000, 1000 * idx)
+    //   bets = bets.concat(additional)
+    //   numBets = additional.length
+    //   idx += 1
+    // }
+
+    // return { bets }
   }
 )
 
@@ -128,7 +130,7 @@ export const getBetHistory = async (game: GameType, where: WhereClause = {}, fir
       epoch: bet.round.epoch,
       won,
       wonAmount,
-      status: bet.claimed ? "claimed" : won ? "claimable" : winner === "Live" ? "pending" : undefined 
+      status: bet.claimed ? "claimed" : won ? "claimable" : winner === "Live" ? "pending" : undefined
     }
   })
   return b
@@ -178,4 +180,34 @@ const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first =
     { first, skip, where },
   )
   return response
+}
+
+const getUserRounds = async (library: any, game: GameType, user: string) => {
+  const web3 = new Web3(library)
+  const contractAddress = PredictionAddress[game.chain]
+  const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
+  let remaining = 0
+  let ct = 0
+  const MAX_ITER = 7
+  const bets: Bet[] = []
+  while (remaining === ct * 1000 && ct < MAX_ITER) {
+    const res = await contract.methods.getUserRounds(web3.utils.toChecksumAddress(user), ct * 1000, 1000).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
+    const [rounds, results, rem] = [res[0], res[1], res[2]]
+    ct += 1
+    remaining = Number(rem)
+    const numItems = Math.min(rounds.length, results.length)
+    createArray(0, numItems).forEach(idx => {
+      const epoch = rounds[idx]
+      const [direction, size, claimed] = results[idx]
+      bets.push({
+        value: size,
+        valueNum: Number(size),
+        valueEthNum: Number(fromWei(size, "ether")),
+        direction: direction === "0" ? "bull" : "bear",
+        claimed,
+        epoch,
+      })
+    })
+  }
+  return bets
 }
