@@ -13,11 +13,11 @@ import { fetchLatestOracle } from '../../thunks/oracle'
 
 type TabTypes = "Play" | "History"
 
-const GamePage: React.FunctionComponent<{chain: Chain}> = ({chain}) => {
+const GamePage: React.FunctionComponent = () => {
 
   const [active, setActive] = React.useState<TabTypes>("Play")
-  const {showRows} = React.useContext(UserConfigContext)
-  const {slow, fast} = React.useContext(RefreshContext)
+  const { showRows } = React.useContext(UserConfigContext)
+  const { slow, fast } = React.useContext(RefreshContext)
 
   const { library, account: web3Account } = useWeb3React()
 
@@ -38,7 +38,7 @@ const GamePage: React.FunctionComponent<{chain: Chain}> = ({chain}) => {
       dispatch<any>(fetchBalance(account))
     }
   }, [slow, account, dispatch])
-  
+
   React.useEffect(() => {
     if (active === "Play") {
       dispatch<any>(fetchLatestRounds(showRows))
@@ -59,6 +59,7 @@ const GamePage: React.FunctionComponent<{chain: Chain}> = ({chain}) => {
               "tab tab-lg tab-active tab-bordered" :
               "tab tab-lg tab-bordered"
             }
+            id={tab === "History" ? "reactour-history" : undefined}
           >
             {tab}
           </a>

@@ -29,14 +29,14 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
   const rowOptions = [5 ,10, 15, 20]
 
   return(
-    <div className="">
+    <div>
       <table className="w-full">
         <thead>
           <RoundHeader/>
         </thead>
         <tbody>
           {rounds.length === 0 && createArray(0, showRows).map(idx => <EmptyRow key={idx}/>)}
-          {rounds.map(r => <RoundRow key={r.epoch} round={r} bet={betsMap.get(r.epoch)} />)}
+          {rounds.map((r, idx) => <RoundRow idx={idx} key={r.epoch} round={r} bet={betsMap.get(r.epoch)} />)}
         </tbody>
       </table>
       <div className="flex float-left mt-4 items-center">

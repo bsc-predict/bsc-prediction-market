@@ -58,10 +58,10 @@ const AppHeader: React.FunctionComponent = () => {
             </ul>
           </div>
           {account ?
-            <button className="btn btn-ghost" onClick={handleDeactivate}>
+            <button className="btn btn-ghost" onClick={handleDeactivate} id="reactour-sign-in">
               {logout}
             </button> :
-            <button className="btn btn-ghost" onClick={handleActivate}>
+            <button className="btn btn-ghost" onClick={handleActivate} id="reactour-sign-in">
               {login}
             </button>
           }

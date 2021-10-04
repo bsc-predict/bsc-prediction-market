@@ -1,4 +1,5 @@
 import React from "react"
+import useWindowDimensions from "../../../hooks/useWindowsDimensions"
 import RoundsTableDesktop from "./desktop"
 import RoundsTableMobile from "./mobile"
 
@@ -11,11 +12,18 @@ interface RoundsTableProps {
 }
 
 const RoundsTable: React.FunctionComponent<RoundsTableProps> = (props) => {
-  const {bets, rounds, page, setPage, numPages} = props
-
-  return(
+  const { bets, rounds, page, setPage, numPages } = props
+  const { width } = useWindowDimensions()
+  const mobile = width < 768
+  return (
     <div>
-      <div className="hidden md:contents">
+      {mobile ?
+        <RoundsTableMobile
+          bets={bets}
+          rounds={rounds}
+          page={page}
+          onChangePage={setPage}
+        /> :
         <RoundsTableDesktop
           bets={bets}
           rounds={rounds}
@@ -23,16 +31,8 @@ const RoundsTable: React.FunctionComponent<RoundsTableProps> = (props) => {
           onChangePage={setPage}
           numPages={numPages}
         />
-      </div>
-      <div className="contents md:hidden">
-        <RoundsTableMobile 
-          bets={bets}
-          rounds={rounds}
-          page={page}
-          onChangePage={setPage}
-        />
-        </div>
-    </div>
+      }
+    </div >
   )
 }
 

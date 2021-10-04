@@ -7,7 +7,11 @@ import { claim, fetchBets } from "../../../thunks/bet"
 import { shortenAddress } from "../../../utils/accounts"
 import { calcBlockTimestamp, toEther, toTimeString } from "../../../utils/utils"
 
-const Info: React.FunctionComponent = () => {
+interface InfoProps {
+  showReactour: (s: boolean) => void
+}
+
+const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
   const [secondsRemaining, setSecondsRemaining] = React.useState(0)
   const [claiming, setClaiming] = React.useState(false)
 
@@ -25,7 +29,7 @@ const Info: React.FunctionComponent = () => {
   const router = useRouter()
 
   const latestEpoch = React.useRef(-1)
-  const {setMessage} = React.useContext(NotificationsContext)
+  const { setMessage } = React.useContext(NotificationsContext)
 
   const handleClaim = () => {
     if (claimable.length > 0) {
@@ -34,16 +38,17 @@ const Info: React.FunctionComponent = () => {
       dispatch<any>(
         claim({
           epochs,
-          onSent: () => setMessage({type: "info", title: "Claim sent", message: "", duration: 5000}),
+          onSent: () => setMessage({ type: "info", title: "Claim sent", message: "", duration: 5000 }),
           onConfirmed: () => {
             setTimeout(() => account && dispatch<any>(fetchBets(account)), 3000)
-            setMessage({type: "success", title: "Claim processed", message: "", duration: 5000})
+            setMessage({ type: "success", title: "Claim processed", message: "", duration: 5000 })
             setClaiming(false)
           },
           onError: (e?: Error) => {
-            setMessage({type: "error", title: "Claim failed", message: e?.message, duration: 7000})
+            setMessage({ type: "error", title: "Claim failed", message: e?.message, duration: 7000 })
             setClaiming(false)
-          }}
+          }
+        }
         )
       )
     }
@@ -68,41 +73,41 @@ const Info: React.FunctionComponent = () => {
 
   const handleSetChain = (chain: Chain) => {
     if (game?.pair) {
-      dispatch(setGame({chain, pair: game.pair}))
+      dispatch(setGame({ chain, pair: game.pair }))
       if (chain === "main") {
-        router.push(router.pathname, { query: undefined})
+        router.push(router.pathname, { query: undefined })
       } else {
-        router.push(router.pathname, { query: { c: chain }})
+        router.push(router.pathname, { query: { c: chain } })
       }
     }
   }
 
   const otherChain = game?.chain === "main" ? "test" : "main"
 
-  return(
+  return (
     <div className="mb-5 mt-5">
       <div className="md:stats">
         <div className="stat">
           <div className="stat-title">Game</div>
           <div className="stat-value">
-              <div tabIndex={0} className="font-bold">{game?.pair === "bnbusdt" ? "BNB-USDT" : ""}</div>
-            </div>
+            <div tabIndex={0} className="font-bold">{game?.pair === "bnbusdt" ? "BNB-USDT" : ""}</div>
+          </div>
           <div className="stat-desc">{game?.chain === "main" ? "mainnet" : game?.chain === "test" ? "testnet" : ""}</div>
         </div>
 
         <div className="stat">
-          <div className="stat-title">Account</div> 
-          <div className="stat-value">{account ? shortenAddress(account): ""}</div>
+          <div className="stat-title">Account</div>
+          <div className="stat-value">{account ? shortenAddress(account) : ""}</div>
           <div className="stat-desc">&nbsp;</div>
         </div>
         <div className="stat">
-          <div className="stat-title">Balance</div> 
+          <div className="stat-title">Balance</div>
           <div className="stat-value">
             {balance !== undefined ? Number(toEther(balance.balance, 2)) : "0.00"}
           </div>
           <div className="stat-desc"> {balance ? `\$${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()}` : ""}</div>
         </div>
-        <div className="stat">
+        <div className="stat" id="reactour-claim">
           <div className="stat-title">Claim</div>
           <div className="stat-value">
             <div
@@ -113,9 +118,9 @@ const Info: React.FunctionComponent = () => {
                 onClick={handleClaim}
                 className={
                   claiming ? "btn loading bg-accent" :
-                  claimableAmount === 0 ?
-                  "btn btn-disabled" :
-                  "btn bg-accent text-accent-content hover:bg-accent-focus"
+                    claimableAmount === 0 ?
+                      "btn btn-disabled" :
+                      "btn bg-accent text-accent-content hover:bg-accent-focus"
                 }>
                 {`${toEther(claimableAmount, 2)} BNB`}
               </button>
@@ -123,9 +128,14 @@ const Info: React.FunctionComponent = () => {
           </div>
           <div className="stat-desc">{claimable.length} round{claimable.length !== 1 ? "s" : ""}</div>
         </div>
-        <div className="stat">
+        <div className="stat" id="reactour-time-remaining">
           <div className="stat-title">Time Remaining</div>
           <div className="stat-value">{toTimeString(secondsRemaining)}</div>
+          <div className="stat-desc">&nbsp;</div>
+        </div>
+        <div className="stat">
+          <div className="stat-title">Help</div>
+          <div className="stat-value cursor-pointer" onClick={() => showReactour(true)}>?</div>
           <div className="stat-desc">&nbsp;</div>
         </div>
       </div>

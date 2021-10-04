@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic"
 import { useWeb3React } from "@web3-react/core";
 import React from "react"
 import { UserConfigContext } from "../../../contexts/UserConfigContext"
@@ -9,13 +10,19 @@ import { fetchRounds } from "../../../thunks/round"
 import { fetchBets } from "../../../thunks/bet"
 import { createArray } from "../../../utils/utils"
 import { usePrevious } from "../../../hooks/usePrevious";
+import { gameSteps } from "./reactour/steps";
+
+const AppTour = dynamic(
+  () => import("reactour"),
+  { ssr: false },
+)
 
 const RoundsPage: React.FunctionComponent = () => {
   const [page, setPage] = React.useState(0)
+  const [showReactour, setShowReactour] = React.useState(false)
   const [displayRounds, setDisplayRounds] = React.useState<Round[]>([])
 
   const { account } = useWeb3React()
-  const game = useAppSelector(s => s.game.game)
   const rounds = useAppSelector(s => s.game.rounds)
   const paused = useAppSelector(s => s.game.paused)
 
@@ -25,8 +32,11 @@ const RoundsPage: React.FunctionComponent = () => {
 
   const bets = useAppSelector(s => s.game.bets)
 
+
   const dispatch = useAppDispatch()
   const { showRows } = React.useContext(UserConfigContext)
+
+  const handleShowReactour = React.useCallback((s: boolean) => setShowReactour(s), [])
 
   React.useEffect(() => {
     if (rounds.length === 0) {
@@ -58,6 +68,12 @@ const RoundsPage: React.FunctionComponent = () => {
 
   return (
     <React.Fragment>
+      <AppTour
+        steps={gameSteps}
+        isOpen={showReactour}
+        onRequestClose={() => setShowReactour(false)}
+        lastStepNextButton={<button className="btn btn-success text-white text-sm">Start</button>}
+      />
       {paused &&
         <div className="mb-6">
           <Notification
@@ -67,7 +83,7 @@ const RoundsPage: React.FunctionComponent = () => {
             absolute={false}
           />
         </div>}
-      <Info />
+      <Info showReactour={handleShowReactour} />
       <RoundsTable
         numPages={displayRounds.length > 0 ? Math.floor((displayRounds[0].epochNum - 2) / showRows) : 0}
         rounds={displayRounds}

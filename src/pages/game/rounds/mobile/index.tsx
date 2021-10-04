@@ -29,8 +29,9 @@ const RoundsTableMobile: React.FunctionComponent<RoundsTableMobileProps> = (prop
         <button className="btn" onClick={() => onChangePage(0)}>Current</button>
         <button className="btn" onClick={() => onChangePage(page - 1)}>Later</button>
       </div>}
-      {rounds.map(r =>
+      {rounds.map((r, idx) =>
         <RoundCardMobile
+          idx={idx}
           key={r.epoch}
           round={r}
           bet={bets.find(b => b.epoch === r.epoch)}

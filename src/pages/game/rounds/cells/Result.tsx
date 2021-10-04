@@ -2,11 +2,12 @@ import React from "react"
 import { toEther } from "../../../../utils/utils"
 
 interface ResultProps {
+  id?: string
   bet: Bet | undefined
 }
 
 const Result: React.FunctionComponent<ResultProps> = (props) => {
-  const {bet} = props
+  const { bet, id } = props
 
   let winAmount = bet?.wonAmount !== undefined ? toEther(bet.wonAmount, 4) : ""
 
@@ -22,8 +23,8 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
     className = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   }
 
-  return(
-    <td className={className}>
+  return (
+    <td className={className} id={id}>
       {bet && !bet.won && <span>{betValue}</span>}
       {bet && bet.won &&
         <div>

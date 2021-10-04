@@ -32,7 +32,7 @@ const BnbUsdt: React.FunctionComponent = () => {
 
   return (
     <AppWrapper title="BSC Predictions" description="Binance Smart Chain (BSC) Prediction Markets">
-      <GamePage chain="main"/>
+      <GamePage />
     </AppWrapper>
   )
 }

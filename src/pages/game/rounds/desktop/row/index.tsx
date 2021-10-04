@@ -8,20 +8,21 @@ import { rowClass } from "../style"
 
 
 interface RoundRowProps {
+  idx: number
   round: Round
   bet?: Bet
 }
 
 const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
-  const {round, bet} = props
-  
+  const { round, bet, idx } = props
+
   const currentTimestamp = useAppSelector(s => calcBlockTimestamp(s.game.block))
-  const constants = useAppSelector(s => ({bufferSeconds: s.game.bufferSeconds, rewardRate: s.game.rewardRate, intervalSeconds: s.game.intervalSeconds}))
+  const constants = useAppSelector(s => ({ bufferSeconds: s.game.bufferSeconds, rewardRate: s.game.rewardRate, intervalSeconds: s.game.intervalSeconds }))
   const latestOracle = useAppSelector(s => s.game.oracle)
 
   const canBet = bet === undefined && calcCanBet(round, currentTimestamp)
 
-  const {prizePool, lockPrice, live, curPriceDisplay, winner} = getRoundInfo(round, currentTimestamp, constants, latestOracle)
+  const { prizePool, lockPrice, live, curPriceDisplay, winner } = getRoundInfo(round, currentTimestamp, constants, latestOracle)
 
   let curPriceClass = rowClass
   let bearCellClass = rowClass
@@ -40,16 +41,19 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
     bearCellClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
   }
 
-  return(
-    <tr className={live ? "active" : undefined}>
+  const first = idx === 0
+  const second = idx === 1
+
+  return (
+    <tr className={live ? "active" : undefined} id={first ? "reactour-live" : undefined}>
       <td className={rowClass}>{round.epoch}</td>
-      <td className={bullCellClass}>{round.bullPayoutGross.toFixed(4)}</td>
-      <td className={bearCellClass}>{round.bearPayoutGross.toFixed(4)}</td>
-      <td className={rowClass}>{prizePool}</td>
-      <td className={rowClass}>{lockPrice.toFixed(2)}</td>
-      <td className={curPriceClass}>{curPriceDisplay}</td>
-      <Position bet={bet} canBet={canBet}/>
-      <Result bet={bet} />
+      <td id={first ? "reactour-bull-payout" : undefined} className={bullCellClass}>{round.bullPayoutGross.toFixed(4)}</td>
+      <td id={first ? "reactour-bear-payout" : undefined} className={bearCellClass}>{round.bearPayoutGross.toFixed(4)}</td>
+      <td id={first ? "reactour-prize-pool" : undefined} className={rowClass}>{prizePool}</td>
+      <td id={second ? "reactour-lock-price" : undefined} className={rowClass}>{lockPrice.toFixed(2)}</td>
+      <td id={second ? "reactour-close-price" : undefined} className={curPriceClass}>{curPriceDisplay}</td>
+      <Position bet={bet} canBet={canBet} id={first ? "reactour-position" : undefined} />
+      <Result bet={bet} id={second ? "reactour-result" : undefined} />
     </tr>
   )
 }

@@ -4,6 +4,7 @@ import React from "react"
 import useLogin from "../../../../hooks/useLogin"
 
 interface PositionProps {
+  id?: string
   bet: Bet | undefined
   canBet: boolean
 }
@@ -11,11 +12,11 @@ interface PositionProps {
 type ShowStates = "make-bet" | "direction" | "login" | "position"
 
 const Position: React.FunctionComponent<PositionProps> = (props) => {
-  const {bet, canBet} = props
+  const { bet, canBet, id } = props
   const router = useRouter()
-  
-  const {handleActivate} = useLogin()
-  const {account} = useWeb3React()
+
+  const { handleActivate } = useLogin()
+  const { account } = useWeb3React()
 
   const position = bet === undefined ? null : bet.direction === "bear" ? "↓" : "↑"
 
@@ -35,13 +36,13 @@ const Position: React.FunctionComponent<PositionProps> = (props) => {
     className = "justify-center text-center border border-grey-900 bg-secondary"
   }
 
-  return(
-    <td className={className}>
+  return (
+    <td className={className} id={id}>
       {showEl === "direction" &&
-          <div className="flex content-center divide-x">
-            <a className="px-4 w-1/2" href={`${router.pathname}#make-bet-bear-modal`}>↓</a>
-            <a className="px-4 w-1/2" href={`${router.pathname}#make-bet-bull-modal`}>↑</a>
-          </div>
+        <div className="flex content-center divide-x">
+          <a className="px-4 w-1/2" href={`${router.pathname}#make-bet-bear-modal`}>↓</a>
+          <a className="px-4 w-1/2" href={`${router.pathname}#make-bet-bull-modal`}>↑</a>
+        </div>
       }
       {showEl === "position" && <div className={"px-4 mx-1"}>{position}</div>}
       {showEl === "login" && <button className="btn btn-primary btn-sm" onClick={handleActivate}>Login</button>}
