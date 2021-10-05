@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' next dev -p 3003",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start -p 3003",
     "lint": "next lint",
     "build:style": "tailwind build public/assets/styles/vendors.css -o public/assets/styles/tailwind.css"
@@ -38,6 +39,7 @@
     "@types/reactour": "^1.18.2",
     "eslint": "7.28.0",
     "eslint-config-next": "11.0.0",
+    "next-sitemap": "^1.6.173",
     "postcss": "^8.3.5",
     "postcss-preset-env": "^6.7.0",
     "tailwindcss": "^2.2.4",

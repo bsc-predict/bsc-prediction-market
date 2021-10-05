@@ -31,9 +31,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
   return(
     <div>
       <table className="w-full">
-        <thead>
           <RoundHeader/>
-        </thead>
         <tbody>
           {rounds.length === 0 && createArray(0, showRows).map(idx => <EmptyRow key={idx}/>)}
           {rounds.map((r, idx) => <RoundRow idx={idx} key={r.epoch} round={r} bet={betsMap.get(r.epoch)} />)}
