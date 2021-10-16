@@ -7,6 +7,7 @@ import { PredictionAddress } from "../contracts/prediction"
 import predictionAbi from "../contracts/prediction_abi.json"
 import type { AbiItem } from "web3-utils"
 import Web3 from "web3"
+import { event } from '../utils/gtag'
 
 interface BetCallbacks {
   onSent: () => void
@@ -33,6 +34,7 @@ export const claim = createAsyncThunk(
     if (!game) {
       return
     }
+    event({ action: "claim", category: game.chain, label: "claim", value: 1 })
     const web3 = new Web3(library)
     const address = PredictionAddress[game.chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -50,11 +52,13 @@ export const makeBet = createAsyncThunk(
     const { epoch, direction, eth, onSent, onConfirmed, onError } = props
 
     const { game: { game, account, library } } = thunkApi.getState() as RootState
+
     if (game === undefined) {
       onError(new Error("Game not defined"))
     } else if (account === undefined || library === undefined) {
       onError(new Error("Not logged in"))
     } else {
+      event({ action: "bet", category: game.chain, label: direction, value: 1 })
       const address = PredictionAddress[game.chain]
       const web3 = new Web3(library)
       const value = toWei(eth.toString(), "ether")
