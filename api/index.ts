@@ -6,9 +6,7 @@ export async function getAllPosts() {
   const context = require.context('../_posts', false, /\.md$/)
   const posts = []
   const postNames = new Set(
-    context.keys()
-      .map(k => typeof k === "string" ? k.replaceAll(/.*\//g, "") : "")
-      .filter(k => k === ""))
+    context.keys().map(k => k.replace(/.*\//g, "")))
   for (const key of postNames) {
     const post = key
     const content = await import(`../_posts/${post}`);
