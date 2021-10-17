@@ -34,7 +34,7 @@ export const claim = createAsyncThunk(
     if (!game) {
       return
     }
-    event({ action: "claim", category: game.chain, label: "claim", value: 1 })
+    event({ action: "claim", category: game.chain, label: "claim", value: 0 })
     const web3 = new Web3(library)
     const address = PredictionAddress[game.chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
@@ -58,7 +58,7 @@ export const makeBet = createAsyncThunk(
     } else if (account === undefined || library === undefined) {
       onError(new Error("Not logged in"))
     } else {
-      event({ action: "bet", category: game.chain, label: direction, value: 1 })
+      event({ action: "bet", category: game.chain, label: direction, value: 0 })
       const address = PredictionAddress[game.chain]
       const web3 = new Web3(library)
       const value = toWei(eth.toString(), "ether")
