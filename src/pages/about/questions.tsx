@@ -10,7 +10,7 @@ const questions = [
   {
     id: "how",
     q: <div>How is this different than <a className="underline" href="https://pancakeswap.finance/prediction">Pancake Swap Prediction Market?</a></div>,
-    a: <div>It&apos;s not. It&apos;s just another way to interact with the same <a className="underline" href="https://bscscan.com/address/0x516ffd7d1e0ca40b1879935b2de87cb20fc1124b">contact</a></div>
+    a: <div>It&apos;s not. It&apos;s just another way to interact with the same <a className="underline" href="https://bscscan.com/address/0x516ffd7d1e0ca40b1879935b2de87cb20fc1124b">contract</a></div>
   },
   {
     id: "why",

@@ -78,7 +78,7 @@ const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
           </tr>
           <tr id={second ? "reactour-result" : undefined}>
             <td className={rowClass}>Result</td>
-            <Result bet={bet} />
+            <Result bet={bet} round={round} />
           </tr>
         </tbody>
       </table>

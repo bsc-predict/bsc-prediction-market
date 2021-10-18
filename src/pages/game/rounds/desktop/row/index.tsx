@@ -53,7 +53,7 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
       <td id={second ? "reactour-lock-price" : undefined} className={rowClass}>{lockPrice.toFixed(2)}</td>
       <td id={second ? "reactour-close-price" : undefined} className={curPriceClass}>{curPriceDisplay}</td>
       <Position bet={bet} canBet={canBet} id={first ? "reactour-position" : undefined} />
-      <Result bet={bet} id={second ? "reactour-result" : undefined} />
+      <Result bet={bet} id={second ? "reactour-result" : undefined} round={round} />
     </tr>
   )
 }

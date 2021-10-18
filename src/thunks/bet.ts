@@ -108,7 +108,8 @@ export const getBetHistory = async (game: GameType, where: WhereClause = {}, fir
     const bearAmountNum = Number(bet.round.bearAmount)
     const baseReward = (bullAmountNum + bearAmountNum) * 0.97
     let payoff = 0
-    if (closePrice === null) {
+
+    if (closePrice === null || closePrice === 0) {
       winner = "Live"
     } else if (closePrice > lockPrice) {
       winner = "Bull"

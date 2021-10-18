@@ -37,7 +37,6 @@ export async function getStaticProps() {
   return {
     props: {
       posts: allPosts,
-      title: "BSC Predict Blog",
       description: "Strategy and more"
     }
   }
