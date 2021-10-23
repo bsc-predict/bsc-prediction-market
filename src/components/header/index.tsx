@@ -34,7 +34,7 @@ const AppHeader: React.FunctionComponent = () => {
       <div className="flex-1 px-2 mx-2">
         <div className="items-stretch space-x-2">
           <Link href="/blog" passHref>
-            <a className="m-1 btn btn-ghost">BLOG</a>
+            <a className="hidden m-1 btn btn-ghost md:inline-flex">BLOG</a>
           </Link>
           <div className="dropdown dropdown-hover">
             <div tabIndex={0} className="m-1 btn btn-ghost">Games</div>

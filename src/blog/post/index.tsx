@@ -9,7 +9,7 @@ interface BlogPostPageProps {
 const BlogPostPage: React.FunctionComponent<BlogPostPageProps> = (props) => {
   const { title, content } = props
   return (
-    <div className="p-4">
+    <div className="p-4 overflow-auto">
       <div className="flex items-center space-x-4">
         <div><Link href="/blog" ><a className="text-xl">←</a></Link></div>
         <h1 className="text-2xl">{title}</h1>
