@@ -1,13 +1,30 @@
+import { getAllPosts } from '@api'
 import React from 'react'
 import HomePage from '../src/pages/home'
 import AppWrapper from '../src/wrapper'
 
-const Home: React.FunctionComponent = () => {
+interface HomeProps {
+  posts: Array<{ slug: string, title: string, date: string }>
+}
+
+const Home: React.FunctionComponent<HomeProps> = ({ posts }) => {
+
   return (
     <AppWrapper title="BSC Predictions" description="Binance Smart Chain (BSC) Prediction Markets">
-      <HomePage />
+      <HomePage posts={posts} />
     </AppWrapper>
   )
 }
+
+
+export async function getStaticProps() {
+  const allPosts = await getAllPosts()
+  return {
+    props: {
+      posts: allPosts,
+    }
+  }
+}
+
 
 export default Home

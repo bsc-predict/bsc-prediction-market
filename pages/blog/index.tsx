@@ -10,17 +10,18 @@ interface BlogProps {
 }
 
 const Blog: React.FunctionComponent<BlogProps> = (props) => {
+  const sortedPosts = props.posts.sort((a, b) => a.date < b.date ? 1 : -1)
   return (
     <AppWrapper title="BSC Predictions Blog" description="Binance Smart Chain (BSC) Prediction Markets Blog">
       <div className="space-y-4 p-6" title={props.title} >
-        <p className="text-2xl">BSC Prediction Market Insights &amp; Analysis</p>
-        <div className="divider"/>
-        <ul className="space-y-2">
+        <p className="text-4xl">BSC Prediction Market Insights &amp; Analysis</p>
+        <div className="divider" />
+        <ul className="space-y-4">
           {props.posts.map((post, idx) => {
             return (
               <li key={idx} >
                 <Link href={'/blog/' + post.slug}>
-                  <a className="text-xl hover:font-bold">{post.title}</a>
+                  <a className="text-2xl hover:font-bold">{post.title}</a>
                 </Link>
                 <div className="text-xs">Published {post.date}</div>
               </li>
