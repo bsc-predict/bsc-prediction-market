@@ -1,6 +1,6 @@
 export const Urls = {
     rpc: {
-      main: "https://bsc-dataseed1.binance.org:443",
+      main: "https://nodes.pancakeswap.com",
       test: "https://data-seed-prebsc-2-s1.binance.org:8545/"  
     },
     bets: {
