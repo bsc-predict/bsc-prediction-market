@@ -27,7 +27,7 @@ const HomePage: React.FunctionComponent<HomePageProps> = (props) => {
           </Link>
         </div>
       </div>
-      <div className="text-lg p-4 border border-solid">
+      <div className="text-lg p-4">
         <a className="underline" href="https://forms.zoho.com/contact631/form/BSCPredictMailingList">Subscribe</a> to BSC Predict mailing list to receive emails on the
         updates and new blog posts
       </div>
