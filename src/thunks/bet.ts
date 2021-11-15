@@ -193,7 +193,7 @@ const getUserRounds = async (library: any, game: GameType, user: string) => {
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
   let remaining = 0
   let ct = 0
-  const MAX_ITER = 10
+  const MAX_ITER = 20
   const bets: Bet[] = []
   while (remaining === ct * 1000 && ct < MAX_ITER) {
     const res = await contract.methods.getUserRounds(web3.utils.toChecksumAddress(user), ct * 1000, 1000).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
