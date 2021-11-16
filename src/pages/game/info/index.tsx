@@ -60,7 +60,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
   }, [])
 
   React.useEffect(() => {
-    const r = rounds.find(r => r.closePriceNum === 0 && r.lockPriceNum === 0)
+    const r = rounds.length > 0 ? rounds.reduce((acc, r) => r.epochNum > acc.epochNum ? r : acc) : undefined
     if (r && !paused) {
       const t = Math.max(0, (r.lockTimestampNum - block))
       latestEpoch.current = r.epochNum

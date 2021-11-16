@@ -45,6 +45,7 @@ export const fetchLatestRounds = createAsyncThunk(
   "rounds/fetchLatest",
   async (n: number, thunkApi) => {
     const {game: {rounds, game, block, intervalSeconds, bufferSeconds: bufferBlocks, fetchingRounds}} = thunkApi.getState() as RootState
+
     if (game === undefined || fetchingRounds !== "rounds/fetchLatest") {
       return {updatedRounds: [], paused: false}
     }
@@ -67,7 +68,8 @@ export const fetchLatestRounds = createAsyncThunk(
     })
     
     const updatedRounds = await Promise.all(updated)
-    const latestLockBlock = updatedRounds.reduce((lock, r) => r.lockTimestampNum > lock ? r.lockTimestampNum : lock, 0)
+
+    const latestLockBlock = updatedRounds ? updatedRounds.reduce((lock, r) => r.lockTimestampNum > lock ? r.lockTimestampNum : lock, 0) : 0
 
     let paused = false
     if ((currentBlock + bufferBlocks + intervalSeconds) > latestLockBlock) {

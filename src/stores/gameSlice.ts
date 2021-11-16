@@ -68,7 +68,7 @@ export const gameSlice = createSlice({
       state.game = action.payload
       state.rounds = []
       state.bets = []
-      state.block = {initial: { timestamp: 0 }, time: new Date()}
+      state.block = {initial: { timestamp: new Date().getTime() }, time: new Date()}
       state.paused = false
     },
   },
