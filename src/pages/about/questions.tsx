@@ -10,7 +10,7 @@ const questions = [
   {
     id: "how",
     q: <div>How is this different than <a className="underline" href="https://pancakeswap.finance/prediction">Pancake Swap Prediction Market?</a></div>,
-    a: <div>It&apos;s not. It&apos;s just another way to interact with the same <a className="underline" href="https://bscscan.com/address/0x516ffd7d1e0ca40b1879935b2de87cb20fc1124b">contract</a></div>
+    a: <div>It&apos;s not. It&apos;s just another way to interact with the same <a className="underline" href="https://bscscan.com/address/0x18b2a687610328590bc8f2e5fedde3b582a49cda">contract</a></div>
   },
   {
     id: "why",
@@ -30,13 +30,13 @@ const questions = [
   },
   {
     id: "play",
-    q: <div>How can I play</div>,
+    q: <div>How can I play?</div>,
     a: <div>Go <Link  href="/bnbusdt"><a className="underline">here</a></Link> to play. If you need help, click the big <strong>?</strong> on the header</div>
   },
   {
     id: "contact",
     q: <div>How can I contact you?</div>,
-    a: <div>You can <a className="underline" href="contact@bscpredict.com">email me</a></div>,
+    a: <div>You can <a className="underline" href="mailto:contact@bscpredict.com">email me</a></div>,
   },
 ]
 
