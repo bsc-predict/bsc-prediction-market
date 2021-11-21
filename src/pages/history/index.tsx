@@ -1,10 +1,11 @@
 import { useWeb3React } from "@web3-react/core"
 import { useRouter } from "next/router"
 import React from "react"
+import { enrichBets } from "src/utils/bets"
 import Notification from "../../components/notifications"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks"
-import { fetchBets, getBetHistory } from "../../thunks/bet"
+import { fetchBets, getBetHistory, getUserRounds } from "../../thunks/bet"
 import { fetchArchivedRounds } from "../../thunks/round"
 import { isAddress } from "../../utils/utils"
 import RoundsTable from "../game/rounds/table"
@@ -20,11 +21,15 @@ const HistoryPage: React.FunctionComponent = () => {
   const [userBets, setUserBets] = React.useState<Bet[]>([])
 
   const router = useRouter()
-  const {account: userAccount} = useWeb3React()
-  const {a: pathAccount} = router.query
-    
-  const {showRows} = React.useContext(UserConfigContext)
+  const { account: userAccount } = useWeb3React()
+  const { a: pathAccount } = router.query
 
+  const { showRows } = React.useContext(UserConfigContext)
+
+  const bufferSeconds = useAppSelector(s => s.game.bufferSeconds)
+  const intervalSeconds = useAppSelector(s => s.game.intervalSeconds)
+  const block = useAppSelector(s => s.game.block)
+  const library = useAppSelector(s => s.game.library)
   const rounds = useAppSelector(s => s.game.rounds)
   const game = useAppSelector(s => s.game.game)
 
@@ -44,16 +49,23 @@ const HistoryPage: React.FunctionComponent = () => {
   }, [account, rounds])
 
   React.useEffect(() => {
-    dispatch<any>(fetchArchivedRounds({latest: false}))
+    dispatch<any>(fetchArchivedRounds({ latest: false }))
   }, [dispatch])
 
   React.useEffect(() => {
-    if (account && game) {
-      getBetHistory(game, { user: account.toLowerCase() }).then(b => setUserBets(b))
+    if (account && game && library && rounds) {
+      getUserRounds(library, game, account).then(bets => {
+        const enriched = enrichBets({ bets, rounds, block, bufferSeconds, intervalSeconds })
+        setUserBets(enriched)
+        setIsLoading(false)
+      })
     }
-  }, [account, game])
+  }, [account, block, bufferSeconds, game, intervalSeconds, library, rounds])
 
-  const handleSetAccount = React.useCallback((a: string) => setAccount(a), [])
+  const handleSetAccount = React.useCallback((a: string) => {
+    setIsLoading(true)
+    setAccount(a)
+  }, [])
   const handleSetUnclaimed = React.useCallback((b: boolean) => setUnclaimed(b), [])
 
   React.useEffect(() => {
@@ -69,8 +81,8 @@ const HistoryPage: React.FunctionComponent = () => {
     setShowRounds(show)
   }, [userBets, rounds, page, showRows, unclaimed])
 
-	const handleSetPage = React.useCallback((p: number) => setPage(p), [])
-  
+  const handleSetPage = React.useCallback((p: number) => setPage(p), [])
+
   let message: JSX.Element | null = null
   const numPages = unclaimed ?
     Math.floor((userBets.filter(b => b.status === "claimable").length - 1) / showRows) :
@@ -83,25 +95,25 @@ const HistoryPage: React.FunctionComponent = () => {
         title="Error"
         absolute={false}
         message="No account provided. Login or provide account in the account text field above"
-      /> 
-  } else if (!isLoading && showRounds.length === 0) {
-      message =
-        <Notification
-          type="info"
-          title={unclaimed ? "No unclaimed bets" : "No bets made"}
-          absolute={false}
-          message={`Account ${account} has ${unclaimed ? "no unclaimed bets" : "not made any bets"}`}
       />
-    } else if (account && !isAddress(account)) {
-      message = 
-        <Notification
-          type="error"
-          title="Error"
-          absolute={false}
-          message="Invalid account"
-        />
-    }
-	return(
+  } else if (!isLoading && showRounds.length === 0) {
+    message =
+      <Notification
+        type="info"
+        title={unclaimed ? "No unclaimed bets" : "No bets made"}
+        absolute={false}
+        message={`Account ${account} has ${unclaimed ? "no unclaimed bets" : "not made any bets"}`}
+      />
+  } else if (account && !isAddress(account)) {
+    message =
+      <Notification
+        type="error"
+        title="Error"
+        absolute={false}
+        message="Invalid account"
+      />
+  }
+  return (
     <div ref={ref}>
       <HistoricalInfo
         bets={userBets}
@@ -111,14 +123,15 @@ const HistoryPage: React.FunctionComponent = () => {
         setUnclaimed={handleSetUnclaimed}
       />
       {message}
-      {(isLoading || showRounds.length === 0) && <div>Loading...</div>}
-       <RoundsTable
-         rounds={showRounds}
-         setPage={handleSetPage}
-         page={page}
-         bets={userBets}
-         numPages={numPages}
-       />
+      {isLoading ? <div>Loading...</div> :
+        <RoundsTable
+          rounds={showRounds}
+          setPage={handleSetPage}
+          page={page}
+          bets={userBets}
+          numPages={numPages}
+        />
+      }
     </div>
   )
 }

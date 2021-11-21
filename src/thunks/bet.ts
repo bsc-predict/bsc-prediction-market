@@ -8,6 +8,7 @@ import predictionAbi from "../contracts/prediction_abi.json"
 import type { AbiItem } from "web3-utils"
 import Web3 from "web3"
 import { event } from '../utils/gtag'
+import { enrichBets } from "src/utils/bets"
 
 interface BetCallbacks {
   onSent: () => void
@@ -187,7 +188,11 @@ const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first =
   return response
 }
 
-const getUserRounds = async (library: any, game: GameType, user: string) => {
+export const getUserRounds = async (
+  library: any,
+  game: GameType,
+  user: string,
+) => {
   const web3 = new Web3(library)
   const contractAddress = PredictionAddress[game.chain]
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
