@@ -1,11 +1,12 @@
 import { useWeb3React } from "@web3-react/core"
 import { useRouter } from "next/router"
 import React from "react"
+import { getArchivedRounds } from "src/api"
 import { enrichBets } from "src/utils/bets"
 import Notification from "../../components/notifications"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
 import { useAppDispatch, useAppSelector } from "../../hooks/reduxHooks"
-import { fetchBets, getBetHistory, getUserRounds } from "../../thunks/bet"
+import { getUserRounds } from "../../thunks/bet"
 import { fetchArchivedRounds } from "../../thunks/round"
 import { isAddress } from "../../utils/utils"
 import RoundsTable from "../game/rounds/table"
@@ -19,6 +20,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const [account, setAccount] = React.useState<string | undefined>()
   const [unclaimed, setUnclaimed] = React.useState(false)
   const [userBets, setUserBets] = React.useState<Bet[]>([])
+  const [rounds, setRounds] = React.useState<Round[]>([])
 
   const router = useRouter()
   const { account: userAccount } = useWeb3React()
@@ -30,10 +32,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const intervalSeconds = useAppSelector(s => s.game.intervalSeconds)
   const block = useAppSelector(s => s.game.block)
   const library = useAppSelector(s => s.game.library)
-  const rounds = useAppSelector(s => s.game.rounds)
   const game = useAppSelector(s => s.game.game)
-
-  const dispatch = useAppDispatch()
 
   const ref = React.useRef<HTMLDivElement>(null)
 
@@ -46,14 +45,17 @@ const HistoryPage: React.FunctionComponent = () => {
     if (!account) {
       setShowRounds([])
     }
-  }, [account, rounds])
+  }, [account])
 
   React.useEffect(() => {
-    dispatch<any>(fetchArchivedRounds({ latest: false }))
-  }, [dispatch])
+    if (game) {
+      getArchivedRounds({latest: false, game}).then(r => setRounds(r))
+    }
+
+  }, [game])
 
   React.useEffect(() => {
-    if (account && game && library && rounds) {
+    if (account && game && library && rounds.length > 0) {
       getUserRounds(library, game, account).then(bets => {
         const enriched = enrichBets({ bets, rounds, block, bufferSeconds, intervalSeconds })
         setUserBets(enriched)
@@ -66,6 +68,7 @@ const HistoryPage: React.FunctionComponent = () => {
     setIsLoading(true)
     setAccount(a)
   }, [])
+
   const handleSetUnclaimed = React.useCallback((b: boolean) => setUnclaimed(b), [])
 
   React.useEffect(() => {

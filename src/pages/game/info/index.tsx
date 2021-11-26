@@ -85,7 +85,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
   const otherChain = game?.chain === "main" ? "test" : "main"
 
   return (
-    <div className="mb-5 mt-5">
+    <div className="mb-5 mt-5 overflow-auto">
       <div className="md:stats">
         <div className="stat">
           <div className="stat-title">Game</div>

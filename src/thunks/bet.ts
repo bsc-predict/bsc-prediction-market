@@ -8,7 +8,6 @@ import predictionAbi from "../contracts/prediction_abi.json"
 import type { AbiItem } from "web3-utils"
 import Web3 from "web3"
 import { event } from '../utils/gtag'
-import { enrichBets } from "src/utils/bets"
 
 interface BetCallbacks {
   onSent: () => void
@@ -82,7 +81,7 @@ export const fetchBets = createAsyncThunk(
     if (game === undefined || library === undefined) {
       return { bets: [] }
     }
-    const bets = await getUserRounds(library, game, address)
+    const bets = await getUserRounds(library, game, address, true)
     return { bets }
     // let bets = await getBetHistory(game, { user: address.toLowerCase() })
     // let numBets = bets.length
@@ -192,18 +191,23 @@ export const getUserRounds = async (
   library: any,
   game: GameType,
   user: string,
+  latest = false,
 ) => {
   const web3 = new Web3(library)
   const contractAddress = PredictionAddress[game.chain]
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
+  const userRoundsLength = latest ? await contract.methods.getUserRoundsLength(user).call().then((n: string) => Number(n)) as number : 0
   let remaining = 0
-  let ct = 0
-  const MAX_ITER = 20
+  let ct = latest ? userRoundsLength - 999 : 0
+  const MAX_ITER = latest ? ct + 1 : 20 * 1000
   const bets: Bet[] = []
-  while (remaining === ct * 1000 && ct < MAX_ITER) {
-    const res = await contract.methods.getUserRounds(web3.utils.toChecksumAddress(user), ct * 1000, 1000).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
+  while (ct < MAX_ITER) {
+    const res = await contract.methods.getUserRounds(
+      web3.utils.toChecksumAddress(user),
+      ct,
+      1000
+    ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
     const [rounds, results, rem] = [res[0], res[1], res[2]]
-    ct += 1
     remaining = Number(rem)
     const numItems = Math.min(rounds.length, results.length)
     createArray(0, numItems).forEach(idx => {
@@ -218,6 +222,8 @@ export const getUserRounds = async (
         epoch,
       })
     })
+    ct += numItems
+    if (numItems < 1000) { break }
   }
   return bets
 }
