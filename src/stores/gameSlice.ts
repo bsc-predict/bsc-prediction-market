@@ -87,6 +87,7 @@ export const gameSlice = createSlice({
           block: state.block,
           bufferSeconds: state.bufferSeconds,
           intervalSeconds: state.intervalSeconds,
+          evenMoney: false,
         })
         state.bets = enriched
         state.rounds = merged
@@ -110,6 +111,7 @@ export const gameSlice = createSlice({
           block: state.block,
           bufferSeconds: state.bufferSeconds,
           intervalSeconds: state.intervalSeconds,
+          evenMoney: false,
         })
         state.bets = enriched
         state.rounds = merged
@@ -140,6 +142,7 @@ export const gameSlice = createSlice({
           block: state.block,
           bufferSeconds: state.bufferSeconds,
           intervalSeconds: state.intervalSeconds,
+          evenMoney: false,
         })
         state.paused = paused
         state.bets = enriched
@@ -152,7 +155,8 @@ export const gameSlice = createSlice({
           rounds: state.rounds,
           block: state.block,
           bufferSeconds: state.bufferSeconds,
-          intervalSeconds: state.intervalSeconds
+          intervalSeconds: state.intervalSeconds,
+          evenMoney: false,
         })
         state.bets = enriched
     })

@@ -81,7 +81,7 @@ export const fetchBets = createAsyncThunk(
     if (game === undefined || library === undefined) {
       return { bets: [] }
     }
-    const bets = await getUserRounds(library, game, address, true)
+    const bets = await getUserRounds({library, game, account: address, latest: true})
     return { bets }
     // let bets = await getBetHistory(game, { user: address.toLowerCase() })
     // let numBets = bets.length
@@ -187,23 +187,24 @@ const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first =
   return response
 }
 
-export const getUserRounds = async (
+export const getUserRounds = async (props: {
   library: any,
   game: GameType,
-  user: string,
-  latest = false,
-) => {
+  account: string,
+  latest: boolean,
+}) => {
+  const { library, game, account, latest } = props
   const web3 = new Web3(library)
   const contractAddress = PredictionAddress[game.chain]
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
-  const userRoundsLength = latest ? await contract.methods.getUserRoundsLength(user).call().then((n: string) => Number(n)) as number : 0
+  const userRoundsLength = latest ? await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number : 0
   let remaining = 0
   let ct = latest ? userRoundsLength - 999 : 0
   const MAX_ITER = latest ? ct + 1 : 20 * 1000
   const bets: Bet[] = []
   while (ct < MAX_ITER) {
     const res = await contract.methods.getUserRounds(
-      web3.utils.toChecksumAddress(user),
+      web3.utils.toChecksumAddress(account),
       ct,
       1000
     ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }

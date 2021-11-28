@@ -1,13 +1,17 @@
+import Web3 from "web3"
 import { calcBlockTimestamp } from "./utils"
 
+const web3 = new Web3()
+
 export const enrichBets = (p: {
-  bets: Bet[],
-  rounds: Round[],
-  block: { initial: { timestamp: number }, time: Date },
+  bets: Bet[]
+  rounds: Round[]
+  block: { initial: { timestamp: number }, time: Date }
   bufferSeconds: number
   intervalSeconds: number
+  evenMoney: boolean
 }) => {
-  const { bets, rounds, block, intervalSeconds, bufferSeconds } = p
+  const { bets, rounds, block, intervalSeconds, bufferSeconds, evenMoney } = p
   const timestamp = calcBlockTimestamp(block)
   const roundsMap = new Map<string, Round>()
   rounds.forEach(r => roundsMap.set(r.epoch, r))
@@ -15,8 +19,12 @@ export const enrichBets = (p: {
   const enriched = bets.map(bet => {
     const r = roundsMap.get(bet.epoch)
 
+    const value = evenMoney ? web3.utils.toWei("1", "ether") : bet.value
+    const valueNum = Number(value)
+    const valueEthNum = Number(web3.utils.fromWei(value, "ether"))
+
     let won = false
-    let wonAmount = -bet.valueNum
+    let wonAmount = -valueNum
     let wonPerc = -1.0
     if (r) {
       const endTimestamp = r.lockTimestampNum + intervalSeconds + bufferSeconds
@@ -24,22 +32,22 @@ export const enrichBets = (p: {
       const canceled = r.oracleCalled === false && passed
       if (canceled) {
         won = true
-        wonAmount = bet.valueNum
+        wonAmount = valueNum
         wonPerc = 0.0
       } else if (!r.oracleCalled) {
         won = false
-        wonAmount = -bet.valueNum
+        wonAmount = -valueNum
       } else if (r.closePriceNum < r.lockPriceNum && bet.direction === "bear") {
         won = true
-        wonAmount = (r.bearPayout - 1.0) * bet.valueNum
+        wonAmount = (r.bearPayout - 1.0) * valueNum
         wonPerc = (r.bearPayout - 1.0)
       } else if (r.closePriceNum > r.lockPriceNum && bet.direction === "bull") {
         won = true
-        wonAmount = (r.bullPayout - 1.0) * bet.valueNum
+        wonAmount = (r.bullPayout - 1.0) * valueNum
         wonPerc = (r.bullPayout - 1.0)
       } else {
         wonPerc = -1.0
-        wonAmount = -bet.valueNum
+        wonAmount = -valueNum
       }
     } else {
       wonAmount = 0
@@ -59,6 +67,9 @@ export const enrichBets = (p: {
 
     return {
       ...bet,
+      value,
+      valueNum,
+      valueEthNum,
       won,
       status,
       wonAmount,
