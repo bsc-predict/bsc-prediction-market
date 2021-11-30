@@ -1,5 +1,5 @@
 import Web3 from "web3"
-import { calcBlockTimestamp } from "./utils"
+import { roundComplete } from "./utils"
 
 const web3 = new Web3()
 
@@ -12,7 +12,6 @@ export const enrichBets = (p: {
   evenMoney: boolean
 }) => {
   const { bets, rounds, block, intervalSeconds, bufferSeconds, evenMoney } = p
-  const timestamp = calcBlockTimestamp(block)
   const roundsMap = new Map<string, Round>()
   rounds.forEach(r => roundsMap.set(r.epoch, r))
   
@@ -27,8 +26,7 @@ export const enrichBets = (p: {
     let wonAmount = -valueNum
     let wonPerc = -1.0
     if (r) {
-      const endTimestamp = r.lockTimestampNum + intervalSeconds + bufferSeconds
-      const passed = timestamp > endTimestamp
+      const passed = roundComplete(r, block, intervalSeconds, bufferSeconds)
       const canceled = r.oracleCalled === false && passed
       if (canceled) {
         won = true

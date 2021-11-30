@@ -19,27 +19,31 @@ const RoundRow: React.FunctionComponent<RoundRowProps> = (props) => {
   const currentTimestamp = useAppSelector(s => calcBlockTimestamp(s.game.block))
   const constants = useAppSelector(s => ({ bufferSeconds: s.game.bufferSeconds, rewardRate: s.game.rewardRate, intervalSeconds: s.game.intervalSeconds }))
   const latestOracle = useAppSelector(s => s.game.oracle)
+  const block = useAppSelector(s => s.game.block)
 
   const canBet = bet === undefined && calcCanBet(round, currentTimestamp)
 
-  const { prizePool, lockPrice, live, curPriceDisplay, winner } = getRoundInfo(round, currentTimestamp, constants, latestOracle)
+  const { prizePool, lockPrice, live, curPriceDisplay, winner } = getRoundInfo(round, block, constants, latestOracle)
 
   let curPriceClass = rowClass
   let bearCellClass = rowClass
   let bullCellClass = rowClass
+
   if (winner === "bear") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
     bearCellClass = "px-5 p-1 border border-grey-800 text-center bg-secondary"
   } else if (winner === "bull") {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
     bullCellClass = "px-5 p-1 border border-grey-800 text-center bg-accent"
-  } else if (Number(curPriceDisplay) > 0) {
+  } else if (live && Number(curPriceDisplay) > 0) {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
     bullCellClass = "px-5 p-1 border border-grey-800 text-center bg-accent opacity-50"
-  } else if (Number(curPriceDisplay) < 0) {
+  } else if (live && Number(curPriceDisplay) < 0) {
     curPriceClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
     bearCellClass = "px-5 p-1 border border-grey-800 text-center bg-secondary opacity-50"
   }
+
+
 
   const first = idx === 0
   const second = idx === 1

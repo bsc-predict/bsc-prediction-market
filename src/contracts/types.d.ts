@@ -37,7 +37,7 @@ interface RoundResponse {
   lockOracleId: string
   lockPrice: string
   lockTimestamp: string
-  oracleCalled: boolean
+  oracleCalled: string
   rewardAmount: string
   rewardBaseCalAmount: string
   startTimestamp: string

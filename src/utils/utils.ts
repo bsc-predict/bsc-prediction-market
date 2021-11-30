@@ -22,7 +22,7 @@ export const camelToUnderscore = (key: string) => {
   return key.replace( /([A-Z])/g, "_$1").toLowerCase()
 }
 
-export const getRoundInfo = (round: Round, timestamp: number, constants: PredictionConstants, latestOracle?: Oracle) => {
+export const getRoundInfo = (round: Round, block: BlockProps, constants: PredictionConstants, latestOracle?: Oracle) => {
   let winner: "bull" | "bear" | undefined = undefined
   if (round.lockPriceNum && round.closePriceNum) {
     if (round.closePriceNum > round.lockPriceNum) {
@@ -32,7 +32,8 @@ export const getRoundInfo = (round: Round, timestamp: number, constants: Predict
     }
   }
 
-  const canceled = round.oracleCalled === false && (round.lockTimestampNum + constants.intervalSeconds + constants.bufferSeconds) < timestamp
+  const complete = roundComplete(round, block, constants.intervalSeconds, constants.bufferSeconds)
+  const canceled = round.oracleCalled === false && complete
   const live = !canceled && round.closePriceNum === 0 && round.lockPriceNum > 0
   const curPrice = live && latestOracle ? (latestOracle.answer - round.lockPriceNum) : (round.closePriceNum - round.lockPriceNum)
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)

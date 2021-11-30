@@ -64,10 +64,9 @@ export const fetchLatestRounds = createAsyncThunk(
     // console.log(availableEpochs)
     // console.log('epochs')
     // console.log(epochs)
-    const updated = Array(...epochs).map(async epoch => {
-      const r = await contract.methods.rounds(epoch.toString()).call() as Object
-      return toRound(r as RoundResponse)
-    })
+    const updated = Array(...epochs).map(async epoch =>
+      contract.methods.rounds(epoch.toString()).call().then((r: RoundResponse) => toRound(r))
+    )
 
     const updatedRounds = await Promise.all(updated)
 
