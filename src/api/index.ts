@@ -34,3 +34,20 @@ export const getArchivedRounds = async (props: { latest: boolean, game: GameType
   const roundResponse = csvToJson(res.data) as RoundResponse[]
   return roundResponse.map(toRound)
 }
+
+export const getLeaderboard = async (props: { evenMoney: boolean, game: GameType }): Promise<Leaderboard[]> => {
+  const { evenMoney, game } = props
+  if (game === undefined) {
+    return []
+  }
+  const url = evenMoney ? Urls.leaderboardEvenMoney[game.chain] : Urls.leaderboard[game.chain]
+  const res = await axios.get(url)
+  const leaderBoardResponse = csvToJson(res.data) as LeaderboardResponse[]
+  return leaderBoardResponse.map(r => ({
+    account: r.account,
+    played: Number(r.played),
+    winnings: Number(r.winnings),
+    winningsEvenMoney: Number(r.winningsevenmoney),
+    averageBetSize: Number(r.averagebetsize)
+  }))
+}

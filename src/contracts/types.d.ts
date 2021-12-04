@@ -44,6 +44,24 @@ interface RoundResponse {
   totalAmount: string
 }
 
+
+interface LeaderboardResponse {
+  account: string
+  played: string
+  winnings: string
+  winningsevenmoney: string
+  averagebetsize: string
+}
+
+interface Leaderboard {
+  account: string
+  played: number
+  winnings: number
+  winningsEvenMoney: number
+  averageBetSize: number
+}
+
+
 interface OracleResponse {
   answer: string
   answeredInRound: string

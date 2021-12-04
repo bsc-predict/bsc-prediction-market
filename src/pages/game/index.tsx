@@ -10,16 +10,21 @@ import { useWeb3React } from '@web3-react/core'
 import { setAccount } from '../../stores/gameSlice'
 import { fetchBalance } from '../../thunks/account'
 import { fetchLatestOracle } from '../../thunks/oracle'
+import LeaderboardPage from '../leaderboard'
+import { useRouter } from 'next/router'
 
-type TabTypes = "Play" | "History"
+type TabTypes = "Play" | "History" | "Leaderboard"
 
 const GamePage: React.FunctionComponent = () => {
+
+  const [historyAccount, setHistoryAccount] = React.useState<string|undefined>(undefined)
 
   const [active, setActive] = React.useState<TabTypes>("Play")
   const { showRows } = React.useContext(UserConfigContext)
   const { slow, fast } = React.useContext(RefreshContext)
 
   const { library, account: web3Account } = useWeb3React()
+  const router = useRouter()
 
   const game = useAppSelector(s => s.game.game)
   const account = useAppSelector(s => s.game.account)
@@ -46,7 +51,12 @@ const GamePage: React.FunctionComponent = () => {
     }
   }, [dispatch, showRows, fast, active, game])
 
-  const tabs: TabTypes[] = ["Play", "History"]
+  const handleOnHistory = React.useCallback((a: string) => {
+    setHistoryAccount(a)
+    setActive("History")
+  }, [])
+
+  const tabs: TabTypes[] = ["Play", "History", "Leaderboard"]
 
   return (
     <div className="space-y-4">
@@ -70,7 +80,8 @@ const GamePage: React.FunctionComponent = () => {
         {MakBetBull}
         {MakeBetBear}
       </div>}
-      {active === "History" && <HistoryPage />}
+      {active === "History" && <HistoryPage account={historyAccount} />}
+      {active === "Leaderboard" && <LeaderboardPage onHistory={handleOnHistory}/>}
     </div>
   )
 }

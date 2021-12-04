@@ -8,7 +8,7 @@ export const csvToJson = (csv: string) => {
       const currentline=lines[i].split(",")
       if (currentline.length === headers.length) {
         for(let j = 0; j < headers.length; j++){
-          obj[headers[j]] = currentline[j]?.replaceAll(/[^a-zA-Z0-9,]/g,'')
+          obj[headers[j]] = currentline[j]?.replaceAll(/[^a-zA-Z0-9,\.]/g,'')
         }
         result.push(obj)
       }

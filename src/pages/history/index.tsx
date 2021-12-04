@@ -11,8 +11,13 @@ import { isAddress } from "../../utils/utils"
 import RoundsTable from "../game/rounds/table"
 import HistoricalInfo from "./info"
 
+interface HistoryPageProps {
+  account?: string
+}
 
-const HistoryPage: React.FunctionComponent = () => {
+const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
+  const { account: pageAccount } = props
+  
   const [page, setPage] = React.useState(0)
   const [showRounds, setShowRounds] = React.useState<Round[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
@@ -20,7 +25,7 @@ const HistoryPage: React.FunctionComponent = () => {
   const [unenrichedUserBets, setUnenrichedUserBets] = React.useState<Bet[]>([])
   const [userBets, setUserBets] = React.useState<Bet[]>([])
   const [rounds, setRounds] = React.useState<Round[]>([])
-  const [evenMoney, setEvenMoney] = React.useState(false)  
+  const [evenMoney, setEvenMoney] = React.useState(false)
 
   const router = useRouter()
   const { account: userAccount } = useWeb3React()
@@ -37,9 +42,9 @@ const HistoryPage: React.FunctionComponent = () => {
   const ref = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
-    const a = typeof pathAccount === "string" ? pathAccount : userAccount
+    const a = typeof pathAccount === "string" ? pathAccount : pageAccount || userAccount
     setAccount(a || undefined)
-  }, [pathAccount, userAccount])
+  }, [pathAccount, userAccount, pageAccount])
 
   React.useEffect(() => {
     if (!account) {

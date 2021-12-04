@@ -198,33 +198,41 @@ export const getUserRounds = async (props: {
   const contractAddress = PredictionAddress[game.chain]
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
   const userRoundsLength = latest ? await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number : 0
-  let remaining = 0
-  let ct = latest ? userRoundsLength - 999 : 0
+  let ct = latest ? userRoundsLength - 500 : userRoundsLength
   const MAX_ITER = latest ? ct + 1 : 20 * 1000
   const bets: Bet[] = []
+  let numItems = 1000
+  let failures = 0
+  const MAX_FAILURES = 10
   while (ct < MAX_ITER) {
-    const res = await contract.methods.getUserRounds(
-      web3.utils.toChecksumAddress(account),
-      ct,
-      1000
-    ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
-    const [rounds, results, rem] = [res[0], res[1], res[2]]
-    remaining = Number(rem)
-    const numItems = Math.min(rounds.length, results.length)
-    createArray(0, numItems).forEach(idx => {
-      const epoch = rounds[idx]
-      const [direction, size, claimed] = results[idx]
-      bets.push({
-        value: size,
-        valueNum: Number(size),
-        valueEthNum: Number(fromWei(size, "ether")),
-        direction: direction === "0" ? "bull" : "bear",
-        claimed,
-        epoch,
+    try {
+      const res = await contract.methods.getUserRounds(
+        web3.utils.toChecksumAddress(account),
+        ct,
+        1000
+      ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
+      const [rounds, results] = [res[0], res[1]]
+      numItems = Math.min(rounds.length, results.length)
+      createArray(0, numItems).forEach(idx => {
+        const epoch = rounds[idx]
+        const [direction, size, claimed] = results[idx]
+        bets.push({
+          value: size,
+          valueNum: Number(size),
+          valueEthNum: Number(fromWei(size, "ether")),
+          direction: direction === "0" ? "bull" : "bear",
+          claimed,
+          epoch,
+        })
       })
-    })
-    ct += numItems
-    if (numItems < 1000) { break }
+      ct -= numItems
+      console.log('success')
+  
+    } catch {
+      failures += 1
+      console.log(`failed ${failures}`)
+    }
+    if (latest || numItems < 1000 || failures > MAX_FAILURES) { break }
   }
   return bets
 }
