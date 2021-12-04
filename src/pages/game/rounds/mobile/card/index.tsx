@@ -14,13 +14,13 @@ interface RoundCardProps {
 const RoundCardMobile: React.FunctionComponent<RoundCardProps> = (props) => {
   const { round, bet, idx } = props
 
-  const currentTimestamp = useAppSelector(s => calcBlockTimestamp(s.game.block))
+  const block = useAppSelector(s => s.game.block)
   const constants = useAppSelector(s => ({ bufferSeconds: s.game.bufferSeconds, rewardRate: s.game.rewardRate, intervalSeconds: s.game.intervalSeconds }))
   const latestOracle = useAppSelector(s => s.game.oracle)
 
-  const { prizePool, lockPrice, live, curPriceDisplay, winner } = getRoundInfo(round, currentTimestamp, constants, latestOracle)
+  const { prizePool, lockPrice, live, curPriceDisplay, winner } = getRoundInfo(round, block, constants, latestOracle)
 
-  const canBet = calcCanBet(round, currentTimestamp)
+  const canBet = calcCanBet(round, calcBlockTimestamp(block))
 
   const rowClass = "w-48 px-5 p-1 border border-grey-800 text-center"
 
