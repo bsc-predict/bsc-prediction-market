@@ -28,7 +28,7 @@ const LeaderboardPage: React.FunctionComponent<LeaderboardPageProps> = (props) =
 
   const filtered = evenMoney ? evenMoneyLeaderboard : leaderboard
   const paginated = filtered.slice(page * PAGINATION, (page + 1) * PAGINATION)
-  const numPages = Math.ceil(filtered.length / PAGINATION) 
+  const numPages = Math.ceil(filtered.length / PAGINATION)
 
   const selectAccount = (a: string) => {
     onHistory(a)
@@ -69,18 +69,21 @@ const LeaderboardPage: React.FunctionComponent<LeaderboardPageProps> = (props) =
               <td className="px-5 p-2 border border-grey-800 text-center">{e.averageBetSize.toFixed(4)}</td>
             </tr>
           )}
+          <tr>
+            <td colSpan={6} className="btn-group w-full mt-4">
+              {Array.from(Array(numPages).keys()).map(p =>
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={p === page ? "btn btn-sm btn-ghost btn-active float-right" : "btn btn-sm btn-ghost float-right"}>
+                  {p + 1}
+                </button>
+              )}
+            </td>
+          </tr>
+
         </tbody>
       </table>
-      <div className="btn-group float-right mt-4">
-        {Array.from(Array(numPages).keys()).map(p => 
-          <button
-            key={p}
-            onClick={() => setPage(p)}
-            className={p === page ? "btn btn-sm btn-ghost btn-active" : "btn btn-sm btn-ghost"}>
-            {p + 1}
-          </button>
-        )}
-      </div>
     </div>
   )
 }
