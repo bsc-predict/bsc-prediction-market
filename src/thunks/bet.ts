@@ -212,7 +212,6 @@ export const getUserRounds = async (props: {
         Math.max(0, ct),
         1000
       ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
-      console.log(res)
       const [rounds, results] = [res[0], res[1]]
       numItems = Math.min(rounds.length, results.length)
       createArray(0, numItems).forEach(idx => {
