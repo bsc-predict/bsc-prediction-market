@@ -204,13 +204,15 @@ export const getUserRounds = async (props: {
   let numItems = 1000
   let failures = 0
   const MAX_FAILURES = 10
+
   while (ct < MAX_ITER) {
     try {
       const res = await contract.methods.getUserRounds(
         web3.utils.toChecksumAddress(account),
-        ct,
+        Math.max(0, ct),
         1000
       ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
+      console.log(res)
       const [rounds, results] = [res[0], res[1]]
       numItems = Math.min(rounds.length, results.length)
       createArray(0, numItems).forEach(idx => {
