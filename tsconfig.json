@@ -2,8 +2,12 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@posts/*": ["_posts/*"],
-      "@api": ["api/index"],
+      "@posts/*": [
+        "_posts/*"
+      ],
+      "@api": [
+        "api/index"
+      ]
     },
     "target": "es5",
     "lib": [
@@ -22,7 +26,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",

@@ -12,6 +12,7 @@ const Links = {
   email: "mailto:contact@bscpredict.com",
   twitter: "https://twitter.com/bscpredict",
   github: "https://github.com/bsc-predict/bsc-prediction-market",
+  tradingBot: "https://github.com/bsc-predict/bsc-prediction-bot",
 }
 
 const Footer: React.FunctionComponent = () => {
@@ -44,6 +45,9 @@ const Footer: React.FunctionComponent = () => {
             </Link>
             <Link href={Links.documentation}>
               <a className={linkClass}>Documentation</a>
+            </Link>
+            <Link href={Links.tradingBot}>
+              <a className={linkClass}>Trading Bot</a>
             </Link>
           </div>
         </div>

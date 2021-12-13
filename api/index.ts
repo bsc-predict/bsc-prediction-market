@@ -1,6 +1,6 @@
 // api/index.js
 import matter from 'gray-matter'
-import marked from 'marked'
+import { marked } from 'marked'
 
 export async function getAllPosts() {
   const context = require.context('../_posts', false, /\.md$/)

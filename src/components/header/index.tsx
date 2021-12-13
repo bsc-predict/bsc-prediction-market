@@ -36,6 +36,9 @@ const AppHeader: React.FunctionComponent = () => {
           <Link href="/blog" passHref>
             <a className="hidden m-1 btn btn-ghost md:inline-flex">BLOG</a>
           </Link>
+          <Link href="https://www.github.com/bsc-predict/bsc-predict-bot" passHref>
+            <a className="hidden m-1 btn btn-ghost md:inline-flex">Trading Bot</a>
+          </Link>
           <div className="dropdown dropdown-hover">
             <div tabIndex={0} className="m-1 btn btn-ghost">Games</div>
             <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-60">
