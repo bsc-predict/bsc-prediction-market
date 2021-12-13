@@ -20,7 +20,7 @@ const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
   
   const [page, setPage] = React.useState(0)
   const [showRounds, setShowRounds] = React.useState<Round[]>([])
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [isLoading, setIsLoading] = React.useState(false)
   const [account, setAccount] = React.useState<string | undefined>()
   const [unenrichedUserBets, setUnenrichedUserBets] = React.useState<Bet[]>([])
   const [userBets, setUserBets] = React.useState<Bet[]>([])
@@ -36,10 +36,10 @@ const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
   const bufferSeconds = useAppSelector(s => s.game.bufferSeconds)
   const intervalSeconds = useAppSelector(s => s.game.intervalSeconds)
   const block = useAppSelector(s => s.game.block)
-  const library = useAppSelector(s => s.game.library)
   const game = useAppSelector(s => s.game.game)
 
   const ref = React.useRef<HTMLDivElement>(null)
+  const active = React.useRef<string>()
 
   React.useEffect(() => {
     const a = typeof pathAccount === "string" ? pathAccount : pageAccount || userAccount
@@ -59,14 +59,15 @@ const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
   }, [game])
 
   React.useEffect(() => {
-    if (account && game && library && rounds.length > 0) {
+    if (account && game && rounds.length > 0 && active.current !== account) {
       setIsLoading(true)
-      getUserRounds({ library, game, account, latest: false }).then(bets => {
+      getUserRounds({ game, account, latest: false }).then(bets => {
         setUnenrichedUserBets(bets)
         setIsLoading(false)
+        active.current = account
       })
     }
-  }, [account, game, library, rounds])
+  }, [account, game, rounds])
 
   React.useEffect(() => {
     const enriched = enrichBets({ bets: unenrichedUserBets, rounds, block, bufferSeconds, intervalSeconds, evenMoney })

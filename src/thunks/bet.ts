@@ -6,8 +6,9 @@ import { Urls } from "../constants"
 import { PredictionAddress } from "../contracts/prediction"
 import predictionAbi from "../contracts/prediction_abi.json"
 import type { AbiItem } from "web3-utils"
-import Web3 from "web3"
 import { event } from '../utils/gtag'
+import { web3Provider } from "src/utils/web3"
+import Web3 from "web3"
 
 interface BetCallbacks {
   onSent: () => void
@@ -81,7 +82,7 @@ export const fetchBets = createAsyncThunk(
     if (game === undefined || library === undefined) {
       return { bets: [] }
     }
-    const bets = await getUserRounds({library, game, account: address, latest: true})
+    const bets = await getUserRounds({game, account: address, latest: true})
     return { bets }
     // let bets = await getBetHistory(game, { user: address.toLowerCase() })
     // let numBets = bets.length
@@ -188,14 +189,13 @@ const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first =
 }
 
 export const getUserRounds = async (props: {
-  library: any,
   game: GameType,
   account: string,
   latest: boolean,
 }) => {
-  const { library, game, account, latest } = props
-  const web3 = new Web3(library)
+  const { game, account, latest } = props
   const contractAddress = PredictionAddress[game.chain]
+  const web3 = web3Provider(game.chain)
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
   const userRoundsLength = latest ? await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number : 0
   let ct = latest ? userRoundsLength - 500 : userRoundsLength
@@ -206,6 +206,7 @@ export const getUserRounds = async (props: {
   const MAX_FAILURES = 10
 
   while (ct < MAX_ITER) {
+    console.log({ct, MAX_ITER})
     try {
       const res = await contract.methods.getUserRounds(
         web3.utils.toChecksumAddress(account),
@@ -227,7 +228,7 @@ export const getUserRounds = async (props: {
         })
       })
       ct -= numItems
-      console.log('success')
+      console.log(`success ${numItems}`)
   
     } catch {
       failures += 1
