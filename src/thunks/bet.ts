@@ -198,7 +198,7 @@ export const getUserRounds = async (props: {
   const web3 = web3Provider(game.chain)
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
   const userRoundsLength = await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number
-  let ct = Math.max(userRoundsLength, userRoundsLength - 1000)
+  let ct = userRoundsLength < 1000 ? userRoundsLength : userRoundsLength - 1000
   const bets: Bet[] = []
   let numItems = 1000
   let failures = 0
