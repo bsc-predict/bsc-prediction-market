@@ -197,21 +197,21 @@ export const getUserRounds = async (props: {
   const contractAddress = PredictionAddress[game.chain]
   const web3 = web3Provider(game.chain)
   const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
-  const userRoundsLength = latest ? await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number : 0
-  let ct = latest ? userRoundsLength - 500 : userRoundsLength
+  const userRoundsLength = await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number
+  let ct = userRoundsLength - 1000
   const MAX_ITER = latest ? ct + 1 : 20 * 1000
   const bets: Bet[] = []
   let numItems = 1000
   let failures = 0
   const MAX_FAILURES = 10
 
-  while (ct < MAX_ITER) {
+  while (ct > 0) {
     console.log({ct, MAX_ITER})
     try {
       const res = await contract.methods.getUserRounds(
         web3.utils.toChecksumAddress(account),
         Math.max(0, ct),
-        1000
+        Math.min(ct, 1000),
       ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
       const [rounds, results] = [res[0], res[1]]
       numItems = Math.min(rounds.length, results.length)
