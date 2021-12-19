@@ -9,6 +9,7 @@ export const Urls = {
       test: (address: string) => `https://jkfwxgcdmc.execute-api.us-east-1.amazonaws.com/dev/v2/test/bets/${address}`,
     },
     bnbPrice: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
+    cakePrice: "https://api1.binance.com/api/v3/ticker/price?symbol=CAKEUSDT",
     leaderboard: {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard.csv",
       test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/test/latest.csv",
@@ -28,6 +29,9 @@ export const Urls = {
     gqlPrediction: {
       main: "https://api.thegraph.com/subgraphs/name/pancakeswap/prediction-v2",
       test: "",
+    },
+    lotteryRounds: {
+      main: "https://gist.githubusercontent.com/bsc-predict/dcdde5b482c31508cb5ab3b29a906299/raw/pancake-swap-lottery.csv"
     }
   }
 

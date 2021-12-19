@@ -23,7 +23,10 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
 
   const dispatch = useAppDispatch()
 
-  const balance = useAppSelector(s => s.game.balance)
+  const balance = useAppSelector(s => s.account.balance)
+  const account = useAppSelector(s => s.account.account)
+  const library = useAppSelector(s => s.account.library)
+  
   const epoch = useAppSelector(s => {
     const timestamp = calcBlockTimestamp(s.game.block)
     return s.game.rounds.find(r => calcCanBet(r, timestamp))?.epoch})
@@ -46,9 +49,11 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
   
   const handleOnSuccess = () => {
     setIsLoading(true)
-    if (epoch) {
+    if (epoch && account) {
       dispatch<any>(makeBet({
           epoch,
+          account,
+          library,
           direction: curDirection,
           eth: size,
           onSent: () => setMessage({type: "info", title: "Bet sent", duration: 5000}),
@@ -86,7 +91,7 @@ const MakeBet: React.FunctionComponent<MakeBetProps> = (props) => {
               value={size}
               onChange={v => handleChangeSize(Number(v.currentTarget.value))}/>
             <p className="text-xs italic">
-              Bet: ${Math.round(size * (balance?.bnbPrice || 0) * 100) / 100 }&nbsp;
+              Bet: ${Math.round(size * (balance?.price || 0) * 100) / 100 }&nbsp;
               Balance: {toEther(balance?.balance || "0", 6)} (${balance?.balanceUsd.toLocaleString()})
             </p>
           </div>

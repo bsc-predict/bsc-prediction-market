@@ -1,8 +1,10 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
+import accountSlice from './accountSlice'
 import gameSlice from './gameSlice'
+import lotterySlice from './lotterySlice'
 
-const reducer = combineReducers({ game: gameSlice })
+const reducer = combineReducers({ game: gameSlice, lottery: lotterySlice, account: accountSlice })
 
 export const store = createStore(reducer, applyMiddleware(thunk))
 

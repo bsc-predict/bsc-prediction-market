@@ -7,7 +7,7 @@ import { fetchArchivedRounds, fetchLatestRounds } from '../../thunks/round'
 import { UserConfigContext } from '../../contexts/UserConfigContext'
 import { RefreshContext } from '../../contexts/RefreshContext'
 import { useWeb3React } from '@web3-react/core'
-import { setAccount } from '../../stores/gameSlice'
+import { setAccount } from '../../stores/accountSlice'
 import { fetchBalance } from '../../thunks/account'
 import { fetchLatestOracle } from '../../thunks/oracle'
 import LeaderboardPage from '../leaderboard'
@@ -17,7 +17,7 @@ type TabTypes = "Play" | "History" | "Leaderboard"
 
 const GamePage: React.FunctionComponent = () => {
 
-  const [historyAccount, setHistoryAccount] = React.useState<string|undefined>(undefined)
+  const [historyAccount, setHistoryAccount] = React.useState<string | undefined>(undefined)
 
   const [active, setActive] = React.useState<TabTypes>("Play")
   const { showRows } = React.useContext(UserConfigContext)
@@ -27,7 +27,7 @@ const GamePage: React.FunctionComponent = () => {
   const router = useRouter()
 
   const game = useAppSelector(s => s.game.game)
-  const account = useAppSelector(s => s.game.account)
+  const account = useAppSelector(s => s.account.account)
   const dispatch = useAppDispatch()
 
   React.useEffect(() => {
@@ -35,7 +35,7 @@ const GamePage: React.FunctionComponent = () => {
   }, [web3Account, dispatch, library])
 
   React.useEffect(() => {
-    dispatch<any>(fetchArchivedRounds({ latest: true }))
+    dispatch<any>(fetchArchivedRounds({ latest: false }))
   }, [dispatch, game])
 
   React.useEffect(() => {
@@ -81,7 +81,7 @@ const GamePage: React.FunctionComponent = () => {
         {MakeBetBear}
       </div>}
       {active === "History" && <HistoryPage account={historyAccount} />}
-      {active === "Leaderboard" && <LeaderboardPage onHistory={handleOnHistory}/>}
+      {active === "Leaderboard" && <LeaderboardPage onHistory={handleOnHistory} />}
     </div>
   )
 }

@@ -57,9 +57,9 @@ interface Bet {
 
 interface Balance {
   balance: string
-  balanceEth: string
+  balanceEth: number
   balanceUsd: number
-  bnbPrice: number
+  price: number
 }
 
 interface BetResponse {

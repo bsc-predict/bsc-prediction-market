@@ -14,7 +14,7 @@ interface HistoricalInfoProps {
 
 const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => {
   const {bets, account, changeAccount, evenMoney, setEvenMoney} = props
-  const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceEth: "0", balanceUsd: 0, bnbPrice: 0})
+  const [balance, setBalance] = React.useState<Balance>({balance: "0", balanceEth: 0, balanceUsd: 0, price: 0})
 
   const sortedBets = bets.slice().sort((a, b) => Number(a.epoch) > Number(b.epoch) ? -1 : 1)
 
@@ -85,13 +85,13 @@ const HistoricalInfo: React.FunctionComponent<HistoricalInfoProps> = (props) => 
         <div className="stat">
           <div className="stat-title">Won</div> 
           <div className="stat-value">{prettyNumber(totalWon, 2)}</div>
-          <div className="stat-desc"> ${prettyNumber(balance.bnbPrice * totalWon, 2)}</div>
+          <div className="stat-desc"> ${prettyNumber(balance.price * totalWon, 2)}</div>
         </div>
         <div className="stat">
           <div className="stat-title">Biggest Win</div> 
           <div className="stat-value">{prettyNumber(biggestWinAmount, 2)}</div>
           <div className="stat-desc">
-            ${prettyNumber(balance.bnbPrice * biggestWinAmount, 2)}
+            ${prettyNumber(balance.price * biggestWinAmount, 2)}
             {biggestWin  && <span>&nbsp;({prettyNumber(biggestWin?.wonPerc || "", 2)}x)</span>}
           </div>
         </div>
