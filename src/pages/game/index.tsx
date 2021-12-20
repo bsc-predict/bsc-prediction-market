@@ -26,6 +26,14 @@ const GamePage: React.FunctionComponent = () => {
   const { library, account: web3Account } = useWeb3React()
   const router = useRouter()
 
+  const { a: pathAccount } = router.query
+
+  React.useEffect(() => {
+    if (pathAccount) {
+      setActive("History")
+    }
+  }, [pathAccount])
+
   const game = useAppSelector(s => s.game.game)
   const account = useAppSelector(s => s.game.account)
   const dispatch = useAppDispatch()
