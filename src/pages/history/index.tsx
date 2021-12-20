@@ -20,7 +20,7 @@ const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
   
   const [page, setPage] = React.useState(0)
   const [showRounds, setShowRounds] = React.useState<Round[]>([])
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
   const [account, setAccount] = React.useState<string | undefined>()
   const [unenrichedUserBets, setUnenrichedUserBets] = React.useState<Bet[]>([])
   const [userBets, setUserBets] = React.useState<Bet[]>([])
@@ -66,6 +66,8 @@ const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
         setIsLoading(false)
         active.current = account
       })
+    } else {
+      setIsLoading(false)
     }
   }, [account, game, rounds])
 
