@@ -18,18 +18,18 @@ interface Lottery {
 }
 
 interface LotteryResponse {
-  status: "0" | "1" | "2" | "3" 
+  status: "0" | "1" | "2" | "3"
   startTime: string
-  endTime: string 
+  endTime: string
   priceTicketInCake: string
   discountDivisor: string
-  rewardsBreakdown: [ string, string, string, string, string, string ] 
+  rewardsBreakdown: [ string, string, string, string, string, string ]
   treasuryFee: string
   cakePerBracket: [ string, string, string, string, string, string ]
   countWinnersPerBracket: [ string, string, string, string, string, string ]
   firstTicketId: string
-  firstTicketIdNextLottery: string 
-  amountCollectedInCake: string 
+  firstTicketIdNextLottery: string
+  amountCollectedInCake: string
   finalNumber: string
 }
 

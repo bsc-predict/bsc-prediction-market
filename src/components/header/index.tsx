@@ -47,6 +47,11 @@ const AppHeader: React.FunctionComponent = () => {
                   <a>BNB-USDT</a>
                 </Link>
               </li>
+              <li className="btn btn-square btn-block btn-ghost">
+                <Link href="/lottery" passHref>
+                  <a>CAKE Lottery</a>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

@@ -31,7 +31,7 @@ export const Urls = {
       test: "",
     },
     lotteryRounds: {
-      main: "https://gist.githubusercontent.com/bsc-predict/dcdde5b482c31508cb5ab3b29a906299/raw/pancake-swap-lottery.csv"
+      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/lottery/v2/main/lottery.csv"
     }
   }
 

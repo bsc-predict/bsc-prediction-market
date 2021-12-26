@@ -115,7 +115,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
           <div className="stat-value">
             <div
               data-tip={claimable.length === 0 ? "" : `[${claimable.map(c => c.epoch).join(", ")}]`}
-              className="tooltip  tooltip-bottom"
+              className="tooltip tooltip-bottom"
             >
               <button
                 onClick={handleClaim}

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@binance-chain/bsc-connector": "^1.0.0",
+    "@ethersproject/constants": "^5.5.0",
     "@reduxjs/toolkit": "^1.6.1",
     "@svgr/webpack": "^6.1.2",
     "@web3-react/core": "^6.1.9",

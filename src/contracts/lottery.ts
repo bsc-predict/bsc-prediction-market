@@ -4,6 +4,7 @@ import type { AbiItem } from "web3-utils"
 import { Urls } from "src/constants"
 import axios from "axios"
 import { csvToJson } from "src/api/utils"
+import Web3 from "web3"
 
 export const LotteryAddress = {
   main: "0x5aF6D33DE2ccEC94efb1bDF8f92Bd58085432d2c",
@@ -34,6 +35,7 @@ const convertArrayToNumbers = (
     Number(arr[5]) / divisor,
   ]
 }
+
 
 export const fetchLotteryHistory = async (): Promise<Lottery[]> => {
   const url = Urls.lotteryRounds.main
@@ -100,7 +102,16 @@ export const fetchLottery = async (lotteryId: number): Promise<Lottery> => {
   }
 }
 
+
+export const fetchLatestLottery = async (): Promise<Lottery> => {
+  const web3 = web3Provider("main")
+  const contract = new web3.eth.Contract(lotteryAbi as AbiItem[], LotteryAddress.main)
+  const id = await contract.methods.viewCurrentLotteryId().call() as string
+  return fetchLottery(Number(id))
+}
+
 export const fetchUserInfo = async (address: string, lotteryId: number): Promise<UserInfo[]> => {
+  console.log({address, lotteryId})
   const web3 = web3Provider("main")
   const contract = new web3.eth.Contract(lotteryAbi as AbiItem[], LotteryAddress.main)
   try {
@@ -123,6 +134,23 @@ export const fetchUserInfo = async (address: string, lotteryId: number): Promise
   } catch {
     return []
   }
-
 }
 
+export const buyLotteryTickets = async (props: {
+  account: string,
+  library: any,
+  lotteryId: number,
+  numbers: string[],
+  onSent: () => void,
+  onConfirmed: () => void,
+  onError: () => void,
+}) => {
+  const { account, library, lotteryId, numbers, onSent, onConfirmed, onError} = props
+  const web3 = new Web3(library)
+  const contract = new web3.eth.Contract(lotteryAbi as AbiItem[], LotteryAddress.main)
+  contract.methods.buyTickets(lotteryId, numbers.map(n => `1${n}`))
+    .send({ from: account })
+    .once('sent', onSent)
+    .once('confirmation', onConfirmed)
+    .once('error', onError)
+}

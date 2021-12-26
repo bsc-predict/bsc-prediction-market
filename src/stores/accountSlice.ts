@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { fetchBalance } from "src/thunks/account"
+import { fetchBalance, fetchCakeBalance } from "src/thunks/account"
 
 
 export interface AccountState {
@@ -26,9 +26,15 @@ export const gameSlice = createSlice({
     },
   },
   extraReducers: builder => {
-      builder.addCase(fetchBalance.fulfilled, (state, action) => {
+    builder.addCase(fetchBalance.fulfilled, (state, action) => {
       if (action.payload) {
         state.balance = action.payload
+      }
+    })
+    builder.addCase(fetchCakeBalance.fulfilled, (state, action) => {
+      console.log(action.payload)
+      if (action.payload) {
+        state.cakeBalance = action.payload
       }
     })
   }

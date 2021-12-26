@@ -17,12 +17,7 @@ export const fetchBalance = createAsyncThunk(
 
 export const fetchCakeBalance = createAsyncThunk(
   "cakeBalance",
-  async (address: string, thunkApi) => {
-    const {game: { game }} = thunkApi.getState() as RootState
-
-    if (game === undefined) {
-      return
-    }
+  async (address: string) => {
    return getCakeBalance(address)
   }
 )
