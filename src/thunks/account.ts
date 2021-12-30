@@ -17,7 +17,10 @@ export const fetchBalance = createAsyncThunk(
 
 export const fetchCakeBalance = createAsyncThunk(
   "cakeBalance",
-  async (address: string) => {
+  async (address: string | undefined) => {
+    if (address === undefined) {
+      return 0
+    }
    return getCakeBalance(address)
   }
 )

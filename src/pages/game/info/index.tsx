@@ -51,8 +51,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
             setMessage({ type: "error", title: "Claim failed", message: e?.message, duration: 7000 })
             setClaiming(false)
           }
-        }
-        )
+        })
       )
     }
   }

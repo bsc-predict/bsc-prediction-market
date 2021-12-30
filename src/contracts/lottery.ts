@@ -111,7 +111,6 @@ export const fetchLatestLottery = async (): Promise<Lottery> => {
 }
 
 export const fetchUserInfo = async (address: string, lotteryId: number): Promise<UserInfo[]> => {
-  console.log({address, lotteryId})
   const web3 = web3Provider("main")
   const contract = new web3.eth.Contract(lotteryAbi as AbiItem[], LotteryAddress.main)
   try {
@@ -124,7 +123,7 @@ export const fetchUserInfo = async (address: string, lotteryId: number): Promise
       const len = l[0].length
       Array.from(Array(len).keys()).map(idx => {
         const o = { ticketId: Number(l[0][idx]), number: l[1][idx], claimed: l[2][idx] }
-        out.push(o)
+        out.push({lotteryId, ...o})
       })
       iter += 1
       if (ct !== 1000 * iter) { break }
@@ -149,6 +148,26 @@ export const buyLotteryTickets = async (props: {
   const web3 = new Web3(library)
   const contract = new web3.eth.Contract(lotteryAbi as AbiItem[], LotteryAddress.main)
   contract.methods.buyTickets(lotteryId, numbers.map(n => `1${n}`))
+    .send({ from: account })
+    .once('sent', onSent)
+    .once('confirmation', onConfirmed)
+    .once('error', onError)
+}
+
+export const claimTickets = async (props: {
+  account: string,
+  library: any,
+  lotteryId: number,
+  ticketIds: number[],
+  brackets: number[],
+  onSent: () => void,
+  onConfirmed: () => void,
+  onError: () => void,
+}) => {
+  const { account, library, lotteryId, ticketIds, brackets, onSent, onConfirmed, onError} = props
+  const web3 = new Web3(library)
+  const contract = new web3.eth.Contract(lotteryAbi as AbiItem[], LotteryAddress.main)
+  contract.methods.claimTickets(lotteryId, ticketIds, brackets)
     .send({ from: account })
     .once('sent', onSent)
     .once('confirmation', onConfirmed)

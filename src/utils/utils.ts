@@ -126,3 +126,16 @@ export function isEqual(x: any, y: any) {
   return true;
 
 }
+
+export function uniqBy<T, U>(arr: T[], f: (v: T) => U): T[] {
+  const seen = new Set<U>()
+  const unique = new Array<T>()
+  arr.forEach(item => {
+    const val = f(item)
+    if (!seen.has(val)) {
+      unique.push(item)
+      seen.add(val)
+    }
+  })
+  return unique
+}

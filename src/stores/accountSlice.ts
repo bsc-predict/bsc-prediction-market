@@ -32,7 +32,6 @@ export const gameSlice = createSlice({
       }
     })
     builder.addCase(fetchCakeBalance.fulfilled, (state, action) => {
-      console.log(action.payload)
       if (action.payload) {
         state.cakeBalance = action.payload
       }

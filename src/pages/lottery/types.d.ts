@@ -73,6 +73,7 @@ interface UserInfoResponse {
 }
 
 interface UserInfo {
+  lotteryId: number
   ticketId: number
   number: string
   claimed: boolean
