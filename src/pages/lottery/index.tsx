@@ -37,9 +37,11 @@ const LotteryPage: React.FunctionComponent = () => {
   React.useEffect(() => {
     if (latest) {
       const ids = createArray(Math.max(0,latest.id - showHistorical), latest.id + 1).filter(id => !lotteriesQueried.has(id))
-      dispatch<any>(fetchLotteryBetsThunk({ ids }))
+      if (ids.length > 0) {
+        dispatch<any>(fetchLotteryBetsThunk({ ids }))
+      }
     }
-  }, [latest, showHistorical, history, web3Account])
+  }, [latest, showHistorical, history, web3Account, dispatch])
 
 
   React.useEffect(() => {

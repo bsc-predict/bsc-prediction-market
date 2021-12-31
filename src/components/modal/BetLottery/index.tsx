@@ -96,7 +96,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
         onSent: () => setMessage({ type: "info", title: "Ticket purchase sent", duration: 5000 }),
         onConfirmed: () => {
           setIsBusy(false)
-          dispatch<any>(fetchLotteryBetsThunk({ids: [lottery.id]}))
+          dispatch<any>(fetchLotteryBetsThunk({ ids: [lottery.id] }))
           setMessage({ type: "info", title: "Tickets purchased", duration: 5000 })
         },
         onError: (e?: Error) => {
@@ -109,6 +109,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
 
   const enable = () => {
     if (account && library) {
+      setIsBusy(true)
       approveCakeSpender({
         account,
         library,
@@ -118,10 +119,12 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
           isApprovedCakeSpender(account, LotteryAddress.main).then(a => setApproved(a))
         },
         onConfirmed: () => {
+          setIsBusy(false)
           setMessage({ title: "Approval complete", type: "success", duration: 5000 })
           isApprovedCakeSpender(account, LotteryAddress.main).then(a => setApproved(a))
         },
         onError: e => {
+          setIsBusy(false)
           setMessage({ type: "error", title: "Approval failed", message: e.message, duration: 5000 })
           isApprovedCakeSpender(account, LotteryAddress.main).then(a => setApproved(a))
         },
@@ -177,7 +180,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
         </div>
         <div >
           {approved && <button className={isBusy ? "btn btn loading float-right" : betDisabled ? "btn btn-disabled float-right" : "btn btn-accent float-right"} onClick={() => buyTickets()}>Buy</button>}
-          {!approved && <button className={approved === undefined ? "btn btn-loading float-right" : "btn btn-accent float-right"} onClick={() => enable()}>Enable</button>}
+          {!approved && <button className={isBusy ? "btn btn loading float-right" : approved === undefined ? "btn btn-loading float-right" : "btn btn-accent float-right"} onClick={() => enable()}>Enable</button>}
         </div>
       </div>
     </div>

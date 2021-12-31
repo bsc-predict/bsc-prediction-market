@@ -1,8 +1,7 @@
 import { useRouter } from "next/router"
 import React, { useContext } from "react"
 import { NotificationsContext } from "src/contexts/NotificationsContext"
-import { approveCakeSpender, isApprovedCakeSpender } from "src/contracts/cake"
-import { buyLotteryTickets, claimTickets, LotteryAddress } from "src/contracts/lottery"
+import { claimTickets } from "src/contracts/lottery"
 import { useAppDispatch, useAppSelector } from "src/hooks/reduxHooks"
 import { fetchLotteryBetsThunk } from "src/thunks/lottery"
 import { createArray } from "src/utils/utils"
@@ -76,7 +75,7 @@ const LotteryHistory: React.FunctionComponent = () => {
       setCurBets([])
     }
 
-  }, [curLottery, bets])
+  }, [curLottery, bets, betsMap])
 
   const selectLottery = (id: number) => {
     const l = lotteriesMap.get(id)
