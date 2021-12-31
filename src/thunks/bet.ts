@@ -6,9 +6,9 @@ import { Urls } from "../constants"
 import { PredictionAddress } from "../contracts/prediction"
 import predictionAbi from "../contracts/prediction_abi.json"
 import type { AbiItem } from "web3-utils"
-import { event } from '../utils/gtag'
 import { web3Provider } from "src/utils/web3"
 import Web3 from "web3"
+import mixpanel from "mixpanel-browser"
 
 interface BetCallbacks {
   onSent: () => void
@@ -39,15 +39,23 @@ export const claim = createAsyncThunk(
     if (!game) {
       return
     }
-    event({ action: "claim", category: game.chain, label: "claim", value: 0 })
     const web3 = new Web3(library)
     const address = PredictionAddress[game.chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
     return contract.methods.claim(epochs)
       .send({ from: account })
-      .once('sending', onSent)
-      .once('confirmation', onConfirmed)
-      .once('error', onError)
+      .once('sending', () => {
+        mixpanel.track("predict-claim", { category: game.chain, status: "sent" })
+        onSent()
+      })
+      .once('confirmation', () => {
+        mixpanel.track("predict-claim", { category: game.chain, status: "confirmed" })
+        onConfirmed()
+      })
+      .once('error', (e: Error | undefined) => {
+        mixpanel.track("predict-claim", { category: game.chain, status: "error", body: JSON.stringify(e) })
+        onError(e)
+      })
   }
 )
 
@@ -63,7 +71,6 @@ export const makeBet = createAsyncThunk(
     } else if (account === undefined || library === undefined) {
       onError(new Error("Not logged in"))
     } else {
-      event({ action: "bet", category: game.chain, label: direction, value: 0 })
       const address = PredictionAddress[game.chain]
       const web3 = new Web3(library)
       const value = toWei(eth.toString(), "ether")
@@ -71,9 +78,18 @@ export const makeBet = createAsyncThunk(
       const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
       return contract.methods[betMethod](epoch)
         .send({ from: account, value })
-        .once('sent', onSent)
-        .once('confirmation', onConfirmed)
-        .once('error', onError)
+        .once('sent', () => {
+          mixpanel.track("predict-bet", { category: game.chain, status: "sent" })
+          onSent()
+        })
+        .once('confirmation', () => {
+          mixpanel.track("predict-bet", { category: game.chain, status: "confirmed" })
+          onConfirmed()
+        })
+        .once('error', (e: Error | undefined) => {
+          mixpanel.track("predict-bet", { category: game.chain, status: "error", body: JSON.stringify(e) })
+          onError(e)
+        })
     }
   }
 )

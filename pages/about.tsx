@@ -4,7 +4,7 @@ import AppWrapper from "../src/wrapper"
 
 const About = () => {
   return(
-    <AppWrapper title="BSC Predictions About">
+    <AppWrapper title="BSC Predict - About">
       <AboutPage />
     </AppWrapper>
   )

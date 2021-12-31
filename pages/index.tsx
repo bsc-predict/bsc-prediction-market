@@ -10,7 +10,7 @@ interface HomeProps {
 const Home: React.FunctionComponent<HomeProps> = ({ posts }) => {
 
   return (
-    <AppWrapper title="BSC Predictions" description="Binance Smart Chain (BSC) Prediction Markets">
+    <AppWrapper title="BSC Predict" description="Binance Smart Chain (BSC) Prediction Markets">
       <HomePage posts={posts} />
     </AppWrapper>
   )

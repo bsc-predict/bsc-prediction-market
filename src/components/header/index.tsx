@@ -53,7 +53,7 @@ const AppHeader: React.FunctionComponent = () => {
             <div tabIndex={0} className="font-sm md:font-base md:m-1 btn btn-ghost">Lottery</div>
             <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-60">
               <li className="btn btn-square btn-block btn-ghost">
-                <Link href="/lottery" passHref>
+                <Link href="/lottery/cake" passHref>
                   <a>CAKE Lottery</a>
                 </Link>
               </li>

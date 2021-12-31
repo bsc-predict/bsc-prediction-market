@@ -10,7 +10,7 @@ interface PostProps {
 
 const Post: React.FunctionComponent<PostProps> = (props) => {
   return (
-    <AppWrapper title="BSC Predictions Blog" description="Binance Smart Chain (BSC) Prediction Markets Blog">
+    <AppWrapper title={`BSC Predict - ${props.title}`} description="Binance Smart Chain (BSC) Prediction Markets Blog">
       <BlogPostPage title={props.title} content={props.content} />
     </AppWrapper>
   )

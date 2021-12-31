@@ -12,7 +12,7 @@ interface BlogProps {
 const Blog: React.FunctionComponent<BlogProps> = (props) => {
   const sortedPosts = props.posts.sort((a, b) => a.date < b.date ? 1 : -1)
   return (
-    <AppWrapper title="BSC Predictions Blog" description="Binance Smart Chain (BSC) Prediction Markets Blog">
+    <AppWrapper title="BSC Predict - Blog" description="Binance Smart Chain (BSC) Prediction Markets Blog">
       <div className="space-y-4 p-6" title={props.title} >
         <p className="text-4xl">BSC Prediction Market Insights &amp; Analysis</p>
         <div className="divider" />

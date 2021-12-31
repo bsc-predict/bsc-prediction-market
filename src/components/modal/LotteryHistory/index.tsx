@@ -32,12 +32,15 @@ const LotteryHistory: React.FunctionComponent = () => {
   const [isClaiming, setIsClaiming] = React.useState(false)
   const [page, setPage] = React.useState(0)
 
-  const {setMessage} = useContext(NotificationsContext)
+  const { setMessage } = useContext(NotificationsContext)
   const dispatch = useAppDispatch()
   const balance = useAppSelector(s => s.account.cakeBalance)
   const account = useAppSelector(s => s.account.account)
   const library = useAppSelector(s => s.account.library)
   const lotteries = useAppSelector(s => s.lottery.history)
+  const latest = useAppSelector(s => s.lottery.latest)
+
+
   const lotteriesQueried = useAppSelector(s => s.lottery.lotteriesQueried)
   const bets = useAppSelector(s => s.lottery.bets)
   const router = useRouter()
@@ -51,6 +54,9 @@ const LotteryHistory: React.FunctionComponent = () => {
 
   const lotteriesMap = new Map<number, Lottery>()
   lotteries.forEach(l => lotteriesMap.set(l.id, l))
+  if (latest) {
+    lotteriesMap.set(latest.id, latest)
+  }
 
   const loadMore = () => {
     setIsBusy(true)
@@ -60,8 +66,8 @@ const LotteryHistory: React.FunctionComponent = () => {
   }
 
   React.useEffect(() => {
-    setCurLottery(lotteries[0])
-  }, [lotteries])
+    setCurLottery(latest)
+  }, [latest])
 
   React.useEffect(() => {
     if (curLottery) {
@@ -81,7 +87,7 @@ const LotteryHistory: React.FunctionComponent = () => {
 
   const claim = () => {
     const claimable = curBets
-      .map(b => ({...b, bracket: scoreTicket(b, curLottery)}))
+      .map(b => ({ ...b, bracket: scoreTicket(b, curLottery) }))
       .filter(b => b.bracket >= 0 && b.claimed === false)
     if (account && library && curLottery && claimable.length > 0) {
       setIsClaiming(true)
@@ -92,16 +98,16 @@ const LotteryHistory: React.FunctionComponent = () => {
         ticketIds: claimable.map(c => c.ticketId),
         brackets: claimable.map(c => c.bracket),
         onSent: () => {
-          setMessage({type: "info", title: "Claim sent", duration: 5000})
+          setMessage({ type: "info", title: "Claim sent", duration: 5000 })
         },
         onConfirmed: () => {
           dispatch<any>(fetchLotteryBetsThunk({ ids: [curLottery.id] }))
           setIsClaiming(false)
-          setMessage({type: "success", title: "Claim processed", duration: 5000})
+          setMessage({ type: "success", title: "Claim processed", duration: 5000 })
         },
-        onError: () => {
+        onError: (e?: Error) => {
           setIsClaiming(false)
-          setMessage({type: "error", title: "Claim failed", duration: 5000})
+          setMessage({ type: "error", title: "Claim failed", message: e?.message || "", duration: 5000 })
         }
       }
       )
@@ -131,9 +137,17 @@ const LotteryHistory: React.FunctionComponent = () => {
               <table>
                 <tbody>
                   <tr>
-                    {curLottery.finalNumber.slice(1).split("").reverse().map((n, idx) =>
+                    {curLottery.finalNumber && curLottery.finalNumber.slice(1).split("").reverse().map((n, idx) =>
                       <td className="w-8 text-center" key={idx}>{n}</td>
                     )}
+                    {curLottery.finalNumber === "0" && <>
+                      <td className="w-8 text-center">?</td>
+                      <td className="w-8 text-center">?</td>
+                      <td className="w-8 text-center">?</td>
+                      <td className="w-8 text-center">?</td>
+                      <td className="w-8 text-center">?</td>
+                      <td className="w-8 text-center">?</td>
+                    </>}
                   </tr>
                 </tbody>
               </table>
@@ -214,9 +228,9 @@ const LotteryHistory: React.FunctionComponent = () => {
           <button
             className={
               isClaiming ? "btn loading" :
-              curBets.some(b => scoreTicket(b, curLottery) > 0 && b.claimed === false) ?
-              "btn btn-accent" :
-              "btn btn-disabled"}
+                curBets.some(b => scoreTicket(b, curLottery) > 0 && b.claimed === false) ?
+                  "btn btn-accent" :
+                  "btn btn-disabled"}
             onClick={() => claim()}
           >
             Claim

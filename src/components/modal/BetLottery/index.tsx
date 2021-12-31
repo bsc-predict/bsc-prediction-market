@@ -2,8 +2,9 @@ import { useRouter } from "next/router"
 import React from "react"
 import { NotificationsContext } from "src/contexts/NotificationsContext"
 import { approveCakeSpender, isApprovedCakeSpender } from "src/contracts/cake"
-import { buyLotteryTickets, LotteryAddress } from "src/contracts/lottery"
-import { useAppSelector } from "src/hooks/reduxHooks"
+import { buyLotteryTickets, fetchUserInfo, LotteryAddress } from "src/contracts/lottery"
+import { useAppDispatch, useAppSelector } from "src/hooks/reduxHooks"
+import { fetchLotteryBetsThunk } from "src/thunks/lottery"
 
 interface BetLotteryProps {
   lottery: Lottery
@@ -21,11 +22,14 @@ const getTicketError = (ticket: string, idx: number) => {
 const getDiscount = (numTickets: number) => Math.max(0, (numTickets - 1) * 0.0005)
 
 const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
+  const [isBusy, setIsBusy] = React.useState(false)
   const { lottery } = props
 
   const balance = useAppSelector(s => s.account.cakeBalance)
   const account = useAppSelector(s => s.account.account)
   const library = useAppSelector(s => s.account.library)
+
+  const dispatch = useAppDispatch()
 
   const [raw, setRaw] = React.useState("")
   const [tickets, setTickets] = React.useState<string[]>([])
@@ -83,14 +87,22 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
 
   const buyTickets = () => {
     if (!betDisabled && library) {
+      setIsBusy(true)
       buyLotteryTickets({
         account,
         library,
         lotteryId: lottery.id,
         numbers: tickets,
         onSent: () => setMessage({ type: "info", title: "Ticket purchase sent", duration: 5000 }),
-        onConfirmed: () => setMessage({ type: "info", title: "Tickets purchased", duration: 5000 }),
-        onError: () => setMessage({ type: "error", title: "Purchase cancelled", duration: 5000 })
+        onConfirmed: () => {
+          setIsBusy(false)
+          dispatch<any>(fetchLotteryBetsThunk({ids: [lottery.id]}))
+          setMessage({ type: "info", title: "Tickets purchased", duration: 5000 })
+        },
+        onError: (e?: Error) => {
+          setIsBusy(false)
+          setMessage({ type: "error", title: "Purchase failed", message: e?.message || "", duration: 5000 })
+        }
       })
     }
   }
@@ -134,9 +146,9 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
             </svg>
           </a>
         </div>
-        <div className="divider"/>
+        <div className="divider" />
         <p className="font-bold">{balance.balanceEth.toFixed(2)} CAKE</p>
-        <div className="divider"/>
+        <div className="divider" />
         <div className="alert">
           <div className="flex-1 text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#2196f3" className="w-6 h-6 mx-2">
@@ -164,7 +176,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
           </div>
         </div>
         <div >
-          {approved && <button className={betDisabled ? "btn btn-disabled float-right" : "btn btn-accent float-right"} onClick={() => buyTickets()}>Buy</button>}
+          {approved && <button className={isBusy ? "btn btn loading float-right" : betDisabled ? "btn btn-disabled float-right" : "btn btn-accent float-right"} onClick={() => buyTickets()}>Buy</button>}
           {!approved && <button className={approved === undefined ? "btn btn-loading float-right" : "btn btn-accent float-right"} onClick={() => enable()}>Enable</button>}
         </div>
       </div>

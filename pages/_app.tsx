@@ -8,8 +8,10 @@ import { NotificationsContextProvider } from '../src/contexts/NotificationsConte
 import { UserConfigContextProvider } from '../src/contexts/UserConfigContext'
 import { Provider } from 'react-redux'
 import { store } from '../src/stores'
+import mixpanel from 'mixpanel-browser'
 
 function MyApp({ Component, pageProps }: AppProps) {
+  mixpanel.init('38ab956e3143ef611e15bb52d235f7fe', {debug: true})
 
   return (
     <Provider store={store}>
