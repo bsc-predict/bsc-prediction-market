@@ -8,7 +8,7 @@ import { shortenAddress } from "../../../utils/accounts"
 import { calcBlockTimestamp, toEther, toTimeString } from "../../../utils/utils"
 
 interface InfoProps {
-  showReactour: (s: boolean) => void
+  showReactour?: (s: boolean) => void
 }
 
 const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
@@ -21,8 +21,9 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
   const paused = useAppSelector(s => s.game.paused)
 
   const dispatch = useAppDispatch()
-  const balance = useAppSelector(s => s.game.balance)
-  const account = useAppSelector(s => s.game.account)
+  const balance = useAppSelector(s => s.account.balance)
+  const account = useAppSelector(s => s.account.account)
+  const library = useAppSelector(s => s.account.library)
   const claimable = useAppSelector(s => s.game.bets.filter(b => b.status === "claimable"))
   const claimableAmount = claimable.reduce((acc, c) => acc + (c.wonAmount || 0) + c.valueNum, 0)
 
@@ -32,15 +33,17 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
   const { setMessage } = React.useContext(NotificationsContext)
 
   const handleClaim = () => {
-    if (claimable.length > 0) {
+    if (account && claimable.length > 0) {
       const epochs = claimable.map(c => c.epoch)
       setClaiming(true)
       dispatch<any>(
         claim({
           epochs,
+          account,
+          library,
           onSent: () => setMessage({ type: "info", title: "Claim sent", message: "", duration: 5000 }),
           onConfirmed: () => {
-            setTimeout(() => account && dispatch<any>(fetchBets(account)), 3000)
+            setTimeout(() => account && dispatch<any>(fetchBets({account})), 3000)
             setMessage({ type: "success", title: "Claim processed", message: "", duration: 5000 })
             setClaiming(false)
           },
@@ -48,8 +51,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
             setMessage({ type: "error", title: "Claim failed", message: e?.message, duration: 7000 })
             setClaiming(false)
           }
-        }
-        )
+        })
       )
     }
   }
@@ -112,7 +114,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
           <div className="stat-value">
             <div
               data-tip={claimable.length === 0 ? "" : `[${claimable.map(c => c.epoch).join(", ")}]`}
-              className="tooltip  tooltip-bottom"
+              className="tooltip tooltip-bottom"
             >
               <button
                 onClick={handleClaim}
@@ -133,11 +135,11 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
           <div className="stat-value">{toTimeString(secondsRemaining)}</div>
           <div className="stat-desc">&nbsp;</div>
         </div>
-        <div className="stat">
+        {showReactour && <div className="stat">
           <div className="stat-title">Help</div>
           <div className="stat-value cursor-pointer" onClick={() => showReactour(true)}>?</div>
           <div className="stat-desc">&nbsp;</div>
-        </div>
+        </div>}
       </div>
     </div>
   )

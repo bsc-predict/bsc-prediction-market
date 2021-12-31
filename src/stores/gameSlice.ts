@@ -10,8 +10,6 @@ import { fetchLatestOracle } from "../thunks/oracle"
 
 export interface GameBlock {initial: { timestamp: number }, time: Date}
 export interface GameState {
-  account?: string
-  library?: any
   bufferSeconds: number
   intervalSeconds: number
   rewardRate: number
@@ -22,12 +20,6 @@ export interface GameState {
   paused: boolean
   fetchingRounds?: string
   oracle: Oracle
-  balance: {
-    balance: string
-    balanceEth: string
-    balanceUsd: number
-    bnbPrice: number
-  }
 }
 
 const initialState: GameState = {
@@ -46,24 +38,12 @@ const initialState: GameState = {
     startedAt: 0,
     updatedAt: 0
   },
-  balance: {
-    balance: "0",
-    balanceEth: "0",
-    balanceUsd: 0,
-    bnbPrice: 0,
-  }
 }
 
 export const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    setAccount(state, action: PayloadAction<{account?: string, library?: any}>) {
-      state.account = action.payload.account
-      state.library = action.payload.library
-      state.bets = []
-      state.balance = {balance: "0", balanceUsd: 0, balanceEth: "0", bnbPrice: state.balance.bnbPrice}
-    },
     setGame(state, action: PayloadAction<GameType>) {
       state.game = action.payload
       state.rounds = []
@@ -150,6 +130,7 @@ export const gameSlice = createSlice({
         state.fetchingRounds = undefined
       })
       .addCase(fetchBets.fulfilled, (state, action) => {
+
         const enriched = enrichBets({
           bets: action.payload.bets,
           rounds: state.rounds,
@@ -160,15 +141,10 @@ export const gameSlice = createSlice({
         })
         state.bets = enriched
     })
-    .addCase(fetchBalance.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.balance = action.payload
-      }
-    })
   }
 })
 
-export const { setAccount, setGame } = gameSlice.actions
+export const { setGame } = gameSlice.actions
 
 export const rounds = (state: RootState) => state.game.rounds
 

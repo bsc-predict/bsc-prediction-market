@@ -31,7 +31,7 @@ const BnbUsdt: React.FunctionComponent = () => {
   }, [game, dispatch])
 
   return (
-    <AppWrapper title="BSC Predictions" description="Binance Smart Chain (BSC) Prediction Markets">
+    <AppWrapper title="BSC Predict - BNB-USDT" description="Binance Smart Chain (BSC) Prediction Markets">
       <GamePage />
     </AppWrapper>
   )

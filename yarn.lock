@@ -1627,6 +1627,11 @@
   resolved "https://registry.yarnpkg.com/@types/marked/-/marked-4.0.1.tgz#d588a7bbc4d6551c5e75249bc106ffda96ae33c5"
   integrity sha512-ZigEmCWdNUU7IjZEuQ/iaimYdDHWHfTe3kg8ORfKjyGYd9RWumPoOJRQXB0bO+XLkNwzCthW3wUIQtANaEZ1ag==
 
+"@types/mixpanel-browser@^2.36.0":
+  version "2.36.0"
+  resolved "https://registry.yarnpkg.com/@types/mixpanel-browser/-/mixpanel-browser-2.36.0.tgz#7d46fc51d7f22d1d09d5521404d156a96a54f306"
+  integrity sha512-aEuQOhK8rEE8TtUbF19H9z/pEYz1xg3/1fpu9qufXpqsR/PHLc1QnrO21BFwHmFytOFaRwEgCPqUhpy/rfIWIA==
+
 "@types/node@*":
   version "16.11.12"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.12.tgz#ac7fb693ac587ee182c3780c26eb65546a1a3c10"
@@ -3074,10 +3079,10 @@ d@1, d@^1.0.1:
     es5-ext "^0.10.50"
     type "^1.0.1"
 
-daisyui@^1.10.0:
-  version "1.16.4"
-  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-1.16.4.tgz#52773401c0962e37ef40507d29f0e513c7f2856f"
-  integrity sha512-bpPUlIR6PJdnaM+Vj+Rd0ljMwbdwjvFAW9E/bhxCRDEU48OnmpKQxnkwNGAtXbwWWATS6I1dEIlLdM8zCbV3uQ==
+daisyui@^1.20.1:
+  version "1.20.1"
+  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-1.20.1.tgz#ee99a51d8af1ac3283c56bfff8d722f38a58fba5"
+  integrity sha512-l0JyyUJav8/XRnbF1HU1sr24Xd0iYKTT+NsdN2sfR7kAG4TnlKt3jF4MrerXBrmQy2fFe1MCh8lrUXmdTsueRA==
 
 damerau-levenshtein@^1.0.7:
   version "1.0.7"
@@ -5194,6 +5199,11 @@ minizlib@^1.3.3:
   integrity sha512-6ZYMOEnmVsdCeTJVE0W9ZD+pVnE8h9Hma/iOwwRDsdQoePpoX56/8B6z3P9VNwppJuBKNRuFDRNRqRWexT9G9Q==
   dependencies:
     minipass "^2.9.0"
+
+mixpanel-browser@^2.42.1:
+  version "2.42.1"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.42.1.tgz#4c067fe172fc27e89e063415f2985ebe688b3bf5"
+  integrity sha512-47oOBCnyREFQiM+IFYquoV0ClTW+vhu3JIyig7TtHD2tY6SuIpxG57tDTUAespyg4cQzWCLQdk2P84zozG4L+Q==
 
 mkdirp-promise@^5.0.1:
   version "5.0.1"

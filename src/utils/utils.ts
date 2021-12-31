@@ -16,10 +16,10 @@ export const groupBy = <T, K extends keyof any>(list: T[], getKey: (item: T) => 
     previous[group].push(currentItem);
     return previous;
   }, {} as Record<K, T[]>)
-  
+
 
 export const camelToUnderscore = (key: string) => {
-  return key.replace( /([A-Z])/g, "_$1").toLowerCase()
+  return key.replace(/([A-Z])/g, "_$1").toLowerCase()
 }
 
 export const getRoundInfo = (round: Round, block: BlockProps, constants: PredictionConstants, latestOracle?: Oracle) => {
@@ -54,7 +54,7 @@ export const toChecksumAddress = web3.utils.toChecksumAddress
 export const isAddress = web3.utils.isAddress
 
 export const calcBlockTimestamp = (p: { initial: { timestamp: number }, time: Date }) => {
-  const {initial, time} = p
+  const { initial, time } = p
   const now = new Date()
   const seconds = (now.getTime() - time.getTime()) / 1000
   return initial.timestamp + seconds
@@ -66,7 +66,9 @@ export const roundComplete = (r: Round, block: BlockProps, intervalSeconds: numb
   return timestamp > (r.lockTimestampNum + intervalSeconds + bufferSeconds + 30)
 }
 
-export const toTimeString = (seconds: number) =>`${Math.floor(seconds / 60)}:${(seconds % 60).toFixed(0).toString().padStart(2, "0")}`
+export const toTimeString = (seconds: number) => new Date(seconds * 1000).toISOString().substring(14, 19)
+
+export const toTimeStringHours = (seconds: number) => new Date(seconds * 1000).toISOString().substring(11, 19)
 
 export const createArray = (from: number, to: number) => {
   const mult = to > from ? 1 : -1
@@ -89,38 +91,51 @@ export const toEther = (wei: string | number, precision: number) => {
 }
 
 export function isEqual(x: any, y: any) {
-    if ( x === y ) return true;
-      // if both x and y are null or undefined and exactly the same
-  
-    if ( ! ( x instanceof Object ) || ! ( y instanceof Object ) ) return false;
-      // if they are not strictly equal, they both need to be Objects
-  
-    if ( x.constructor !== y.constructor ) return false;
-      // they must have the exact same prototype chain, the closest we can do is
-      // test there constructor.
-  
-    for ( var p in x ) {
-      if ( ! x.hasOwnProperty( p ) ) continue;
-        // other properties were tested using x.constructor === y.constructor
-  
-      if ( ! y.hasOwnProperty( p ) ) return false;
-        // allows to compare x[ p ] and y[ p ] when set to undefined
-  
-      if ( x[ p ] === y[ p ] ) continue;
-        // if they have the same strict value or identity then they are equal
-  
-      if ( typeof( x[ p ] ) !== "object" ) return false;
-        // Numbers, Strings, Functions, Booleans must be strictly equal
-  
-      if ( ! isEqual( x[ p ],  y[ p ] ) ) return false;
-        // Objects and Arrays must be tested recursively
+  if (x === y) return true;
+  // if both x and y are null or undefined and exactly the same
+
+  if (!(x instanceof Object) || !(y instanceof Object)) return false;
+  // if they are not strictly equal, they both need to be Objects
+
+  if (x.constructor !== y.constructor) return false;
+  // they must have the exact same prototype chain, the closest we can do is
+  // test there constructor.
+
+  for (var p in x) {
+    if (!x.hasOwnProperty(p)) continue;
+    // other properties were tested using x.constructor === y.constructor
+
+    if (!y.hasOwnProperty(p)) return false;
+    // allows to compare x[ p ] and y[ p ] when set to undefined
+
+    if (x[p] === y[p]) continue;
+    // if they have the same strict value or identity then they are equal
+
+    if (typeof (x[p]) !== "object") return false;
+    // Numbers, Strings, Functions, Booleans must be strictly equal
+
+    if (!isEqual(x[p], y[p])) return false;
+    // Objects and Arrays must be tested recursively
+  }
+
+  for (p in y)
+    if (y.hasOwnProperty(p) && !x.hasOwnProperty(p))
+      return false;
+  // allows x[ p ] to be set to undefined
+
+  return true;
+
+}
+
+export function uniqBy<T, U>(arr: T[], f: (v: T) => U): T[] {
+  const seen = new Set<U>()
+  const unique = new Array<T>()
+  arr.forEach(item => {
+    const val = f(item)
+    if (!seen.has(val)) {
+      unique.push(item)
+      seen.add(val)
     }
-  
-    for ( p in y )
-      if ( y.hasOwnProperty( p ) && ! x.hasOwnProperty( p ) )
-        return false;
-          // allows x[ p ] to be set to undefined
-  
-    return true;
-  
+  })
+  return unique
 }

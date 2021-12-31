@@ -20,7 +20,10 @@ const HomePage: React.FunctionComponent<HomePageProps> = (props) => {
         <div className="text-xl">Predict BNB-USD movements in 5 minute intervals</div>
         <div className="flex space-x-4 justify-center">
           <Link href="/bnbusdt" passHref>
-            <button className="btn btn-primary"><a>Play Now</a></button>
+            <button className="btn btn-primary"><a>Predict</a></button>
+          </Link>
+          <Link href="/lottery/cake" passHref>
+            <button className="btn btn-primary"><a>CAKE Lottery</a></button>
           </Link>
           <Link href="/blog" passHref>
             <button className="btn btn-ghost"><a>Blog</a></button>

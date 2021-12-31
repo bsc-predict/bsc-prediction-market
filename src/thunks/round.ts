@@ -76,6 +76,7 @@ export const fetchLatestRounds = createAsyncThunk(
     if ((currentBlock + bufferBlocks + intervalSeconds) > latestLockBlock) {
       paused = await contract.methods.paused().call()
     }
+
     return { updatedRounds, paused }
   }
 )

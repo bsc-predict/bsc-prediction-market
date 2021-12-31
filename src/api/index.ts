@@ -7,7 +7,13 @@ import { csvToJson } from "./utils"
 export const fetchBnbPrice = async () => {
   const url = Urls.bnbPrice
   const res = await axios.get(url)
-  return res.data.price as number
+  return res.data.price as string
+}
+
+export const fetchCakePrice = async () => {
+  const url = Urls.cakePrice
+  const res = await axios.get(url)
+  return res.data.price as string
 }
 
 export const getBalance = async (game: GameType, address: string) => {
@@ -18,9 +24,9 @@ export const getBalance = async (game: GameType, address: string) => {
 
   return Promise.all([bnbPrice, balance])
     .then(([price, bal]) => {
-      const balanceEth = web3.utils.fromWei(bal, "ether")
-      const balanceUsd = Number(balanceEth) * price
-      return { balance: bal, balanceUsd, balanceEth, bnbPrice: price }
+      const balanceEth = Number(web3.utils.fromWei(bal, "ether"))
+      const balanceUsd = Number(balanceEth) * Number(price)
+      return { balance: bal, balanceUsd, balanceEth, price: Number(price) }
     })
 }
 

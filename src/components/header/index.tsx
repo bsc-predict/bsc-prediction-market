@@ -31,7 +31,7 @@ const AppHeader: React.FunctionComponent = () => {
           </Link>
         </span>
       </div>
-      <div className="flex-1 px-2 mx-2">
+      <div className="flex-1 px-2 md:mx-2">
         <div className="items-stretch space-x-2">
           <Link href="/blog" passHref>
             <a className="hidden m-1 btn btn-ghost md:inline-flex">BLOG</a>
@@ -40,7 +40,7 @@ const AppHeader: React.FunctionComponent = () => {
             <a className="hidden m-1 btn btn-ghost md:inline-flex">Trading Bot</a>
           </Link>
           <div className="dropdown dropdown-hover">
-            <div tabIndex={0} className="m-1 btn btn-ghost">Games</div>
+            <div tabIndex={0} className="font-sm md:font-base md:m-1 btn btn-ghost">Predict</div>
             <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-60">
               <li className="btn btn-square btn-block btn-ghost">
                 <Link href="/bnbusdt" passHref>
@@ -49,11 +49,21 @@ const AppHeader: React.FunctionComponent = () => {
               </li>
             </ul>
           </div>
+          <div className="dropdown dropdown-hover">
+            <div tabIndex={0} className="font-sm md:font-base md:m-1 btn btn-ghost">Lottery</div>
+            <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-60">
+              <li className="btn btn-square btn-block btn-ghost">
+                <Link href="/lottery/cake" passHref>
+                  <a>CAKE Lottery</a>
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <div className="flex-none space-x-2">
         <div className="dropdown dropdown-hover" >
-          <div tabIndex={0} className="m-1 btn btn-ghost">Theme</div>
+          <div tabIndex={0} className="hidden md:inline-flex m-1 btn btn-ghost">Theme</div>
           <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-32">
             <button className="btn btn-square btn-block btn-ghost" data-set-theme="light" data-act-class="bg-accent">
               <a>Light</a>

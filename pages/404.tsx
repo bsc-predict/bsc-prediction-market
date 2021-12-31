@@ -4,7 +4,7 @@ import Link from "next/link"
 
 const NotFound: React.FunctionComponent = () => {
   return(
-    <AppWrapper>
+    <AppWrapper title="BSC Predict - 404">
       <div className="flex flex-col w-full justify-center items-center">
         <div className="flex divide-x-2 self-center mt-48 my-8">
           <div className="px-8 text-2xl">404</div>
