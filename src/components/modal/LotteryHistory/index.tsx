@@ -69,13 +69,16 @@ const LotteryHistory: React.FunctionComponent = () => {
   }, [latest])
 
   React.useEffect(() => {
+    const betsMap = new Map<number, UserInfo[]>()
+    bets.forEach(b => betsMap.set(b.lotteryId, (betsMap.get(b.lotteryId) || []).concat(b)))
+  
     if (curLottery) {
       setCurBets(betsMap.get(curLottery?.id)?.sort((a, b) => scoreTicket(a, curLottery) < scoreTicket(b, curLottery) ? 1 : -1) || [])
     } else {
       setCurBets([])
     }
 
-  }, [curLottery, bets, betsMap])
+  }, [curLottery, bets])
 
   const selectLottery = (id: number) => {
     const l = lotteriesMap.get(id)

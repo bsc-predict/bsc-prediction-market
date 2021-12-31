@@ -44,7 +44,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
     } else {
       setApproved(false)
     }
-  }, [])
+  }, [account])
 
   React.useEffect(() => {
     const tRaw = raw.split(/\n|\,/g)
@@ -155,7 +155,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
         <div className="alert">
           <div className="flex-1 text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#2196f3" className="w-6 h-6 mx-2">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
             <label>{tickets.length} Valid Tickets: {(price).toFixed(2)} CAKE ({(getDiscount(tickets.length) * 100).toFixed(2)}% bulk discount)</label>
           </div>
@@ -173,7 +173,7 @@ const BetLottery: React.FunctionComponent<BetLotteryProps> = (props) => {
         <div className={errors === "" ? "invisible alert alert-error" : "alert alert-error"}>
           <div className="flex-1">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-6 h-6 mx-2 stroke-current">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
             </svg>
             <label>{errors}</label>
           </div>
