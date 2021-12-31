@@ -63,7 +63,7 @@ const LotteryInfo: React.FunctionComponent<LotteryInfoProps> = ({ latest, userIn
           <div className="stat-desc">&nbsp;</div>
         </div>
         <div className="stat">
-          <div className="stat-title">Balance</div>
+          <div className="stat-title">CAKE Balance</div>
           <div className="stat-value">{Number(toEther(balance.balance, 2))}</div>
           <div className="stat-desc"> {balance ? `\$${(Math.round(balance.balanceUsd * 100) / 100).toLocaleString()}` : ""}</div>
         </div>

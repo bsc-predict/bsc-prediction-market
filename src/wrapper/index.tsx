@@ -16,7 +16,9 @@ const AppWrapper: React.FunctionComponent<AppWrapperProps> = (props) => {
 
   const { notificationProps } = React.useContext(NotificationsContext)
 
-  mixpanel.track("Page View", { page: props.title })
+  React.useEffect(() => {
+    mixpanel.track("Page View", { page: props.title })
+  }, [])
 
   return (
     <div>

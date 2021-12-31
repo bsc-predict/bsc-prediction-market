@@ -11,7 +11,7 @@ import { store } from '../src/stores'
 import mixpanel from 'mixpanel-browser'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  mixpanel.init('38ab956e3143ef611e15bb52d235f7fe', {debug: true})
+  mixpanel.init('38ab956e3143ef611e15bb52d235f7fe')
 
   return (
     <Provider store={store}>
