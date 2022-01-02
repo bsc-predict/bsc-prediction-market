@@ -26,7 +26,7 @@ const RoundsTableDesktop: React.FunctionComponent<RoundsTableDesktopProps> = (pr
   })
 
   const pages = page < 3 ? createArray(0, 5) : createArray(page - 2, page + 3)
-  const rowOptions = [5 ,10, 15, 20]
+  const rowOptions = [5 ,10, 15, 20, 50]
 
   return(
     <div>
