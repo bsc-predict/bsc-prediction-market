@@ -3,17 +3,7 @@ import Link from "next/link"
 import { linkClass } from "./style"
 import { github } from "../../images/github"
 import { twitter } from "../../images/twitter"
-
-const Links = {
-  pancakeSwap: "https://pancakeswap.finance",
-  pancakeSwapPredictions: "https://pancakeswap.finance/prediction",
-  documentation: "https://docs.pancakeswap.finance/products/prediction",
-  about: "/about",
-  email: "mailto:contact@bscpredict.com",
-  twitter: "https://twitter.com/bscpredict",
-  github: "https://github.com/bsc-predict/bsc-prediction-market",
-  tradingBot: "https://github.com/bsc-predict/bsc-prediction-bot",
-}
+import { Links } from "src/constants"
 
 const Footer: React.FunctionComponent = () => {
 
@@ -25,7 +15,7 @@ const Footer: React.FunctionComponent = () => {
       </div>
       <div className="hidden md:flex mt-12 mb-12 flex-row justify-center space-x-20">
         <div className="w-52">
-          <div className="mb-4 block font-bold text-xl mb-8">Games</div>
+          <div className="block font-bold text-xl mb-8">Games</div>
           <div>
             <Link href="/bnbusdt">
               <a className={linkClass}>
@@ -35,7 +25,7 @@ const Footer: React.FunctionComponent = () => {
           </div>
         </div>
         <div className="w-52">
-          <div className="mb-4 block font-bold text-xl mb-8">Links</div>
+          <div className="block font-bold text-xl mb-8">Links</div>
           <div>
           <Link href={Links.pancakeSwap}>
               <a className={linkClass}>Pancake Swap</a>

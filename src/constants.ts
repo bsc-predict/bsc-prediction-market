@@ -1,3 +1,14 @@
+export const Links = {
+  pancakeSwap: "https://pancakeswap.finance",
+  pancakeSwapPredictions: "https://pancakeswap.finance/prediction",
+  documentation: "https://docs.pancakeswap.finance/products/prediction",
+  about: "/about",
+  email: "mailto:contact@bscpredict.com",
+  twitter: "https://twitter.com/bscpredict",
+  github: "https://github.com/bsc-predict/bsc-prediction-market",
+  tradingBot: "https://github.com/bsc-predict/bsc-prediction-bot",
+}
+
 export const Urls = {
     rpc: {
       main: "https://nodes.pancakeswap.com",
