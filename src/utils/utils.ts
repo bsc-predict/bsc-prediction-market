@@ -127,6 +127,12 @@ export function isEqual(x: any, y: any) {
 
 }
 
+export function flatten<T>(arr: T[][]): T[] {
+  const out: T[] = []
+  arr.forEach(row => row.forEach(node => out.push(node)))
+  return out
+}
+
 export function uniqBy<T, U>(arr: T[], f: (v: T) => U): T[] {
   const seen = new Set<U>()
   const unique = new Array<T>()

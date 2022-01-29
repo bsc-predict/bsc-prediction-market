@@ -2,6 +2,7 @@
 title: Why Martingale betting strategy doesn't work 
 slug: strategy-martingale
 date: "2021-11-11"
+sticky: false
 ---
 
 

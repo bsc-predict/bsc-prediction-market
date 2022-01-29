@@ -15,9 +15,11 @@ export async function getAllPosts() {
       slug: post.replace('.md', ''),
       title: meta.data.title,
       date: meta.data.date,
+      sticky: meta.data.sticky ? true : false,
+      tags: meta.data.tags?.split(",") || []
     })
   }
-  return posts
+  return posts.sort((p1, p2) => p1.date < p2.date ? 1 : -1)
 }
 
 
