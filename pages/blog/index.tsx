@@ -20,7 +20,7 @@ const Blog: React.FunctionComponent<BlogProps> = (props) => {
     } else {
       setPosts(props.posts)
     }
-  }, [activeTag])
+  }, [activeTag, props.posts])
 
   const tags = uniqBy(flatten(props.posts.map(p => p.tags)), f => f)
 
@@ -34,7 +34,7 @@ const Blog: React.FunctionComponent<BlogProps> = (props) => {
           <div className="divider divider-vertical"/>
           <div>
             {tags.map(tag =>
-              <button className={tag === activeTag ? "btn btn-primary" : "btn"} onClick={() => setActiveTag(t => t === tag ? undefined : tag)}>{tag}</button>)}
+              <button key={tag} className={tag === activeTag ? "btn btn-primary" : "btn"} onClick={() => setActiveTag(t => t === tag ? undefined : tag)}>{tag}</button>)}
           </div>
         </div>
         <div className="divider" />
