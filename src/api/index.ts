@@ -1,5 +1,5 @@
 import axios from "axios"
-import { toRound } from "src/contracts/prediction"
+import { BnbUsdt } from "src/contracts/prediction"
 import { Urls } from "../constants"
 import { web3Provider } from "../utils/web3"
 import { csvToJson } from "./utils"
@@ -35,10 +35,10 @@ export const getArchivedRounds = async (props: { latest: boolean, game: GameType
   if (game === undefined) {
     return []
   }
-  const url = latest ? Urls.latestRounds[game.chain] : Urls.allRounds[game.chain]
+  const url = latest ? Urls.bnbUsdt.latestRounds[game.chain] : Urls.bnbUsdt.allRounds[game.chain]
   const res = await axios.get(url)
-  const roundResponse = csvToJson(res.data) as RoundResponse[]
-  return roundResponse.map(toRound)
+  const roundResponse = csvToJson(res.data) as PsRoundResponse[]
+  return roundResponse.map(BnbUsdt.toRound)
 }
 
 export const getLeaderboard = async (props: { evenMoney: boolean, game: GameType }): Promise<Leaderboard[]> => {
@@ -46,7 +46,7 @@ export const getLeaderboard = async (props: { evenMoney: boolean, game: GameType
   if (game === undefined) {
     return []
   }
-  const url = evenMoney ? Urls.leaderboardEvenMoney[game.chain] : Urls.leaderboard[game.chain]
+  const url = evenMoney ? Urls.bnbUsdt.leaderboardEvenMoney[game.chain] : Urls.bnbUsdt.leaderboard[game.chain]
   const res = await axios.get(url)
   const leaderBoardResponse = csvToJson(res.data) as LeaderboardResponse[]
   return leaderBoardResponse.map(r => ({

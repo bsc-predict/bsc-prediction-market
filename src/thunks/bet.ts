@@ -1,15 +1,9 @@
 import { gql, request } from "graphql-request"
 import { createAsyncThunk } from "@reduxjs/toolkit"
-import { createArray, fromWei, toWei } from "../utils/utils"
+import { toWei } from "../utils/utils"
 import { RootState } from "../stores"
 import { Urls } from "../constants"
-import { PredictionAddress } from "../contracts/prediction"
-import predictionAbi from "../contracts/prediction_abi.json"
-import type { AbiItem } from "web3-utils"
-import { web3Provider } from "src/utils/web3"
-import Web3 from "web3"
-import mixpanel from "mixpanel-browser"
-
+import { BnbUsdt } from "../contracts/prediction"
 interface BetCallbacks {
   onSent: () => void
   onConfirmed: () => void
@@ -39,23 +33,10 @@ export const claim = createAsyncThunk(
     if (!game) {
       return
     }
-    const web3 = new Web3(library)
-    const address = PredictionAddress[game.chain]
-    const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
-    return contract.methods.claim(epochs)
-      .send({ from: account })
-      .once('sending', () => {
-        mixpanel.track("predict-claim", { category: game.chain, status: "sent" })
-        onSent()
-      })
-      .once('confirmation', () => {
-        mixpanel.track("predict-claim", { category: game.chain, status: "confirmed" })
-        onConfirmed()
-      })
-      .once('error', (e: Error | undefined) => {
-        mixpanel.track("predict-claim", { category: game.chain, status: "error", body: JSON.stringify(e) })
-        onError(e)
-      })
+
+    if (game.pair === "bnbusdt") {
+      return BnbUsdt.claim({ game, epochs, library, onSent, onConfirmed, onError, account })
+    }
   }
 )
 
@@ -70,26 +51,18 @@ export const makeBet = createAsyncThunk(
       onError(new Error("Game not defined"))
     } else if (account === undefined || library === undefined) {
       onError(new Error("Not logged in"))
-    } else {
-      const address = PredictionAddress[game.chain]
-      const web3 = new Web3(library)
-      const value = toWei(eth.toString(), "ether")
-      const betMethod = direction === "bull" ? "betBull" : "betBear"
-      const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
-      return contract.methods[betMethod](epoch)
-        .send({ from: account, value })
-        .once('sent', () => {
-          mixpanel.track("predict-bet", { category: game.chain, status: "sent" })
-          onSent()
-        })
-        .once('confirmation', () => {
-          mixpanel.track("predict-bet", { category: game.chain, status: "confirmed" })
-          onConfirmed()
-        })
-        .once('error', (e: Error | undefined) => {
-          mixpanel.track("predict-bet", { category: game.chain, status: "error", body: JSON.stringify(e) })
-          onError(e)
-        })
+    } else if (game.pair === "bnbusdt") {
+      BnbUsdt.makeBet({
+        game,
+        library,
+        direction,
+        epoch,
+        account,
+        eth,
+        onSent,
+        onConfirmed,
+        onError,
+      })
     }
   }
 )
@@ -103,7 +76,7 @@ export const fetchBets = createAsyncThunk(
     if (game === undefined) {
       return { bets: [] }
     }
-    const bets = await getUserRounds({ game, account, latest: true })
+    const bets = await BnbUsdt.fetchUserRounds({ game, account, latest: true })
     return { bets }
     // let bets = await getBetHistory(game, { user: address.toLowerCase() })
     // let numBets = bets.length
@@ -164,7 +137,7 @@ export const getBetHistory = async (game: GameType, where: WhereClause = {}, fir
 }
 
 const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first = 1000, skip = 0): Promise<GraphQlBetResponse> => {
-  const url = Urls.gqlPrediction[game.chain]
+  const url = Urls.bnbUsdt.gqlPrediction[game.chain]
   const response = await request<GraphQlBetResponse>(
     url,
     gql`
@@ -207,52 +180,4 @@ const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first =
     { first, skip, where },
   )
   return response
-}
-
-export const getUserRounds = async (props: {
-  game: GameType,
-  account: string,
-  latest: boolean,
-}) => {
-  const { game, account, latest } = props
-
-  const contractAddress = PredictionAddress[game.chain]
-  const web3 = web3Provider(game.chain)
-  const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
-  const userRoundsLength = await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number
-  let ct = userRoundsLength < 1000 ? userRoundsLength : userRoundsLength - 1000
-  const bets: Bet[] = []
-  let numItems = 1000
-  let failures = 0
-  const MAX_FAILURES = 10
-  while (ct > 0) {
-    try {
-      const res = await contract.methods.getUserRounds(
-        web3.utils.toChecksumAddress(account),
-        ct === userRoundsLength ? 0 : Math.max(0, ct),
-        Math.min(ct, 1000),
-      ).call() as { 0: string[], 1: Array<[string, string, boolean]>, 2: string }
-      const [rounds, results] = [res[0], res[1]]
-      numItems = Math.min(rounds.length, results.length)
-      createArray(0, numItems).forEach(idx => {
-        const epoch = rounds[idx]
-        const [direction, size, claimed] = results[idx]
-        bets.push({
-          value: size,
-          valueNum: Number(size),
-          valueEthNum: Number(fromWei(size, "ether")),
-          direction: direction === "0" ? "bull" : "bear",
-          claimed,
-          epoch,
-        })
-      })
-      ct -= numItems
-      console.log(`success ${numItems}`)
-    } catch (e) {
-      failures += 1
-      console.log(`failed ${failures}`)
-    }
-    if (latest || numItems < 1000 || failures > MAX_FAILURES) { break }
-  }
-  return bets
 }

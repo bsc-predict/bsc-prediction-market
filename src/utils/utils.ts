@@ -33,7 +33,12 @@ export const getRoundInfo = (round: Round, block: BlockProps, constants: Predict
   }
 
   const complete = roundComplete(round, block, constants.intervalSeconds, constants.bufferSeconds)
-  const canceled = round.oracleCalled === false && complete
+  let canceled = false
+  if (round.type === "ps") {
+    canceled = round.oracleCalled === false && complete
+  } else {
+    canceled = round.cancelled
+  }
   const live = !canceled && round.closePriceNum === 0 && round.lockPriceNum > 0
   const curPrice = live && latestOracle ? (latestOracle.answer - round.lockPriceNum) : (round.closePriceNum - round.lockPriceNum)
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)
@@ -62,8 +67,12 @@ export const calcBlockTimestamp = (p: { initial: { timestamp: number }, time: Da
 
 export const roundComplete = (r: Round, block: BlockProps, intervalSeconds: number, bufferSeconds: number) => {
   const timestamp = calcBlockTimestamp(block)
-  // NOTE: Buffer to allow some more time for oracle to be called
-  return timestamp > (r.lockTimestampNum + intervalSeconds + bufferSeconds + 30)
+  if (r.type === "ps") {
+    // NOTE: Buffer to allow some more time for oracle to be called
+    return timestamp > (r.lockTimestampNum + intervalSeconds + bufferSeconds + 30)
+  } else {
+    return r.completed
+  }
 }
 
 export const toTimeString = (seconds: number) => new Date(seconds * 1000).toISOString().substring(14, 19)
@@ -145,3 +154,8 @@ export function uniqBy<T, U>(arr: T[], f: (v: T) => U): T[] {
   })
   return unique
 }
+
+export const isPsRounds = (r: Array<Round>): r is Array<PsRound> => r.every(r => r.type === "ps")
+
+export const isPrdtRounds = (r: Array<Round>): r is Array<PrdtRound> => r.every(r => r.type === "prdt")
+

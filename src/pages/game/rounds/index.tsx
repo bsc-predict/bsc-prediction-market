@@ -29,7 +29,6 @@ const RoundsPage: React.FunctionComponent = () => {
   const latestEpoch = useAppSelector(s => s.game.rounds.reduce((prior, r) => r.epochNum > prior ? r.epochNum : prior, -1))
   const previousLatestEpoch = usePrevious(latestEpoch)
   const previousAccount = usePrevious(account)
-  const library = useAppSelector(s => s.account.library)
 
   const bets = useAppSelector(s => s.game.bets)
 

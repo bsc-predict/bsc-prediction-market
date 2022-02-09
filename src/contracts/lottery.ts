@@ -39,7 +39,7 @@ const convertArrayToNumbers = (
 
 
 export const fetchLotteryHistory = async (): Promise<Lottery[]> => {
-  const url = Urls.lotteryRounds.main
+  const url = Urls.cakeLottery.lotteryRounds.main
   const res = await axios.get(url)
   const roundResponse = csvToJson(res.data) as LotteryCsvResponse[]
   return roundResponse.map(l => ({

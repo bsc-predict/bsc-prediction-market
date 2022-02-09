@@ -3,10 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { calcBlockTimestamp, createArray, roundComplete, toWei } from "../utils/utils"
 import { RootState } from "../stores"
 import { Urls } from "../constants"
-import axios from "axios"
-import { csvToJson } from "../api/utils"
 import { getPredictionContract } from "./utils"
-import { toRound } from "../contracts/prediction"
+import { BnbUsdt } from "../contracts/prediction"
 import request, { gql } from "graphql-request"
 import { getArchivedRounds } from "src/api"
 
@@ -55,17 +53,13 @@ export const fetchLatestRounds = createAsyncThunk(
         .filter(r => roundComplete(r, block, intervalSeconds, bufferBlocks))
         .map(r => r.epochNum)
     )
-    const backfill = rounds.slice(0, 20).filter(r => r.oracleCalled === false).map(r => r.epochNum)
+    const backfill = rounds.slice(0, 20).filter(r => (r.type === "ps" && r.oracleCalled === false) || (r.type === "prdt" && r.completed === false)).map(r => r.epochNum)
     const contract = getPredictionContract(game)
     const currentBlock = calcBlockTimestamp(block)
     const latest = await contract.methods.currentEpoch().call().then((l: string) => Number(l)) as number
     const epochs = new Set(createArray(Math.max(0, latest - n), latest + 1).filter(e => !availableEpochs.has(e)).concat(backfill))
-    // console.log('available')
-    // console.log(availableEpochs)
-    // console.log('epochs')
-    // console.log(epochs)
     const updated = Array(...epochs).map(async epoch =>
-      contract.methods.rounds(epoch.toString()).call().then((r: RoundResponse) => toRound(r))
+      contract.methods.rounds(epoch.toString()).call().then((r: PsRoundResponse) => BnbUsdt.toRound(r))
     )
 
     const updatedRounds = await Promise.all(updated)
@@ -81,7 +75,7 @@ export const fetchLatestRounds = createAsyncThunk(
   }
 )
 
-const fetchRoundHistory = async (game: GameType, where: WhereClause = {}, first = 1000, skip = 0): Promise<Round[]> => {
+const fetchRoundHistory = async (game: GameType, where: WhereClause = {}, first = 1000, skip = 0): Promise<PsRound[]> => {
   const rounds = await getRoundHistoryGql(game, where, first, skip).then(res => res.rounds.map(r => ({
     bearAmount: toWei(r.bearAmount, "ether"),
     bullAmount: toWei(r.bullAmount, "ether"),
@@ -92,7 +86,7 @@ const fetchRoundHistory = async (game: GameType, where: WhereClause = {}, first 
     startAt: r.startAt,
     totalAmount: toWei(r.totalAmount, "ether")
   })))
-  const b: Round[] = rounds.map(round => {
+  const b: PsRound[] = rounds.map(round => {
     const bearAmountNum = Number(round.bearAmount)
     const bullAmountNum = Number(round.bullAmount)
     const rewardAmountNum = bearAmountNum + bullAmountNum
@@ -108,6 +102,7 @@ const fetchRoundHistory = async (game: GameType, where: WhereClause = {}, first 
     const closePriceNum = round.closePrice === null ? 0 : Number(round.closePrice) * 1e+8
 
     return {
+      type: "ps",
       oracleCalled: round.closePrice !== null,
       bearAmount: round.bearAmount,
       bullAmount: round.bullAmount,
@@ -140,7 +135,7 @@ const fetchRoundHistory = async (game: GameType, where: WhereClause = {}, first 
 }
 
 const getRoundHistoryGql = async (game: GameType, where: WhereClause = {}, first = 1000, skip = 0): Promise<GraphQlRoundResponse> => {
-  const url = Urls.gqlPrediction[game.chain]
+  const url = Urls.bnbUsdt.gqlPrediction[game.chain]
   const response = await request<GraphQlRoundResponse>(
     url,
     gql`

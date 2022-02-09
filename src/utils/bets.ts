@@ -10,7 +10,7 @@ export const enrichBets = (p: {
   bufferSeconds: number
   intervalSeconds: number
   evenMoney: boolean
-}) => {
+}): Bet[] => {
   const { bets, rounds, block, intervalSeconds, bufferSeconds, evenMoney } = p
   const roundsMap = new Map<string, Round>()
   rounds.forEach(r => roundsMap.set(r.epoch, r))
@@ -26,13 +26,14 @@ export const enrichBets = (p: {
     let wonAmount = -valueNum
     let wonPerc = -1.0
     if (r) {
+      const oracleCalled = r.type === "ps" ? r.oracleCalled : r.completed
       const passed = roundComplete(r, block, intervalSeconds, bufferSeconds)
-      const canceled = r.oracleCalled === false && passed
+      const canceled = oracleCalled === false && passed
       if (canceled) {
         won = true
         wonAmount = valueNum
         wonPerc = 0.0
-      } else if (!r.oracleCalled) {
+      } else if (!oracleCalled) {
         won = false
         wonAmount = -valueNum
       } else if (r.closePriceNum < r.lockPriceNum && bet.direction === "bear") {
@@ -57,7 +58,7 @@ export const enrichBets = (p: {
       status = "claimed"
     } else if (won) {
       status = "claimable"
-    } else if (r?.oracleCalled === false) {
+    } else if (r?.type ==="ps" && r?.oracleCalled === false) {
       status = "pending"
     } else {
       status = bet?.status
@@ -88,5 +89,9 @@ export const calcMaxDrawdown = (bets: Bet[]) => {
 }
 
 export const calcCanBet = (round: Round, currentTimestamp: number) => {
-  return round.startTimestampNum < currentTimestamp && round.lockTimestampNum > currentTimestamp
+  if (round.type === "ps") {
+    return round.startTimestampNum < currentTimestamp && round.lockTimestampNum > currentTimestamp
+  } else {
+    return round.completed === false
+  }
 }

@@ -11,6 +11,6 @@ interface WindowChain {
   }
 
 type Chain = "main" | "test"
-type Pair = "bnbusdt"
+type Pair = "bnbusdt" | "ethusdt"
 
 interface GameType { chain: Chain, pair: Pair }

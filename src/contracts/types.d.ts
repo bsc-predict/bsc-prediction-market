@@ -1,4 +1,48 @@
-interface Round {
+type Round = PsRound | PrdtRound
+
+interface PrdtRound {
+  type: "prdt"
+  epoch: string
+  epochNum: number
+  genesis: boolean
+  completed: boolean
+  cancelled: boolean
+  bullAmount: number
+  bearAmount: number
+  rewardBaseCalAmount: number
+  rewardAmount: number
+  treasuryAmount: number
+  bullBonusAmount: number
+  bearBonusAmount: number
+  lockPrice: number
+  closePrice: number
+  bullPayoutGross: number
+  bearPayoutGross: number
+  lockPriceNum: number
+  closePriceNum: number
+  prizePool: number
+  bullPayout: number
+  bearPayout: number
+}
+
+interface PrdtResponse {
+  epoch: string
+  genesis: boolean
+  completed: boolean
+  cancelled: boolean
+  bullAmount: number
+  bearAmount: number
+  rewardBaseCalAmount: number
+  rewardAmount: number
+  treasuryAmount: number
+  bullBonusAmount: number
+  bearBonusAmount: number
+  lockPrice: number
+  closePrice: number
+}
+
+interface PsRound {
+  type: "ps"
   oracleCalled: boolean
   bearAmount: string
   bullAmount: string
@@ -27,7 +71,7 @@ interface Round {
   prizePool: string
 }
 
-interface RoundResponse {
+interface PsRoundResponse {
   bearAmount: string
   bullAmount: string
   closeOracleId: string

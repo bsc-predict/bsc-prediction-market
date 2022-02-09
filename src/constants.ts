@@ -10,17 +10,14 @@ export const Links = {
 }
 
 export const Urls = {
-    rpc: {
-      main: "https://nodes.pancakeswap.com",
-      // main: "https://speedy-nodes-nyc.moralis.io/f50c95b944af245f8c9a951e/bsc/mainnet",
-      test: "https://data-seed-prebsc-2-s1.binance.org:8545/"  
-    },
-    bets: {
-      main: (address: string) => `https://jkfwxgcdmc.execute-api.us-east-1.amazonaws.com/dev/v2/main/bets/${address}`,
-      test: (address: string) => `https://jkfwxgcdmc.execute-api.us-east-1.amazonaws.com/dev/v2/test/bets/${address}`,
-    },
-    bnbPrice: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
-    cakePrice: "https://api1.binance.com/api/v3/ticker/price?symbol=CAKEUSDT",
+  rpc: {
+    main: "https://nodes.pancakeswap.com",
+    // main: "https://speedy-nodes-nyc.moralis.io/f50c95b944af245f8c9a951e/bsc/mainnet",
+    test: "https://data-seed-prebsc-2-s1.binance.org:8545/"
+  },
+  bnbPrice: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
+  cakePrice: "https://api1.binance.com/api/v3/ticker/price?symbol=CAKEUSDT",
+  bnbUsdt: {
     leaderboard: {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard.csv",
       test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/test/latest.csv",
@@ -41,10 +38,13 @@ export const Urls = {
       main: "https://api.thegraph.com/subgraphs/name/pancakeswap/prediction-v2",
       test: "",
     },
+  },
+  cakeLottery: {
     lotteryRounds: {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/lottery/v2/main/lottery.csv"
     }
   }
+}
 
 export interface PredictionConstants {
   bufferSeconds: number
