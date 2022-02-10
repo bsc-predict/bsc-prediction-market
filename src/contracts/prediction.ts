@@ -105,7 +105,6 @@ export const BnbUsdt = {
     let failures = 0
     const MAX_FAILURES = 1
     let numIters = Math.floor(userRoundsLength / 1000)
-    console.log({ numIters, userRoundsLength })
 
     while (numIters >= 0) {
       try {

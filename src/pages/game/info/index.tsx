@@ -63,7 +63,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
 
   React.useEffect(() => {
     const r = rounds.length > 0 ? rounds.reduce((acc, r) => r.epochNum > acc.epochNum ? r : acc) : undefined
-    if (r && !paused) {
+    if (r && r.type === "ps" && !paused) {
       const t = Math.max(0, (r.lockTimestampNum - block))
       latestEpoch.current = r.epochNum
       // rounds are updated every 5 seconds so if seconds remaining is correct +/- 10 seconds, don't update
