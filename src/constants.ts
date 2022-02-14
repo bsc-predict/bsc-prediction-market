@@ -11,8 +11,8 @@ export const Links = {
 
 export const Urls = {
   rpc: {
-    main: "https://nodes.pancakeswap.com",
-    // main: "https://speedy-nodes-nyc.moralis.io/f50c95b944af245f8c9a951e/bsc/mainnet",
+    // main: "https://nodes.pancakeswap.com",
+    main: "https://speedy-nodes-nyc.moralis.io/f50c95b944af245f8c9a951e/bsc/mainnet",
     test: "https://data-seed-prebsc-2-s1.binance.org:8545/"
   },
   bnbPrice: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
