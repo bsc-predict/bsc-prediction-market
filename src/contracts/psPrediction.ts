@@ -1,27 +1,27 @@
 import { web3Provider } from "../utils/web3"
-import predictionAbi from "../contracts/prediction_abi.json"
+import predictionAbi from "./ps_prediction_abi.json"
 import type { AbiItem } from "web3-utils"
 import mixpanel from "mixpanel-browser"
 import Web3 from "web3"
 import { createArray, fromWei, toWei } from "src/utils/utils"
 
-export const BnbUsdtPredictionAddress = {
+export const PsBnbUsdtPredictionAddress = {
   main: "0x18B2A687610328590Bc8F2e5fEdDe3b582A49cdA",
   test: "0x5E5D4d6337Ac83Ef71fEb143669D95073D0e9462"
 }
 
-export const BnbUsdt = {
+export const PsBnbUsdt = {
   fetchRounds: async (
     game: GameType,
     epochs: Array<string | number>
   ): Promise<Round[]> => {
     const web3 = web3Provider(game.chain)
-    const address = BnbUsdtPredictionAddress[game.chain]
+    const address = PsBnbUsdtPredictionAddress[game.chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
 
     const rounds = epochs.map(async epoch => {
       const r = await contract.methods.rounds(epoch.toString()).call() as Object
-      return BnbUsdt.toRound(r as PsRoundResponse)
+      return PsBnbUsdt.toRound(r as PsRoundResponse)
     })
     return await Promise.all(rounds)
   },
@@ -37,7 +37,7 @@ export const BnbUsdt = {
   }) => {
     const { game, epochs, account, library, onSent, onConfirmed, onError } = props
     const web3 = new Web3(library)
-    const address = BnbUsdtPredictionAddress[game.chain]
+    const address = PsBnbUsdtPredictionAddress[game.chain]
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], address)
     return contract.methods.claim(epochs)
       .send({ from: account })
@@ -67,7 +67,7 @@ export const BnbUsdt = {
     onError: (e?: Error) => void,
   }) => {
     const { game, library, direction, epoch, account, eth, onSent, onConfirmed, onError } = props
-    const address = BnbUsdtPredictionAddress[game.chain]
+    const address = PsBnbUsdtPredictionAddress[game.chain]
     const web3 = new Web3(library)
     const value = toWei(eth.toString(), "ether")
     const betMethod = direction === "bull" ? "betBull" : "betBear"
@@ -96,7 +96,7 @@ export const BnbUsdt = {
   }) => {
     const { game, account, latest } = props
 
-    const contractAddress = BnbUsdtPredictionAddress[game.chain]
+    const contractAddress = PsBnbUsdtPredictionAddress[game.chain]
     const web3 = web3Provider(game.chain)
     const contract = new web3.eth.Contract(predictionAbi as AbiItem[], contractAddress)
     const userRoundsLength = await contract.methods.getUserRoundsLength(account).call().then((n: string) => Number(n)) as number
@@ -108,7 +108,6 @@ export const BnbUsdt = {
 
     while (numIters >= 0) {
       try {
-        console.log({numIters})
         const res = await contract.methods.getUserRounds(
           web3.utils.toChecksumAddress(account),
           numIters * 1000,
@@ -129,11 +128,8 @@ export const BnbUsdt = {
           })
         })
         numIters -= 1
-        console.log(`success ${numItems}`)
       } catch (e) {
-        console.log(e)
         failures += 1
-        console.log(`failed ${failures}`)
       }
       if (latest || failures > MAX_FAILURES) { break }
     }

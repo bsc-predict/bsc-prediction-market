@@ -42,9 +42,14 @@ const AppHeader: React.FunctionComponent = () => {
           <div className="dropdown dropdown-hover">
             <div tabIndex={0} className="font-sm md:font-base md:m-1 btn btn-ghost">Predict</div>
             <ul className="shadow menu dropdown-content bg-base-100 rounded-box w-60">
+            <li className="btn btn-square btn-block btn-ghost">
+                <Link href="/ps/bnbusdt" passHref>
+                  <a>BNB (PancakeSwap)</a>
+                </Link>
+              </li>
               <li className="btn btn-square btn-block btn-ghost">
-                <Link href="/bnbusdt" passHref>
-                  <a>BNB-USDT</a>
+                <Link href="/prdt/bnbusdt" passHref>
+                  <a>BNB (Prdt)</a>
                 </Link>
               </li>
             </ul>
