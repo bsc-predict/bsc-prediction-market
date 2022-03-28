@@ -42,7 +42,7 @@ export const Urls = {
   },
   cakeLottery: {
     lotteryRounds: {
-      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/lottery/v2/main/lottery.csv"
+      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/lottery.csv"
     }
   }
 }
