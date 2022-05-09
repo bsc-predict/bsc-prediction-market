@@ -1,14 +1,21 @@
 import { web3Provider } from "../utils/web3"
-import predictionAbi from "../contracts/prediction_abi.json"
+import prdtPredictionAbi from "../contracts/prdt_prediction_abi.json"
+import psPredictionAbi from "../contracts/ps_prediction_abi.json"
 import oracleAbi from "../contracts/oracle_abi.json"
 import type {AbiItem} from "web3-utils"
-import { BnbUsdtPredictionAddress } from "../contracts/prediction"
+import { PsBnbUsdtPredictionAddress } from "../contracts/psPrediction"
+import { PrdtBnbUsdtPredictionAddress } from "../contracts/prdtPrediction"
 import { OracleAddresses } from "../contracts/oracle"
 
 export const getPredictionContract = (game: GameType) => {
   const web3 = web3Provider(game.chain)
-  const address = BnbUsdtPredictionAddress[game.chain]
-  return new web3.eth.Contract(predictionAbi as AbiItem[], address)
+  if (game.service === "ps") {
+    const address = PsBnbUsdtPredictionAddress[game.chain]
+    return new web3.eth.Contract(psPredictionAbi as AbiItem[], address)      
+  } else {
+    const address = PrdtBnbUsdtPredictionAddress[game.chain]
+    return new web3.eth.Contract(prdtPredictionAbi as AbiItem[], address)
+  }
 }
 
 export const getOracleContract = (game: GameType) => {

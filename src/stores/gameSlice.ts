@@ -4,7 +4,6 @@ import { setupGame } from "../thunks/game"
 import { fetchBets } from "../thunks/bet"
 import { enrichBets } from "../utils/bets"
 import type { RootState } from "./index"
-import { fetchBalance } from "../thunks/account"
 import { fetchLatestOracle } from "../thunks/oracle"
 
 
@@ -33,10 +32,6 @@ const initialState: GameState = {
   paused: false,
   oracle: {
     answer: 0,
-    answeredInRound: 0,
-    roundId: 0,
-    startedAt: 0,
-    updatedAt: 0
   },
 }
 
@@ -44,13 +39,7 @@ export const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    setGame(state, action: PayloadAction<GameType>) {
-      state.game = action.payload
-      state.rounds = []
-      state.bets = []
-      state.block = {initial: { timestamp: new Date().getTime() }, time: new Date()}
-      state.paused = false
-    },
+
   },
   extraReducers: builder => {
     builder
@@ -79,12 +68,13 @@ export const gameSlice = createSlice({
         }
       })
       .addCase(fetchLatestOracle.fulfilled, (state, action) => {
-        if (action.payload) {
-          state.oracle = action.payload
+        if (action.payload.oracle && gameEqual(action.payload.game, state.game)) {
+          state.oracle = action.payload.oracle
         }
       })
       .addCase(fetchArchivedRounds.fulfilled, (state, action) => {
-        const merged = mergeRounds(state.rounds, action.payload)
+        if (!gameEqual(action.payload.game, state.game)) { return }
+        const merged = mergeRounds(state.rounds, action.payload.rounds)
         const enriched = enrichBets({
           bets: state.bets,
           rounds: merged,
@@ -106,6 +96,7 @@ export const gameSlice = createSlice({
           state.rewardRate = action.payload.rewardRate
           state.block = action.payload.block
           state.game = action.payload.game
+          state.fetchingRounds = undefined
         }
       })
       .addCase(fetchLatestRounds.pending, (state) => {
@@ -114,6 +105,10 @@ export const gameSlice = createSlice({
         }
       })
       .addCase(fetchLatestRounds.fulfilled, (state, action) => {
+        if (!gameEqual(action.payload.game, state.game)) {
+          state.fetchingRounds = undefined
+          return
+        }
         const { updatedRounds, paused } = action.payload
         const merged = mergeRounds(state.rounds, updatedRounds)
         const enriched = enrichBets({
@@ -130,7 +125,7 @@ export const gameSlice = createSlice({
         state.fetchingRounds = undefined
       })
       .addCase(fetchBets.fulfilled, (state, action) => {
-
+        if (!gameEqual(action.payload.game, state.game)) { return }
         const enriched = enrichBets({
           bets: action.payload.bets,
           rounds: state.rounds,
@@ -144,7 +139,12 @@ export const gameSlice = createSlice({
   }
 })
 
-export const { setGame } = gameSlice.actions
+const gameEqual = (game: GameType | undefined, other: GameType | undefined) => {
+  if (game === undefined || other === undefined) {
+    return false
+  }
+  return game.chain === other.chain && game.service === other.service && game.pair === other.pair
+}
 
 export const rounds = (state: RootState) => state.game.rounds
 

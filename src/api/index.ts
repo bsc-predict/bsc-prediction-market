@@ -1,5 +1,6 @@
 import axios from "axios"
-import { BnbUsdt } from "src/contracts/prediction"
+import { PrdtBnbUsdt } from "src/contracts/prdtPrediction"
+import { PsBnbUsdt } from "src/contracts/psPrediction"
 import { Urls } from "../constants"
 import { web3Provider } from "../utils/web3"
 import { csvToJson } from "./utils"
@@ -35,10 +36,23 @@ export const getArchivedRounds = async (props: { latest: boolean, game: GameType
   if (game === undefined) {
     return []
   }
-  const url = latest ? Urls.bnbUsdt.latestRounds[game.chain] : Urls.bnbUsdt.allRounds[game.chain]
+
+  let url = ""
+  if (game.service === "ps") {
+    url = latest ? Urls.bsBnbUsdt.latestRounds[game.chain] : Urls.bsBnbUsdt.allRounds[game.chain]
+  } else if (game.service === "prdt") {
+    url = latest ? Urls.prdtBnbUsdt.latestRounds[game.chain] : Urls.prdtBnbUsdt.allRounds[game.chain]
+  }
   const res = await axios.get(url)
-  const roundResponse = csvToJson(res.data) as PsRoundResponse[]
-  return roundResponse.map(BnbUsdt.toRound)
+  const roundResponse = csvToJson(res.data)
+  if (game.service === "ps") {
+    return (roundResponse as PsRoundResponse[]).map(PsBnbUsdt.toRound)
+  } else if (game.service === "prdt") {
+    const r = (roundResponse as Array<PrdtResponse & PrdtTimestampResponse>).map(r => PrdtBnbUsdt.toRound(r, r))
+    return r
+  } else {
+    return []
+  }
 }
 
 export const getLeaderboard = async (props: { evenMoney: boolean, game: GameType }): Promise<Leaderboard[]> => {
@@ -46,7 +60,7 @@ export const getLeaderboard = async (props: { evenMoney: boolean, game: GameType
   if (game === undefined) {
     return []
   }
-  const url = evenMoney ? Urls.bnbUsdt.leaderboardEvenMoney[game.chain] : Urls.bnbUsdt.leaderboard[game.chain]
+  const url = evenMoney ? Urls.bsBnbUsdt.leaderboardEvenMoney[game.chain] : Urls.bsBnbUsdt.leaderboard[game.chain]
   const res = await axios.get(url)
   const leaderBoardResponse = csvToJson(res.data) as LeaderboardResponse[]
   return leaderBoardResponse.map(r => ({

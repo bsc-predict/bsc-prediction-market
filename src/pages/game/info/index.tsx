@@ -63,7 +63,7 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
 
   React.useEffect(() => {
     const r = rounds.length > 0 ? rounds.reduce((acc, r) => r.epochNum > acc.epochNum ? r : acc) : undefined
-    if (r && r.type === "ps" && !paused) {
+    if (r && !paused) {
       const t = Math.max(0, (r.lockTimestampNum - block))
       latestEpoch.current = r.epochNum
       // rounds are updated every 5 seconds so if seconds remaining is correct +/- 10 seconds, don't update
@@ -73,18 +73,6 @@ const Info: React.FunctionComponent<InfoProps> = ({ showReactour }) => {
     }
   }, [block, rounds, paused])
 
-  const handleSetChain = (chain: Chain) => {
-    if (game?.pair) {
-      dispatch(setGame({ chain, pair: game.pair }))
-      if (chain === "main") {
-        router.push(router.pathname, { query: undefined })
-      } else {
-        router.push(router.pathname, { query: { c: chain } })
-      }
-    }
-  }
-
-  const otherChain = game?.chain === "main" ? "test" : "main"
 
   return (
     <div className="mb-5 mt-5 overflow-auto">

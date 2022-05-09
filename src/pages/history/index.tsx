@@ -2,7 +2,7 @@ import { useWeb3React } from "@web3-react/core"
 import { useRouter } from "next/router"
 import React from "react"
 import { getArchivedRounds } from "src/api"
-import { BnbUsdt } from "src/contracts/prediction"
+import { PsBnbUsdt } from "src/contracts/psPrediction"
 import { enrichBets } from "src/utils/bets"
 import Notification from "../../components/notifications"
 import { UserConfigContext } from "../../contexts/UserConfigContext"
@@ -61,7 +61,7 @@ const HistoryPage: React.FunctionComponent<HistoryPageProps> = (props) => {
   React.useEffect(() => {
     if (account && game && rounds.length > 0 && active.current !== account) {
       setIsLoading(true)
-      BnbUsdt.fetchUserRounds({ game, account, latest: false }).then(bets => {
+      PsBnbUsdt.fetchUserRounds({ game, account, latest: false }).then(bets => {
         setUnenrichedUserBets(bets)
         setIsLoading(false)
         active.current = account

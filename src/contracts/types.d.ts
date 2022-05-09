@@ -7,38 +7,52 @@ interface PrdtRound {
   genesis: boolean
   completed: boolean
   cancelled: boolean
-  bullAmount: number
-  bearAmount: number
-  rewardBaseCalAmount: number
-  rewardAmount: number
-  treasuryAmount: number
-  bullBonusAmount: number
-  bearBonusAmount: number
-  lockPrice: number
-  closePrice: number
+  bullAmount: string
+  bearAmount: string
+  rewardBaseCalAmount: string
+  rewardAmount: string
+  treasuryAmount: string
+  bullBonusAmount: string
+  bearBonusAmount: string
+  lockPrice: string
+  closePrice: string
   bullPayoutGross: number
   bearPayoutGross: number
   lockPriceNum: number
   closePriceNum: number
-  prizePool: number
   bullPayout: number
   bearPayout: number
+  rewardAmountNum: number
+  rewardBaseCalAmountNum: number
+  bearAmountNum: number
+  bullAmountNum: number
+  closePriceNum: number
+  lockTimestampNum: number
+  closeTimestampNum: number
+  startTimestampNum: number
+  prizePool: string
 }
 
 interface PrdtResponse {
   epoch: string
-  genesis: boolean
-  completed: boolean
-  cancelled: boolean
-  bullAmount: number
-  bearAmount: number
-  rewardBaseCalAmount: number
-  rewardAmount: number
-  treasuryAmount: number
-  bullBonusAmount: number
-  bearBonusAmount: number
-  lockPrice: number
-  closePrice: number
+  genesis: "True" | "False"
+  completed: "True" | "False"
+  cancelled: "True" | "False"
+  bullAmount: string
+  bearAmount: string
+  rewardBaseCalAmount: string
+  rewardAmount: string
+  treasuryAmount: string
+  bullBonusAmount: string
+  bearBonusAmount: string
+  lockPrice: string
+  closePrice: string
+}
+
+interface PrdtTimestampResponse {
+  startTimestamp: string
+  lockTimestamp: string
+  closeTimestamp: string
 }
 
 interface PsRound {
@@ -115,9 +129,9 @@ interface OracleResponse {
 }
 
 interface Oracle {
-  roundId: number
+  // roundId: number
   answer: number
-  startedAt: number
-  updatedAt: number
-  answeredInRound: number
+  // startedAt: number
+  // updatedAt: number
+  // answeredInRound: number
 }

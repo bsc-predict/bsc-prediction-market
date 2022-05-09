@@ -19,7 +19,7 @@ const Result: React.FunctionComponent<ResultProps> = (props) => {
 
   let className = "p-1 border border-grey-800 text-center"
 
-  const leading = oracle > round.lockPriceNum ? "bull" : oracle < round.lockPriceNum ? "bear" : "tie" 
+  const leading = oracle > round.lockPriceNum ? "bull" : oracle < round.lockPriceNum ? "bear" : "tie"
   const pendingWin = bet?.direction === leading
   if (bet?.status === "pending" && pendingWin) {
     className = "p-1 border border-grey-800 text-center bg-accent opacity-50"

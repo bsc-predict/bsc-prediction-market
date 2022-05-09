@@ -18,7 +18,7 @@ export const Urls = {
   },
   bnbPrice: "https://api1.binance.com/api/v3/ticker/price?symbol=BNBUSDT",
   cakePrice: "https://api1.binance.com/api/v3/ticker/price?symbol=CAKEUSDT",
-  bnbUsdt: {
+  bsBnbUsdt: {
     leaderboard: {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard.csv",
       test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/test/latest.csv",
@@ -44,6 +44,16 @@ export const Urls = {
     lotteryRounds: {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/lottery.csv"
     }
+  },
+  prdtBnbUsdt: {
+    latestRounds: {
+      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/prdt/latest.csv",
+      test: "",
+    },
+    allRounds: {
+      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/prdt/rounds.csv",
+      test: "",
+    },
   }
 }
 

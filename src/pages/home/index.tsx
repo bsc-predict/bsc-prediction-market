@@ -22,7 +22,7 @@ const HomePage: React.FunctionComponent<HomePageProps> = (props) => {
         <h1 className="text-4xl">BSC Predict</h1>
         <div className="text-xl">Predict BNB-USD movements in 5 minute intervals</div>
         <div className="flex space-x-4 justify-center">
-          <Link href="/bnbusdt" passHref>
+          <Link href="/ps/bnbusdt" passHref>
             <button className="btn btn-primary"><a>Predict</a></button>
           </Link>
           <Link href="/lottery/cake" passHref>
