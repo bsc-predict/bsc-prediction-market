@@ -4,9 +4,10 @@ import { calcBlockTimestamp, createArray, roundComplete, toWei } from "../utils/
 import { RootState } from "../stores"
 import { Urls } from "../constants"
 import { getPredictionContract } from "./utils"
-import { BnbUsdt } from "../contracts/prediction"
+import { PsBnbUsdt } from "../contracts/psPrediction"
 import request, { gql } from "graphql-request"
 import { getArchivedRounds } from "src/api"
+import { PrdtBnbUsdt } from "src/contracts/prdtPrediction"
 
 
 export const fetchArchivedRounds = createAsyncThunk(
@@ -15,9 +16,10 @@ export const fetchArchivedRounds = createAsyncThunk(
     const { latest } = props
     const { game: { game, fetchingRounds } } = thunkAPI.getState() as RootState
     if (game === undefined || fetchingRounds !== "archive/rounds/fetch") {
-      return []
+      return {game, rounds: [] as Round[]}
     }
-    return getArchivedRounds({ latest, game })
+    const rounds = await getArchivedRounds({ latest, game })
+    return { game, rounds }
   }
 )
 
@@ -58,11 +60,8 @@ export const fetchLatestRounds = createAsyncThunk(
     const currentBlock = calcBlockTimestamp(block)
     const latest = await contract.methods.currentEpoch().call().then((l: string) => Number(l)) as number
     const epochs = new Set(createArray(Math.max(0, latest - n), latest + 1).filter(e => !availableEpochs.has(e)).concat(backfill))
-    const updated = Array(...epochs).map(async epoch =>
-      contract.methods.rounds(epoch.toString()).call().then((r: PsRoundResponse) => BnbUsdt.toRound(r))
-    )
 
-    const updatedRounds = await Promise.all(updated)
+    const updatedRounds = game.service === "prdt" ? await PrdtBnbUsdt.fetchRounds(game, Array(...epochs)) : await PsBnbUsdt.fetchRounds(game, Array(...epochs))
 
     const latestLockBlock = updatedRounds ? updatedRounds.reduce((lock, r) => r.lockTimestampNum > lock ? r.lockTimestampNum : lock, 0) : 0
 
@@ -71,7 +70,7 @@ export const fetchLatestRounds = createAsyncThunk(
       paused = await contract.methods.paused().call()
     }
 
-    return { updatedRounds, paused }
+    return { game, updatedRounds, paused }
   }
 )
 
@@ -135,7 +134,7 @@ const fetchRoundHistory = async (game: GameType, where: WhereClause = {}, first 
 }
 
 const getRoundHistoryGql = async (game: GameType, where: WhereClause = {}, first = 1000, skip = 0): Promise<GraphQlRoundResponse> => {
-  const url = Urls.bnbUsdt.gqlPrediction[game.chain]
+  const url = Urls.bsBnbUsdt.gqlPrediction[game.chain]
   const response = await request<GraphQlRoundResponse>(
     url,
     gql`

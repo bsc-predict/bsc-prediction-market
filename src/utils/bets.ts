@@ -14,7 +14,7 @@ export const enrichBets = (p: {
   const { bets, rounds, block, intervalSeconds, bufferSeconds, evenMoney } = p
   const roundsMap = new Map<string, Round>()
   rounds.forEach(r => roundsMap.set(r.epoch, r))
-  
+
   const enriched = bets.map(bet => {
     const r = roundsMap.get(bet.epoch)
 
@@ -58,7 +58,7 @@ export const enrichBets = (p: {
       status = "claimed"
     } else if (won) {
       status = "claimable"
-    } else if (r?.type ==="ps" && r?.oracleCalled === false) {
+    } else if (r?.type === "ps" && r?.oracleCalled === false) {
       status = "pending"
     } else {
       status = bet?.status
@@ -89,9 +89,5 @@ export const calcMaxDrawdown = (bets: Bet[]) => {
 }
 
 export const calcCanBet = (round: Round, currentTimestamp: number) => {
-  if (round.type === "ps") {
-    return round.startTimestampNum < currentTimestamp && round.lockTimestampNum > currentTimestamp
-  } else {
-    return round.completed === false
-  }
+  return round.startTimestampNum < currentTimestamp && round.lockTimestampNum > currentTimestamp
 }

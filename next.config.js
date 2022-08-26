@@ -1,4 +1,14 @@
 module.exports = {
+  async redirects() {
+    return [
+      {
+        source: '/bnbusdt',
+        destination: '/ps/bnbusdt',
+        permanent: true,
+      },
+    ]
+  },
+
   reactStrictMode: true,
   images: {
     disableStaticImages: true

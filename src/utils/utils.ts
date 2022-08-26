@@ -44,6 +44,7 @@ export const getRoundInfo = (round: Round, block: BlockProps, constants: Predict
   const curPriceDisplay = canceled ? "Canceled" : (curPrice / Math.pow(10, 8)).toFixed(2)
   const prizePool = toEther(round.prizePool, 2)
   const lockPrice = round.lockPriceNum / Math.pow(10, 8)
+
   return {
     winner,
     curPriceDisplay,

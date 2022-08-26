@@ -6,9 +6,9 @@ export const OracleAddresses = {
 export const toOracle = (o: OracleResponse): Oracle => {
   return {
     answer: Number(o.answer),
-    answeredInRound: Number(o.answeredInRound),
-    startedAt: Number(o.startedAt),
-    roundId: Number(o.roundId),
-    updatedAt: Number(o.updatedAt),
+    // answeredInRound: Number(o.answeredInRound),
+    // startedAt: Number(o.startedAt),
+    // roundId: Number(o.roundId),
+    // updatedAt: Number(o.updatedAt),
   }
 }

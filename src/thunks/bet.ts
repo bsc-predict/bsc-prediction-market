@@ -3,7 +3,8 @@ import { createAsyncThunk } from "@reduxjs/toolkit"
 import { toWei } from "../utils/utils"
 import { RootState } from "../stores"
 import { Urls } from "../constants"
-import { BnbUsdt } from "../contracts/prediction"
+import { PsBnbUsdt } from "../contracts/psPrediction"
+import { PrdtBnbUsdt } from "src/contracts/prdtPrediction"
 interface BetCallbacks {
   onSent: () => void
   onConfirmed: () => void
@@ -35,7 +36,7 @@ export const claim = createAsyncThunk(
     }
 
     if (game.pair === "bnbusdt") {
-      return BnbUsdt.claim({ game, epochs, library, onSent, onConfirmed, onError, account })
+      return PsBnbUsdt.claim({ game, epochs, library, onSent, onConfirmed, onError, account })
     }
   }
 )
@@ -52,7 +53,8 @@ export const makeBet = createAsyncThunk(
     } else if (account === undefined || library === undefined) {
       onError(new Error("Not logged in"))
     } else if (game.pair === "bnbusdt") {
-      BnbUsdt.makeBet({
+      const f = game.service === "prdt" ? PrdtBnbUsdt.makeBet : PsBnbUsdt.makeBet
+      f({
         game,
         library,
         direction,
@@ -76,8 +78,8 @@ export const fetchBets = createAsyncThunk(
     if (game === undefined) {
       return { bets: [] }
     }
-    const bets = await BnbUsdt.fetchUserRounds({ game, account, latest: true })
-    return { bets }
+    const bets = await PsBnbUsdt.fetchUserRounds({ game, account, latest: true })
+    return { game, bets }
     // let bets = await getBetHistory(game, { user: address.toLowerCase() })
     // let numBets = bets.length
     // let idx = 1
@@ -137,7 +139,7 @@ export const getBetHistory = async (game: GameType, where: WhereClause = {}, fir
 }
 
 const getBetHistoryGql = async (game: GameType, where: WhereClause = {}, first = 1000, skip = 0): Promise<GraphQlBetResponse> => {
-  const url = Urls.bnbUsdt.gqlPrediction[game.chain]
+  const url = Urls.bsBnbUsdt.gqlPrediction[game.chain]
   const response = await request<GraphQlBetResponse>(
     url,
     gql`
