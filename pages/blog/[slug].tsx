@@ -1,7 +1,7 @@
 import React from "react";
 import { getAllPosts, getPostBySlug } from "../../api";
 import BlogPostPage from "../../src/blog/post";
-import AppWrapper from "../../src/wrapper";
+import AppWrapper from "../../src/wrapper/AppWrapper";
 
 interface PostProps {
   title: string

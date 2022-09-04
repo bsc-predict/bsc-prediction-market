@@ -1,7 +1,7 @@
 import mixpanel from 'mixpanel-browser'
 import React from 'react'
 import LotteryPage from 'src/pages/lottery'
-import AppWrapper from '../../src/wrapper'
+import AppWrapper from '../../src/wrapper/AppWrapper'
 
 
 const Lottery: React.FunctionComponent = () => {

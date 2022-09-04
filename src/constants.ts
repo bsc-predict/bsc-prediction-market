@@ -27,6 +27,12 @@ export const Urls = {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard-even-money.csv",
       test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard-even-money.csv",
     },
+    weeklyLeaderboard: {
+      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard-weekly.csv",
+    },
+    weeklyLoserleaderboard: {
+      main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/leaderboard-losers-weekly.csv",
+    },
     latestRounds: {
       main: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/main/latest.csv",
       test: "https://raw.githubusercontent.com/bsc-predict/bsc-predict-updater/master/data/v2/test/latest.csv",

@@ -1,5 +1,5 @@
 import React from "react"
-import AppWrapper from "../src/wrapper"
+import AppWrapper from "../src/wrapper/AppWrapper"
 import Link from "next/link"
 
 const NotFound: React.FunctionComponent = () => {

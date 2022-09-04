@@ -41,12 +41,28 @@ export const getArchivedRounds = async (props: { latest: boolean, game: GameType
   return roundResponse.map(BnbUsdt.toRound)
 }
 
-export const getLeaderboard = async (props: { evenMoney: boolean, game: GameType }): Promise<Leaderboard[]> => {
-  const { evenMoney, game } = props
+export const getLeaderboard = async (props: { evenMoney?: boolean, game: GameType, type: "weekly" | "all-time", losers?: boolean }): Promise<Leaderboard[]> => {
+  const { evenMoney, game, type, losers } = props
   if (game === undefined) {
     return []
   }
-  const url = evenMoney ? Urls.bnbUsdt.leaderboardEvenMoney[game.chain] : Urls.bnbUsdt.leaderboard[game.chain]
+  let url = ""
+  if (type === "all-time" && !losers && !evenMoney) {
+    // regular
+    url = Urls.bnbUsdt.leaderboard[game.chain]
+  } else if (type === "all-time" && !losers && evenMoney) {
+    // regular even money
+    url = Urls.bnbUsdt.leaderboardEvenMoney[game.chain]
+  } else if (type === "weekly" && !losers && !evenMoney && game.chain === "main") {
+    url = Urls.bnbUsdt.weeklyLeaderboard[game.chain]
+  } else if (type === "weekly" && losers && !evenMoney && game.chain === "main") {
+    url = Urls.bnbUsdt.weeklyLoserleaderboard[game.chain]
+  }
+
+  if (!url) {
+    return []
+  }
+
   const res = await axios.get(url)
   const leaderBoardResponse = csvToJson(res.data) as LeaderboardResponse[]
   return leaderBoardResponse.map(r => ({

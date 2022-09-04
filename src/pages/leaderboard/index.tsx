@@ -8,27 +8,56 @@ interface LeaderboardPageProps {
 }
 
 const PAGINATION = 20
+type LeaderboardType = "all-time" | "all-time-even-money" | "weekly-winners" | "weekly-losers"
 
 const LeaderboardPage: React.FunctionComponent<LeaderboardPageProps> = (props) => {
   const { onHistory } = props
 
-  const [evenMoney, setEvenMoney] = React.useState(false)
+  const [type, setType] = React.useState<LeaderboardType>("all-time")
   const [page, setPage] = React.useState(0)
   const [leaderboard, setLeaderboard] = React.useState<Leaderboard[]>([])
   const [evenMoneyLeaderboard, setEvenMoneyLeaderboard] = React.useState<Leaderboard[]>([])
+  const [weeklyLeaderboard, setWeeklyLeaderboard] = React.useState<Leaderboard[]>([])
+  const [weeklyLoserLeaderboard, setWeeklyLoserLeaderboard] = React.useState<Leaderboard[]>([])
+  const [results, setResults] = React.useState<Leaderboard[]>([])
+
+  const router = useRouter()
+  const { t: pathType } = router.query
 
   const game = useAppSelector(s => s.game.game)
 
   React.useEffect(() => {
     if (game) {
-      getLeaderboard({ evenMoney: true, game }).then(setEvenMoneyLeaderboard)
-      getLeaderboard({ evenMoney: false, game }).then(setLeaderboard)
+      getLeaderboard({ game, evenMoney: true, type: "all-time" }).then(setEvenMoneyLeaderboard)
+      getLeaderboard({ game, type: "all-time" }).then(setLeaderboard)
+      getLeaderboard({ game, type: "weekly" }).then(setWeeklyLeaderboard)
+      getLeaderboard({ game, type: "weekly", losers: true }).then(setWeeklyLoserLeaderboard)
     }
   }, [game])
 
-  const filtered = evenMoney ? evenMoneyLeaderboard : leaderboard
-  const paginated = filtered.slice(page * PAGINATION, (page + 1) * PAGINATION)
-  const numPages = Math.ceil(filtered.length / PAGINATION)
+  React.useEffect(() => {
+    const types = new Set(["all-time", "all-time-even-money", "weekly-winners", "weekly-losers"])
+    if (typeof pathType === "string" && types.has(pathType)) {
+      setType(pathType as LeaderboardType)
+      router.replace(router.asPath.replace(/\?t=.+/g, ""), undefined, { shallow: true });
+
+    }
+  }, [pathType])
+
+  React.useEffect(() => {
+    if (type === "all-time") {
+      setResults(leaderboard)
+    } else if (type === "all-time-even-money") {
+      setResults(evenMoneyLeaderboard)
+    } else if (type === "weekly-winners") {
+      setResults(weeklyLeaderboard)
+    } else if (type === "weekly-losers") {
+      setResults(weeklyLoserLeaderboard)
+    }
+  }, [type, leaderboard, weeklyLeaderboard, weeklyLoserLeaderboard, evenMoneyLeaderboard])
+
+  const paginated = results.slice(page * PAGINATION, (page + 1) * PAGINATION)
+  const numPages = Math.ceil(results.length / PAGINATION)
 
   const selectAccount = (a: string) => {
     onHistory(a)
@@ -37,15 +66,15 @@ const LeaderboardPage: React.FunctionComponent<LeaderboardPageProps> = (props) =
   return (
     <div >
       <div className="stat-title flex align-center">
-        Even Money
+        Type
       </div>
       <div className="stat-value">
-        <input
-          type="checkbox"
-          checked={evenMoney}
-          onChange={e => setEvenMoney(e.currentTarget.checked)}
-          className="toggle toggle-accent"
-        />
+        <select className="select w-full max-w-xs" value={type} onChange={v => setType(v.currentTarget.value as LeaderboardType)}>
+          <option value="all-time">All-Time Winners</option>
+          <option value="all-time-even-money">All-Time Even Money Winners</option>
+          <option value="weekly-winners">Weekly Winners</option>
+          <option value="weekly-losers">Weekly Losers</option>
+        </select>
       </div>
       <table >
         <thead>

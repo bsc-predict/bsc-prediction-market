@@ -1,7 +1,7 @@
 import { getAllPosts } from '@api'
 import React from 'react'
 import HomePage from '../src/pages/home'
-import AppWrapper from '../src/wrapper'
+import AppWrapper from '../src/wrapper/AppWrapper'
 
 interface HomeProps {
   posts: Array<{ slug: string, title: string, date: string }>

@@ -1,13 +1,9 @@
-import React from 'react'
-import { useAppDispatch, useAppSelector } from '../src/hooks/reduxHooks'
-import GamePage from '../src/pages/game'
-import { setGame } from '../src/stores/gameSlice'
-import { setupGame } from '../src/thunks/game'
-import AppWrapper from '../src/wrapper'
+import React from "react"
+import { useAppSelector, useAppDispatch } from "src/hooks/reduxHooks"
+import { setGame } from "src/stores/gameSlice"
+import { setupGame } from "src/thunks/game"
 
-
-const BnbUsdt: React.FunctionComponent = () => {
-
+const GameWrapper: React.FunctionComponent = (props) => {
   const game = useAppSelector(g => g.game.game)
   const dispatch = useAppDispatch()
   React.useEffect(() => {
@@ -30,11 +26,11 @@ const BnbUsdt: React.FunctionComponent = () => {
     }
   }, [game, dispatch])
 
-  return (
-    <AppWrapper title="BSC Predict - BNB-USDT" description="Binance Smart Chain (BSC) Prediction Markets">
-      <GamePage />
-    </AppWrapper>
-  )
+
+  if (!props.children) {
+    return null
+  }
+  return <React.Fragment>{props.children}</React.Fragment>
 }
 
-export default BnbUsdt
+export default GameWrapper

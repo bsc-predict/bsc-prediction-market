@@ -1,6 +1,6 @@
 import React from "react"
 import AboutPage from "../src/pages/about"
-import AppWrapper from "../src/wrapper"
+import AppWrapper from "../src/wrapper/AppWrapper"
 
 const About = () => {
   return(

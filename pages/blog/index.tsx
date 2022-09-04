@@ -2,7 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 import { flatten, uniqBy } from 'src/utils/utils'
 import { getAllPosts } from '../../api'
-import AppWrapper from '../../src/wrapper'
+import AppWrapper from '../../src/wrapper/AppWrapper'
 
 interface BlogProps {
   posts: Array<{ slug: string, title: string, date: string, tags: string[], sticky: boolean }>
